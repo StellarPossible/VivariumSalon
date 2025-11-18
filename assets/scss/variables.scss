@@ -1,0 +1,32 @@
+// assets/scss/variables.scss
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap');
+// Font imports
+
+// Primary brand palette
+$primary: #020b14;    // Deep teal
+$secondary: #1794d0;  // Muted green-teal
+$accent: #c8d8e4;     // Soft blue accent
+
+// Backgrounds and neutrals
+$white: #ffffff;
+$light: #f2f2f2;      // Light gray background
+$dark: #333333;       // Default dark text
+
+// Utility
+$border: #dddddd;
+$shadow-color: rgba(0, 0, 0, 0.05);
+
+@font-face {
+  font-family: 'Evermore';
+  src: url('@/assets/fonts/Evermore.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'OrionSans';
+  src: url('@/assets/fonts/orionsans.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+

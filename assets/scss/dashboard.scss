@@ -1,0 +1,39 @@
+.dashboard-container {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  min-height: 100vh;
+  background: #f8f9fa;
+}
+
+.dashboard-sidebar {
+  background: #fff;
+  border-right: 1px solid #e9ecef;
+  padding: 2rem 1rem;
+}
+
+.dashboard-main {
+  padding: 2rem;
+  overflow-y: auto;
+}
+
+.dashboard-content {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2rem;
+  margin-top: 2rem;
+}
+
+.dashboard-grid {
+  display: contents;
+}
+
+@media (max-width: 960px) {
+  .dashboard-container {
+    grid-template-columns: 1fr;
+  }
+  .dashboard-sidebar {
+    position: sticky;
+    top: 64px;
+    z-index: 10;
+  }
+}
