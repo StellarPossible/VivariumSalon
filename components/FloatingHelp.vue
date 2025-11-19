@@ -1,61 +1,68 @@
 <template>
-  <button
-    v-if="!isContactPage"
-    type="button"
-    class="floating-help"
-    aria-label="Contact or get help"
-    @click="open()"
-  >
-    <Icon icon="mdi:help-circle-outline" />
+  <button class="floating-book-now" @click="openBooking" title="Book an appointment">
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+    </svg>
+    <span>Book Now</span>
   </button>
 </template>
 
 <script setup lang="ts">
-import { Icon } from '@iconify/vue'
-const route = useRoute()
-const isContactPage = computed(() => route.path === '/contact')
-const { open } = useContactModal()
+const emit = defineEmits(['open-booking'])
+
+function openBooking() {
+  emit('open-booking')
+}
 </script>
 
 <style scoped lang="scss">
-.floating-help {
-  position: fixed;
-  right: 1rem;
-  bottom: 4.25rem; // sit just above fixed footer
-  z-index: 3500; // higher than footer (3000)
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 44px;
-  height: 44px;
-  border-radius: 50%;
-  backdrop-filter: blur(6px);
-  background: rgba(0,0,0,0.45);
-  color: #fff;
-  text-decoration: none;
-  border: 1px solid rgba(255,255,255,0.25);
-  cursor: pointer;
-  transition: transform .15s ease, background .2s ease, border-color .2s ease, box-shadow .2s ease;
+@use '@/assets/scss/variables.scss' as *;
 
-  :deep(svg) {
-    width: 22px;
-    height: 22px;
+.floating-book-now {
+  position: fixed;
+  bottom: $spacing-xl;
+  right: $spacing-xl;
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+  padding: $spacing-md $spacing-xl;
+  border-radius: 50px;
+  background: linear-gradient(135deg, $accent-gold 0%, darken($accent-gold, 10%) 100%);
+  color: $white;
+  border: none;
+  font-size: 1.1rem;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 8px 24px rgba($accent-gold, 0.4);
+  transition: all 0.3s ease;
+  z-index: 1500;
+
+  svg {
+    width: 24px;
+    height: 24px;
   }
 
   &:hover {
-    transform: translateY(-1px);
-    background: rgba(0,0,0,0.55);
-    border-color: rgba(255,255,255,0.35);
-    box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+    transform: translateY(-4px);
+    box-shadow: 0 12px 32px rgba($accent-gold, 0.6);
+  }
+
+  &:active {
+    transform: translateY(-2px);
   }
 }
 
-@media (max-width: 768px) {
-  .floating-help {
-    bottom: 4rem;
-    right: 0.75rem;
-    width: 40px;
-    height: 40px;
+@media (max-width: $breakpoint-md) {
+  .floating-book-now {
+    bottom: $spacing-lg;
+    right: $spacing-lg;
+    padding: $spacing-md $spacing-lg;
+    font-size: 1rem;
+
+    svg {
+      width: 20px;
+      height: 20px;
+    }
   }
 }
 </style>

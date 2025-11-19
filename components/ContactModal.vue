@@ -1,189 +1,359 @@
 <template>
-  <Teleport to="body">
-    <div v-if="isOpen" class="modal-overlay" @click.self="onClose" role="dialog" aria-modal="true" aria-labelledby="contact-title">
-      <div class="modal">
-        <header class="modal-header">
-          <h2 id="contact-title">Contact Us</h2>
-          <button class="icon-btn" aria-label="Close" @click="onClose">×</button>
-        </header>
-
-        <form class="modal-body" @submit.prevent="onSubmit" novalidate>
-          <label>
-            <span>Name</span>
-            <input v-model.trim="form.name" type="text" required :disabled="submitting" />
-          </label>
-          <label>
-            <span>Email</span>
-            <input v-model.trim="form.email" type="email" required :disabled="submitting" />
-          </label>
-          <label>
-            <span>Subject</span>
-            <input v-model.trim="form.subject" type="text" :disabled="submitting" />
-          </label>
-          <label>
-            <span>Message</span>
-            <textarea v-model.trim="form.message" rows="5" required :disabled="submitting"></textarea>
-          </label>
-
-          <p v-if="error" class="error">{{ error }}</p>
-          <p v-if="success" class="success">Thanks! Your message has been sent.</p>
-
-          <footer class="modal-footer">
-            <button type="button" class="btn" @click="onClose" :disabled="submitting">Cancel</button>
-            <button type="submit" class="btn primary" :disabled="submitting || !isValid">
-              <span v-if="submitting">Sending…</span>
-              <span v-else>Send</span>
-            </button>
-          </footer>
-        </form>
+  <div v-if="isOpen" class="modal-overlay" @click="close">
+    <div class="modal-content" @click.stop>
+      <button class="close-btn" @click="close">×</button>
+      <h2>Book Your Appointment</h2>
+      
+      <div class="contact-options">
+        <a href="tel:443-717-3313" class="contact-option phone">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+          </svg>
+          <div>
+            <strong>Call Us</strong>
+            <span>443-717-3313</span>
+          </div>
+        </a>
       </div>
+
+      <div class="divider">
+        <span>or</span>
+      </div>
+      
+      <p class="form-intro">Fill out the form below and we'll get back to you shortly</p>
+      
+      <form @submit.prevent="handleSubmit">
+        <div class="form-group">
+          <label for="name">Name *</label>
+          <input id="name" v-model="form.name" type="text" required placeholder="Your full name" />
+        </div>
+        <div class="form-group">
+          <label for="email">Email *</label>
+          <input id="email" v-model="form.email" type="email" required placeholder="your@email.com" />
+        </div>
+        <div class="form-group">
+          <label for="phone">Phone</label>
+          <input id="phone" v-model="form.phone" type="tel" placeholder="(123) 456-7890" />
+        </div>
+        <div class="form-group">
+          <label for="service">Preferred Service</label>
+          <select id="service" v-model="form.service">
+            <option value="">Select a service</option>
+            <option value="haircut">Haircut</option>
+            <option value="color">Color Services</option>
+            <option value="styling">Styling</option>
+            <option value="treatment">Hair Treatment</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="date">Preferred Date</label>
+          <input id="date" v-model="form.date" type="date" />
+        </div>
+        <div class="form-group">
+          <label for="message">Additional Notes</label>
+          <textarea id="message" v-model="form.message" rows="4" placeholder="Any specific requests or questions?"></textarea>
+        </div>
+        <button type="submit" class="submit-btn" :disabled="isSubmitting">
+          <span v-if="!isSubmitting">Request Appointment</span>
+          <span v-else>Sending...</span>
+        </button>
+        <p v-if="submitMessage" class="submit-message" :class="{ error: submitError }">
+          {{ submitMessage }}
+        </p>
+      </form>
     </div>
-  </Teleport>
-  
+  </div>
 </template>
 
 <script setup lang="ts">
-import { onMounted, onBeforeUnmount } from 'vue'
-import type { User } from '~/types/auth'
-const { isOpen, close } = useContactModal()
-const user = useState<User | null>('auth.user')
+import { ref, reactive } from 'vue'
+
+const isOpen = ref(false)
+const isSubmitting = ref(false)
+const submitMessage = ref('')
+const submitError = ref(false)
 
 const form = reactive({
   name: '',
   email: '',
-  subject: '',
+  phone: '',
+  service: '',
+  date: '',
   message: ''
 })
 
-const submitting = ref(false)
-const success = ref(false)
-const error = ref('')
-
-// Pre-fill from logged in user
-watchEffect(() => {
-  if (user.value && isOpen.value && !form.name && !form.email) {
-    form.name = user.value.name || user.value.username
-    form.email = user.value.email
-  }
-})
-
-const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-const isValid = computed(() => !!form.name && emailRegex.test(form.email) && !!form.message)
-
-function onClose() {
-  close()
-  // Reset after close so we can show success next time
-  setTimeout(() => {
-    success.value = false
-    error.value = ''
-    submitting.value = false
-  }, 150)
+function open() {
+  isOpen.value = true
+  submitMessage.value = ''
+  submitError.value = false
 }
 
-async function onSubmit() {
-  error.value = ''
-  success.value = false
-  if (!isValid.value) {
-    error.value = 'Please fill all required fields with a valid email.'
-    return
-  }
-  submitting.value = true
+function close() {
+  isOpen.value = false
+}
+
+async function handleSubmit() {
+  isSubmitting.value = true
+  submitMessage.value = ''
+  submitError.value = false
+  
   try {
-    await $fetch('/api/contact', {
+    const response = await fetch('/api/booking', {
       method: 'POST',
-      body: { ...form }
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        ...form,
+        to: 'booking@vivariumsalon.com'
+      })
     })
-    success.value = true
-    // Optionally clear message/subject only
-    form.subject = ''
-    form.message = ''
-    // Auto-close after a short delay
-    setTimeout(() => onClose(), 1200)
-  } catch (e: any) {
-    error.value = e?.data?.message || 'Failed to send message. Please try again.'
+    
+    if (response.ok) {
+      submitMessage.value = 'Thank you! Your appointment request has been received. We\'ll contact you soon.'
+      submitError.value = false
+      // Reset form
+      Object.keys(form).forEach(key => form[key as keyof typeof form] = '')
+      setTimeout(() => {
+        close()
+      }, 3000)
+    } else {
+      throw new Error('Failed to submit')
+    }
+  } catch (error) {
+    submitMessage.value = 'Sorry, there was an error sending your request. Please call us at 443-717-3313.'
+    submitError.value = true
   } finally {
-    submitting.value = false
+    isSubmitting.value = false
   }
 }
 
-// Close on Escape
-function onKeydown(e: KeyboardEvent) {
-  if (e.key === 'Escape' && isOpen.value) onClose()
-}
-onMounted(() => window.addEventListener('keydown', onKeydown))
-onBeforeUnmount(() => window.removeEventListener('keydown', onKeydown))
-
+defineExpose({ open, close })
 </script>
 
 <style scoped lang="scss">
+@use '@/assets/scss/variables.scss' as *;
+
 .modal-overlay {
   position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,0.5);
-  backdrop-filter: blur(2px);
-  display: grid;
-  place-items: center;
-  z-index: 4000; // above header and footer
-}
-.modal {
-  width: min(680px, 92vw);
-  background: #0e0f1a;
-  color: #fff;
-  border: 1px solid rgba(255,255,255,0.15);
-  border-radius: 12px;
-  box-shadow: 0 12px 40px rgba(0,0,0,0.5);
-}
-.modal-header {
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(5px);
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  padding: 1rem 1.25rem;
-  border-bottom: 1px solid rgba(255,255,255,0.1);
+  justify-content: center;
+  z-index: 2000;
+  padding: $spacing-lg;
+  overflow-y: auto;
 }
-.icon-btn {
-  background: transparent;
-  border: 1px solid rgba(255,255,255,0.25);
-  color: #fff;
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  cursor: pointer;
-}
-.modal-body {
-  display: grid;
-  gap: 0.75rem;
-  padding: 1rem 1.25rem 1.25rem;
-}
-label { display: grid; gap: 0.35rem; }
-input, textarea {
-  background: rgba(255,255,255,0.06);
-  color: #fff;
-  border: 1px solid rgba(255,255,255,0.18);
-  border-radius: 8px;
-  padding: 0.6rem 0.75rem;
-}
-.modal-footer {
-  display: flex;
-  justify-content: flex-end;
-  gap: 0.5rem;
-  margin-top: 0.5rem;
-}
-.btn {
-  background: rgba(255,255,255,0.1);
-  color: #fff;
-  border: 1px solid rgba(255,255,255,0.2);
-  border-radius: 8px;
-  padding: 0.5rem 0.9rem;
-  cursor: pointer;
-}
-.btn.primary {
-  background: #4f46e5;
-  border-color: #4f46e5;
-}
-.error { color: #ff6b6b; }
-.success { color: #2ecc71; }
 
-@media (max-width: 520px) {
-  .modal { width: 94vw; }
+.modal-content {
+  background: $background-color;
+  padding: $spacing-xl * 2;
+  border-radius: 20px;
+  max-width: 600px;
+  width: 100%;
+  position: relative;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 20px 60px rgba($black, 0.5);
+
+  h2 {
+    margin-bottom: $spacing-lg;
+    color: $text-color;
+    font-size: 2rem;
+    text-align: center;
+  }
+
+  .close-btn {
+    position: absolute;
+    top: $spacing-lg;
+    right: $spacing-lg;
+    background: rgba($secondary-color, 0.1);
+    border: none;
+    font-size: 2rem;
+    cursor: pointer;
+    color: $secondary-color;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+
+    &:hover {
+      background: rgba($secondary-color, 0.2);
+      color: $text-color;
+    }
+  }
+
+  .contact-options {
+    margin-bottom: $spacing-xl;
+  }
+
+  .contact-option {
+    display: flex;
+    align-items: center;
+    gap: $spacing-md;
+    padding: $spacing-lg;
+    background: linear-gradient(135deg, rgba($accent-gold, 0.15) 0%, rgba($accent-gold, 0.1) 100%);
+    border: 2px solid rgba($accent-gold, 0.3);
+    border-radius: 12px;
+    text-decoration: none;
+    color: $text-color;
+    transition: all 0.3s ease;
+
+    svg {
+      width: 32px;
+      height: 32px;
+      color: $accent-gold;
+      flex-shrink: 0;
+    }
+
+    div {
+      display: flex;
+      flex-direction: column;
+      gap: $spacing-xs;
+
+      strong {
+        font-size: 1.1rem;
+      }
+
+      span {
+        color: $secondary-color;
+        font-size: 1.1rem;
+      }
+    }
+
+    &:hover {
+      background: linear-gradient(135deg, rgba($accent-gold, 0.25) 0%, rgba($accent-gold, 0.2) 100%);
+      border-color: rgba($accent-gold, 0.5);
+      transform: translateY(-2px);
+    }
+  }
+
+  .divider {
+    text-align: center;
+    margin: $spacing-xl 0;
+    position: relative;
+
+    &::before,
+    &::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      width: 40%;
+      height: 1px;
+      background: rgba($secondary-color, 0.3);
+    }
+
+    &::before {
+      left: 0;
+    }
+
+    &::after {
+      right: 0;
+    }
+
+    span {
+      background: $background-color;
+      padding: 0 $spacing-md;
+      color: $secondary-color;
+      font-weight: 500;
+    }
+  }
+
+  .form-intro {
+    text-align: center;
+    color: $secondary-color;
+    margin-bottom: $spacing-xl;
+  }
+
+  .form-group {
+    margin-bottom: $spacing-lg;
+
+    label {
+      display: block;
+      margin-bottom: $spacing-sm;
+      font-weight: 600;
+      color: $text-color;
+    }
+
+    input,
+    textarea,
+    select {
+      width: 100%;
+      padding: $spacing-md;
+      border: 2px solid rgba($secondary-color, 0.3);
+      border-radius: 8px;
+      font-family: inherit;
+      font-size: 1rem;
+      transition: all 0.2s ease;
+
+      &:focus {
+        outline: none;
+        border-color: $primary-color;
+        box-shadow: 0 0 0 3px rgba($primary-color, 0.15);
+      }
+
+      &::placeholder {
+        color: rgba($secondary-color, 0.5);
+      }
+    }
+
+    select {
+      cursor: pointer;
+    }
+  }
+
+  .submit-btn {
+    width: 100%;
+    background: linear-gradient(135deg, $accent-gold 0%, darken($accent-gold, 10%) 100%);
+    color: $white;
+    border: none;
+    padding: $spacing-md $spacing-xl;
+    border-radius: 50px;
+    cursor: pointer;
+    font-size: 1.1rem;
+    font-weight: 700;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba($accent-gold, 0.4);
+
+    &:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba($accent-gold, 0.6);
+    }
+
+    &:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+  }
+
+  .submit-message {
+    margin-top: $spacing-md;
+    padding: $spacing-md;
+    border-radius: 8px;
+    text-align: center;
+    background: rgba(40, 167, 69, 0.1);
+    color: #28a745;
+    font-weight: 500;
+
+    &.error {
+      background: rgba(220, 53, 69, 0.1);
+      color: #dc3545;
+    }
+  }
+}
+
+@media (max-width: $breakpoint-md) {
+  .modal-content {
+    padding: $spacing-xl;
+  }
 }
 </style>

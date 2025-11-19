@@ -1,32 +1,33 @@
-// assets/scss/variables.scss
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap');
-// Font imports
+// Color variables - Vivarium Salon Palette
+$primary-color: #353637; // Charcoal gray
+$secondary-color: #838264; // Olive green/khaki
+$accent-color: #112917; // Dark forest green (accent only)
+$accent-gold: #96784E; // Brownish-gold
+$accent-sage: #B5C1B8; // Light sage green/gray-green
+$success-color: #353637;
+$danger-color: #dc3545;
+$warning-color: #96784E;
+$info-color: #B5C1B8;
 
-// Primary brand palette
-$primary: #020b14;    // Deep teal
-$secondary: #1794d0;  // Muted green-teal
-$accent: #c8d8e4;     // Soft blue accent
+$white: #E6E3DE; // Off-white/cream
+$black: #353637; // Charcoal gray
+$text-color: #353637;
+$background-color: #E6E3DE;
 
-// Backgrounds and neutrals
-$white: #ffffff;
-$light: #f2f2f2;      // Light gray background
-$dark: #333333;       // Default dark text
+// Spacing
+$spacing-xs: 0.25rem;
+$spacing-sm: 0.5rem;
+$spacing-md: 1rem;
+$spacing-lg: 1.5rem;
+$spacing-xl: 2rem;
 
-// Utility
-$border: #dddddd;
-$shadow-color: rgba(0, 0, 0, 0.05);
+// Typography
+$font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+$font-size-base: 1rem;
+$line-height-base: 1.3;
 
-@font-face {
-  font-family: 'Evermore';
-  src: url('@/assets/fonts/Evermore.ttf') format('truetype');
-  font-weight: normal;
-  font-style: normal;
-}
-
-@font-face {
-  font-family: 'OrionSans';
-  src: url('@/assets/fonts/orionsans.ttf') format('truetype');
-  font-weight: normal;
-  font-style: normal;
-}
-
+// Breakpoints
+$breakpoint-sm: 576px;
+$breakpoint-md: 768px;
+$breakpoint-lg: 992px;
+$breakpoint-xl: 1200px;

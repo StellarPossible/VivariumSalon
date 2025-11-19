@@ -1,115 +1,162 @@
 <template>
-  <section class="hero-content">
-    <div class="hero-backdrop">
-      <h1>Your Ideas. Our Tech. <br />Infinite Possibility.</h1>
-      <p>
-        Human-focused solutions for creatives, educators, and visionaries.
-      </p>
-      <div class="hero-buttons">
-        <NuxtLink to="/contact" class="button primary">Get In Touch</NuxtLink>
-        <NuxtLink to="/products" class="button ghost">Products</NuxtLink>
+  <section class="hero-content" id="home">
+    <div class="hero-inner">
+      <div class="hero-logo">
+        <img src="/images/vivariumlogo.png" alt="Vivarium Salon" />
+      </div>
+      <div class="hero-values">
+        <span>Quality</span>
+        <span class="separator">•</span>
+        <span>Integrity</span>
+        <span class="separator">•</span>
+        <span>Authenticity</span>
+      </div>
+      <p class="hero-subtitle">Your premier destination for beauty and wellness</p>
+      <div class="hero-cta">
+        <a href="#shop" class="btn btn-primary">Shop Now</a>
+        <a href="#specialists" class="btn btn-secondary">Meet Our Team</a>
       </div>
     </div>
   </section>
 </template>
+
+<script setup lang="ts">
+</script>
 
 <style scoped lang="scss">
 @use '@/assets/scss/variables.scss' as *;
 
 .hero-content {
   display: flex;
-  justify-content: center;
+  flex-direction: column;
   align-items: center;
-  padding: 6rem 2rem;
+  justify-content: center;
   min-height: 100vh;
+  text-align: center;
+  padding: $spacing-xl * .5;
   position: relative;
-  z-index: 2;
-
-  .hero-backdrop {
-    text-align: center;
-    padding: 1rem;
-    backdrop-filter: blur(8px);
-    background-color: rgba(0, 0, 0, 0.45);
-    border-radius: 1rem;
-    box-shadow: 0 0 40px rgba(0, 0, 0, 0.5);
-    max-width: 900px;
-    margin-top: -8rem;
-    color: #fff;
+  background: url('/images/vivariumhero.png') no-repeat center center;
+  background-size: cover;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba($black, 0.5);
+    z-index: 0;
   }
+}
 
-  h1 {
-    font-family: 'Montserrat', sans-serif;
-    font-size: 3.5rem;
-    font-weight: 600;
-    line-height: 4rem;
-    margin: 0;
+.hero-inner {
+  max-width: 75%;
+  width: 100%;
+  margin: 0 auto;
+  position: relative;
+  z-index: 1;
+}
+
+.hero-logo {
+  display: flex;
+  justify-content: center;
+  
+  img {
+    max-width: 600px;
+    width: 100%;
+    height: auto;
+    filter: drop-shadow(0 4px 20px rgba(0, 0, 0, 0.5));
   }
+}
 
-  p {
-    font-size: 1.25rem;
-    margin-bottom: 2rem;
-    opacity: 0.9;
+.hero-values {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: $spacing-md;
+  margin-bottom: $spacing-xl * 1.5;
+  font-size: clamp(0.85rem, 1.8vw, 1.1rem);
+  color: $white;
+  font-weight: 600;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+  
+  span {
+    opacity: 0.95;
   }
+  
+  .separator {
+    opacity: 0.5;
+    font-weight: 300;
+  }
+}
 
-  .hero-buttons {
-    display: flex;
-    justify-content: center;
-    gap: 1.5rem;
+.hero-title {
+  font-size: clamp(2rem, 4.5vw, 3.5rem);
+  margin-bottom: $spacing-md;
+  color: $white;
+  font-weight: 700;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+  line-height: 1.2;
+}
 
-    .button {
-      padding: 1rem 2rem;
-      font-size: 1rem;
-      font-weight: 600;
-      border: none;
-      border-radius: 0.5rem;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      text-decoration: none;
-      display: inline-block;
-      text-align: center;
+.hero-subtitle {
+  font-size: clamp(1.1rem, 2.2vw, 1.5rem);
+  color: rgba($white, 0.9);
+  margin-bottom: $spacing-xl * 1.5;
+  text-shadow: 0 1px 5px rgba(0, 0, 0, 0.2);
+  line-height: 1.2;
+}
 
-      &.primary {
-        background-color: white;
-        color: $primary;
-      }
+.hero-cta {
+  display: flex;
+  gap: $spacing-lg;
+  justify-content: center;
+  flex-wrap: wrap;
+}
 
-      &.ghost {
-        background-color: transparent;
-        color: white;
-        border: 1px solid white;
-      }
-
-      &.primary:hover {
-        background-color: #f0f0f0;
-        transform: translateY(-2px);
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-      }
-      
-      &.ghost:hover {
-        background-color: rgba(255, 255, 255, 0.1);
-        transform: translateY(-2px);
-      }
+.btn {
+  padding: $spacing-md $spacing-xl;
+  border-radius: 50px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  
+  &-primary {
+    background: linear-gradient(135deg, $accent-gold 0%, darken($accent-gold, 10%) 100%);
+    color: $white;
+    box-shadow: 0 4px 15px rgba($accent-gold, 0.4);
+    
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba($accent-gold, 0.6);
+    }
+  }
+  
+  &-secondary {
+    background: rgba($white, 0.2);
+    color: $black;
+    border: 2px solid rgba($black, 0.3);
+    backdrop-filter: blur(10px);
+    
+    &:hover {
+      background: rgba($white, 0.3);
+      border-color: rgba($black, 0.5);
+      transform: translateY(-2px);
     }
   }
 }
 
-@media screen and (max-width: 1024px) {
-  .hero-content h1 {
-    font-size: 2.5rem;
-    line-height: 2.75rem;
-  }
-
-  .hero-content .hero-buttons {
+@media (max-width: $breakpoint-md) {
+  .hero-cta {
     flex-direction: column;
-    gap: 1rem;
+    align-items: center;
     
-  }
-}
-
-@media screen and (max-width: 425px) {
-  .hero-content h1 {
-    font-size: 1.75rem;
-    line-height: 2rem;
+    .btn {
+      width: 100%;
+      max-width: 300px;
+    }
   }
 }
 </style>

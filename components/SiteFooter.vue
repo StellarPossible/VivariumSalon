@@ -1,151 +1,197 @@
 <template>
   <footer class="site-footer">
-    <div class="footer-content">
-  <button type="button" class="contact-btn" aria-label="Contact StellarPossible" @click="open()">Contact</button>
-      <span class="copyright">&copy; {{ year }} StellarPossible, LLC</span>
-      <a
-        href="https://instagram.com/stellarpossible"
-        target="_blank"
-        rel="noopener"
-        aria-label="Instagram"
-        class="social-icon"
-      >
-        <svg viewBox="0 0 32 32" width="32" height="32" fill="none">
-          <circle class="ig-bg" cx="16" cy="16" r="14" />
-          <rect x="9" y="9" width="14" height="14" rx="7" class="ig-square"/>
-          <circle cx="16" cy="16" r="4" class="ig-circle"/>
-          <circle cx="21" cy="11" r="1.5" class="ig-dot"/>
-        </svg>
-      </a>
+    <div class="container">
+      <div class="footer-content">
+        <div class="footer-section">
+          <h3>Vivarium Salon</h3>
+          <p>Your premier destination for beauty and wellness</p>
+          <div class="social-links">
+            <a 
+              href="https://www.instagram.com/vivariumsalon" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              class="social-link instagram"
+              aria-label="Follow us on Instagram @vivariumsalon"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+              </svg>
+            </a>
+          </div>
+        </div>
+        <div class="footer-section">
+          <h4>Visit Us</h4>
+          <address>
+            <p>165 Defense Hwy</p>
+            <p>Annapolis, MD 21401</p>
+          </address>
+          <a 
+            href="https://maps.google.com/?q=165+Defense+Hwy,+Annapolis,+MD+21401" 
+            target="_blank"
+            rel="noopener noreferrer"
+            class="directions-link"
+          >
+            Get Directions →
+          </a>
+        </div>
+        <div class="footer-section">
+          <h4>Contact</h4>
+          <p>
+            <a href="mailto:booking@vivariumsalon.com">booking@vivariumsalon.com</a>
+          </p>
+          <p>
+            <a href="tel:443-717-3313">443-717-3313</a>
+          </p>
+          <p>
+            <a 
+              href="https://vivarium.glossgenius.com" 
+              target="_blank"
+              rel="noopener noreferrer"
+              class="book-link"
+            >
+              Book Online
+            </a>
+          </p>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; {{ new Date().getFullYear() }} Vivarium Salon. All rights reserved.</p>
+      </div>
     </div>
   </footer>
 </template>
 
 <script setup lang="ts">
-const year = new Date().getFullYear()
-const { open } = useContactModal()
 </script>
 
 <style scoped lang="scss">
 @use '@/assets/scss/variables.scss' as *;
 
 .site-footer {
-  position: fixed; // changed from relative
-  left: 0;
-  right: 0;
-  bottom: 0;
-  width: 100%;
-  padding: .5rem;
-  background: $primary opacify($color: #000000, $amount: 0);
+  background: linear-gradient(180deg, rgba($black, 0.9) 0%, rgba($black, 0.98) 100%);
+  backdrop-filter: blur(20px);
   color: $white;
-  font-family: 'Montserrat', sans-serif;
-  text-align: center;
-  font-size: 1.5rem;
-  z-index: 3000; // higher than .layout-wrapper (which is 2000)
-  overflow: hidden;
+  padding: $spacing-xl * 2.5 0 $spacing-lg;
+  margin-top: auto;
+  border-top: 1px solid rgba($accent-color, 0.3);
+  position: relative;
+  z-index: 10;
 
-  &::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.6);
-    background-size: cover;
-    background-attachment: fixed;
-    filter: blur(3px);
-    z-index: -1;
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 $spacing-lg;
   }
 
   .footer-content {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: $spacing-xl * 1.5;
+    margin-bottom: $spacing-xl * 1.5;
+  }
+
+  .footer-section {
+    h3 {
+      font-size: 1.8rem;
+      margin-bottom: $spacing-md;
+      background: linear-gradient(135deg, $white 0%, $accent-color 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    h4 {
+      margin-bottom: $spacing-lg;
+      font-size: 1.2rem;
+      font-weight: 600;
+    }
+
+    p {
+      opacity: 0.9;
+      margin-bottom: $spacing-md;
+      line-height: 1.4;
+    }
+
+    address {
+      font-style: normal;
+      
+      p {
+        margin-bottom: $spacing-sm;
+      }
+    }
+
+    a {
+      color: rgba($white, 0.9);
+      text-decoration: none;
+      transition: all 0.2s ease;
+      display: inline-block;
+
+      &:hover {
+        color: $white;
+        transform: translateX(2px);
+      }
+    }
+
+    .directions-link,
+    .book-link {
+      color: $accent-gold;
+      font-weight: 600;
+      margin-top: $spacing-sm;
+      display: inline-block;
+
+      &:hover {
+        color: $accent-color;
+      }
+    }
+  }
+
+  .social-links {
     display: flex;
-    justify-content: center;
+    gap: $spacing-md;
+    margin-top: $spacing-lg;
+  }
+
+  .social-link {
+    width: 40px;
+    height: 40px;
+    display: flex;
     align-items: center;
-    gap: 1.25rem;
-    position: relative;
-    z-index: 1;
-  }
+    justify-content: center;
+    border-radius: 50%;
+    background: rgba($white, 0.1);
+    transition: all 0.3s ease;
 
-  .contact-btn {
-    background: rgba(255,255,255,0.08);
-    color: $white;
-    border: 1px solid rgba(255,255,255,0.24);
-    padding: 0.3rem 0.65rem;
-    border-radius: 10px;
-    text-decoration: none;
-    font-weight: 600;
-    font-size: 0.95rem;
-    letter-spacing: 0.01em;
-    transition: background .2s ease, border-color .2s ease;
-
-    &:hover {
-      background: rgba(255,255,255,0.16);
-      border-color: rgba(255,255,255,0.3);
-    }
-  }
-
-  .copyright {
-    font-size: 1rem;
-    letter-spacing: 0.02em;
-    color: $white;
-    opacity: 0.9;
-    
-  }
-
-@media (max-width: 768px) {
-  .copyright {
-    font-size: .5rem;
-  }
-  .footer-content { gap: 0.75rem; }
-  .contact-btn { padding: 0.28rem 0.55rem; font-size: .9rem; }
-  }
-
-  .social-icon {
-    display: inline-block;
-    transition: transform 0.3s;
     svg {
-      vertical-align: middle;
+      width: 20px;
+      height: 20px;
     }
-    &:hover {
-      transform: scale(1.2) rotate(-10deg);
-      .ig-bg {
-        stroke: #e1306c;
-        stroke-width: 2;
-        animation: igPulse 0.7s;
-      }
-      .ig-square {
-        fill: #e1306c;
-      }
-      .ig-circle {
-        fill: #fff;
-      }
-      .ig-dot {
-        fill: #e1306c;
-      }
+
+    &.instagram:hover {
+      background: linear-gradient(135deg, $accent-gold 0%, $accent-color 100%);
+      transform: translateY(-3px);
     }
   }
 
-  .ig-bg {
-    stroke: #fff;
-    stroke-width: 1;
-    fill: none;
-    transition: stroke 0.3s;
-  }
-  .ig-square {
-    fill: #fff;
-    transition: fill 0.3s;
-  }
-  .ig-circle {
-    fill: #e1306c;
-    transition: fill 0.3s;
-  }
-  .ig-dot {
-    fill: #fff;
-    transition: fill 0.3s;
-  }
+  .footer-bottom {
+    text-align: center;
+    padding-top: $spacing-xl;
+    border-top: 1px solid rgba($white, 0.1);
 
-  @keyframes igPulse {
-    0% { stroke-width: 2; }
-    50% { stroke-width: 6; }
-    100% { stroke-width: 2; }
+    p {
+      opacity: 0.6;
+      font-size: 0.9rem;
+    }
+  }
+}
+
+@media (max-width: $breakpoint-md) {
+  .site-footer {
+    padding: $spacing-xl * 2 0 $spacing-xl;
+
+    .footer-content {
+      grid-template-columns: 1fr;
+      gap: $spacing-xl;
+    }
   }
 }
 </style>
