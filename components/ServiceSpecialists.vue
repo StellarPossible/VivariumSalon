@@ -8,9 +8,10 @@
       
       <div class="specialists-grid">
         <div 
-          v-for="specialist in specialists" 
+          v-for="(specialist, index) in specialists" 
           :key="specialist.id"
           class="specialist-card"
+          :id="index === firstAvailableIndex ? 'available-spaces' : undefined"
         >
           <div class="specialist-image">
             <img :src="specialist.image" :alt="specialist.name" />
@@ -144,13 +145,17 @@ const specialists = ref([
     specialties: ['Chair Rental', 'Various Services']
   }
 ])
+
+const firstAvailableIndex = computed(() =>
+  specialists.value.findIndex((specialist) => specialist.isAvailable)
+)
 </script>
 
 <style scoped lang="scss">
 @use '@/assets/scss/variables.scss' as *;
 
 .specialists-section {
-  padding: $spacing-xl * 5 $spacing-lg $spacing-xl * 4;
+  padding: $spacing-xl $spacing-lg $spacing-xl;
   position: relative;
   background: linear-gradient(180deg, rgba(0, 0, 0, 0.3) 0%, rgba(0, 0, 0, 0.5) 100%);
 }
@@ -162,7 +167,7 @@ const specialists = ref([
 
 .section-header {
   text-align: center;
-  margin-bottom: $spacing-xl * 2.5;
+  margin-bottom: $spacing-xl;
 }
 
 .section-title {
@@ -203,6 +208,10 @@ const specialists = ref([
       transform: scale(1.1);
     }
   }
+}
+
+#available-spaces {
+  scroll-margin-top: $spacing-xl * 2.5;
 }
 
 .specialist-image {
@@ -336,9 +345,6 @@ const specialists = ref([
 }
 
 @media (max-width: $breakpoint-md) {
-  .specialists-section {
-    padding: $spacing-xl * 2 $spacing-md;
-  }
   
   .specialists-grid {
     grid-template-columns: 1fr;

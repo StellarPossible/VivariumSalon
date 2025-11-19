@@ -17,6 +17,52 @@
         <a href="#specialists" class="btn btn-secondary">Book Services</a>
       </div>
     </div>
+    <div class="hero-features">
+      <div class="feature-card">
+        <div class="feature-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+        </div>
+        <div class="feature-copy">
+          <h4>Eco-Friendly</h4>
+          <p>Sustainable beauty brands</p>
+        </div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+          </svg>
+        </div>
+        <div class="feature-copy">
+          <h4>Community</h4>
+          <p>Inclusive, supportive space</p>
+        </div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+          </svg>
+        </div>
+        <div class="feature-copy">
+          <h4>Independents</h4>
+          <p>Professionals with expertise</p>
+        </div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+          </svg>
+        </div>
+        <div class="feature-copy">
+          <h4>Woman-Owned</h4>
+          <p>Built by a stylist</p>
+        </div>
+      </div>
+    </div>
   </section>
 </template>
 
@@ -30,12 +76,13 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: space-evenly ;
   min-height: 100vh;
   text-align: center;
   position: relative;
   background: url('/images/vivariumhero.png') no-repeat center center;
   background-size: cover;
+  padding: $spacing-xl * 2 $spacing-lg $spacing-xl * 6;
   
   &::before {
     content: '';
@@ -52,6 +99,67 @@
   margin: 0 auto;
   position: relative;
   z-index: 1;
+}
+
+.hero-features {
+  position: absolute;
+  bottom: $spacing-xl * 1.5;
+  left: 50%;
+  transform: translateX(-50%);
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: $spacing-md;
+  width: min(90%, 1100px);
+  border-radius: 20px;
+  background: transparent;
+  border: none;
+  backdrop-filter: blur(18px);
+  box-shadow: 0 10px 30px rgba($black, 0.45);
+}
+
+.feature-card {
+  display: flex;
+  align-items: center;
+  gap: $spacing-md;
+  padding: $spacing-sm $spacing-md;
+  border-radius: 14px;
+  background: transparent;
+  border: none;
+  transition: transform 0.3s ease;
+
+  &:hover {
+    transform: translateY(-3px);
+  }
+}
+
+.feature-icon {
+  width: 42px;
+  height: 42px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+  background: linear-gradient(135deg, rgba($accent-color, 0.7) 0%, rgba($accent-color, 0.5) 100%);
+  flex-shrink: 0;
+
+  svg {
+    width: 22px;
+    height: 22px;
+    color: $white;
+  }
+}
+
+.feature-copy h4 {
+  margin: 0;
+  font-size: 1rem;
+  color: $white;
+  font-weight: 600;
+}
+
+.feature-copy p {
+  margin: $spacing-xs 0 0;
+  color: rgba($white, 0.75);
+  font-size: 0.85rem;
 }
 
 .hero-logo {
@@ -165,6 +273,10 @@
 }
 
 @media (max-width: $breakpoint-md) {
+  .hero-content {
+    padding: $spacing-xl * 1.5 $spacing-md $spacing-xl * 3;
+  }
+
   .hero-cta {
     flex-direction: column;
     align-items: center;
@@ -173,6 +285,18 @@
       width: 100%;
       max-width: 300px;
     }
+  }
+
+  .hero-features {
+    position: static;
+    transform: none;
+    margin-top: $spacing-xl * 2;
+    width: 100%;
+    background: transparent;
+  }
+
+  .feature-card {
+    padding: $spacing-md;
   }
 }
 </style>

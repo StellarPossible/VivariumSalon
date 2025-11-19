@@ -80,7 +80,7 @@
 
 .section-header {
   text-align: center;
-  margin-bottom: $spacing-xl * 2.5;
+  margin-bottom: $spacing-xl;
 }
 
 .section-title {
@@ -108,7 +108,7 @@
   backdrop-filter: blur(20px);
   border: 1px solid rgba($white, 0.1);
   border-radius: 20px;
-  padding: $spacing-xl * 2;
+  padding: $spacing-xl;
   text-align: center;
   
   .icon {
@@ -229,10 +229,6 @@
 @media (max-width: $breakpoint-md) {
   .shop-section {
     padding: $spacing-xl * .5 $spacing-md * .5;
-  }
-  
-  .shop-message {
-    padding: $spacing-xl;
   }
   
   .shop-grid {
