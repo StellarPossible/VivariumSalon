@@ -217,6 +217,8 @@ const specialists = ref([
     height: 100%;
     object-fit: cover;
     transition: transform 0.3s ease;
+    position: relative;
+    z-index: 1;
   }
   
   // Placeholder pattern when image is missing
@@ -228,6 +230,7 @@ const specialists = ref([
     background-position: center;
     background-repeat: no-repeat;
     background-size: 60%;
+    z-index: 0;
   }
 }
 

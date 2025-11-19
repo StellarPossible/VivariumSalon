@@ -123,8 +123,8 @@
   backdrop-filter: blur(20px);
   border: 2px solid rgba($accent-color, 0.4);
   border-radius: 20px;
-  padding: $spacing-xl * 1.5;
-  margin-top: $spacing-xl * 2;
+  padding: $spacing-xl * .75;
+  margin-top: $spacing-xl;
   
   h3 {
     font-size: clamp(1.3rem, 2vw, 1.6rem);
@@ -150,7 +150,7 @@
   backdrop-filter: blur(20px);
   border: 1px solid rgba($white, 0.1);
   border-radius: 15px;
-  padding: $spacing-xl;
+  padding: $spacing-xl * .5;
   transition: all 0.3s ease;
   
   &:hover {
@@ -209,8 +209,5 @@
     grid-template-columns: 1fr;
   }
   
-  .highlight-box {
-    padding: $spacing-xl;
-  }
 }
 </style>

@@ -14,7 +14,7 @@
       </div>
       <div class="hero-cta">
         <a href="#shop" class="btn btn-primary">Shop Now</a>
-        <a href="#specialists" class="btn btn-secondary">Meet Our Team</a>
+        <a href="#specialists" class="btn btn-secondary">Book Services</a>
       </div>
     </div>
   </section>
@@ -33,7 +33,6 @@
   justify-content: center;
   min-height: 100vh;
   text-align: center;
-  padding: $spacing-xl * .5;
   position: relative;
   background: url('/images/vivariumhero.png') no-repeat center center;
   background-size: cover;
@@ -100,10 +99,11 @@
 }
 
 .hero-subtitle {
+  margin: 3rem 0 2rem 0;
   font-family: 'Charm', cursive;
-  font-size: clamp(1.1rem, 2.2vw, 1.5rem);
+  font-size: clamp(1.25rem, 3.2vw, 2.5rem);
   color: rgba($white, 0.9);
-  margin-bottom: $spacing-xl * 1.5;
+  margin-bottom: $spacing-xl;
   text-shadow: 0 1px 5px rgba(0, 0, 0, 0.2);
   line-height: 1.2;
 }
