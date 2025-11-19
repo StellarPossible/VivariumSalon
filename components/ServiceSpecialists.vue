@@ -3,7 +3,7 @@
     <div class="container">
       <div class="section-header">
         <h2 class="section-title">Meet Our Service Specialists</h2>
-        <p class="section-subtitle">Expert stylists dedicated to bringing out your best</p>
+        <p class="section-subtitle">Expert Professionals Dedicated to Bringing Out Your Best</p>
       </div>
       
       <div class="specialists-grid">
@@ -174,6 +174,7 @@ const specialists = ref([
 }
 
 .section-subtitle {
+  font-family: 'Charm', cursive;
   font-size: clamp(0.95rem, 1.8vw, 1.2rem);
   color: rgba($white, 0.8);
   line-height: 1.2;
@@ -263,7 +264,6 @@ const specialists = ref([
   border-radius: 20px;
   font-size: 0.85rem;
   color: $white;
-  backdrop-filter: blur(10px);
 }
 
 .booking-options {
@@ -306,7 +306,6 @@ const specialists = ref([
     background: rgba($white, 0.1);
     color: $white;
     border: 2px solid rgba($white, 0.3);
-    backdrop-filter: blur(10px);
     
     &:hover {
       background: rgba($white, 0.2);

@@ -1,7 +1,10 @@
+// Google Fonts
+@import url('https://fonts.googleapis.com/css2?family=Charm:wght@400;700&family=Forum&display=swap');
+
 // Color variables - Vivarium Salon Palette
 $primary-color: #353637; // Charcoal gray
 $secondary-color: #838264; // Olive green/khaki
-$accent-color: #112917; // Dark forest green (accent only)
+$accent-color: #838264; // Olive green (accent)
 $accent-gold: #96784E; // Brownish-gold
 $accent-sage: #B5C1B8; // Light sage green/gray-green
 $success-color: #353637;
@@ -22,7 +25,7 @@ $spacing-lg: 1.5rem;
 $spacing-xl: 2rem;
 
 // Typography
-$font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+$font-family: 'Forum', serif;
 $font-size-base: 1rem;
 $line-height-base: 1.3;
 

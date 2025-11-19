@@ -63,7 +63,7 @@ onBeforeUnmount(() => {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  font-family: 'Inter', sans-serif;
+  font-family: $font-family;
   color: $white;
   position: relative;
   background: $black

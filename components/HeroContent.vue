@@ -1,6 +1,7 @@
 <template>
   <section class="hero-content" id="home">
     <div class="hero-inner">
+      <p class="hero-subtitle">Your Premier Destination for Beauty and Wellness</p>
       <div class="hero-logo">
         <img src="/images/vivariumlogo.png" alt="Vivarium Salon" />
       </div>
@@ -11,7 +12,6 @@
         <span class="separator">•</span>
         <span>Authenticity</span>
       </div>
-      <p class="hero-subtitle">Your premier destination for beauty and wellness</p>
       <div class="hero-cta">
         <a href="#shop" class="btn btn-primary">Shop Now</a>
         <a href="#specialists" class="btn btn-secondary">Meet Our Team</a>
@@ -100,6 +100,7 @@
 }
 
 .hero-subtitle {
+  font-family: 'Charm', cursive;
   font-size: clamp(1.1rem, 2.2vw, 1.5rem);
   color: rgba($white, 0.9);
   margin-bottom: $spacing-xl * 1.5;
@@ -117,6 +118,7 @@
 .btn {
   padding: $spacing-md $spacing-xl;
   border-radius: 50px;
+  font-family: $font-family;
   font-size: 1.1rem;
   font-weight: 600;
   text-decoration: none;
@@ -126,24 +128,39 @@
   &-primary {
     background: linear-gradient(135deg, $accent-gold 0%, darken($accent-gold, 10%) 100%);
     color: $white;
+    opacity: 0.9;
     box-shadow: 0 4px 15px rgba($accent-gold, 0.4);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
     
     &:hover {
+      opacity: 1;
       transform: translateY(-2px);
       box-shadow: 0 6px 20px rgba($accent-gold, 0.6);
+    }
+    
+    &:active {
+      transform: translateY(0);
     }
   }
   
   &-secondary {
-    background: rgba($white, 0.2);
-    color: $black;
-    border: 2px solid rgba($black, 0.3);
+    background: $primary-color;
+    color: $white;
+    opacity: 0.9;
+    border: 2px solid $primary-color;
+    box-shadow: 0 4px 15px rgba($primary-color, 0.4);
     backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
     
     &:hover {
-      background: rgba($white, 0.3);
-      border-color: rgba($black, 0.5);
+      opacity: 1;
       transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba($primary-color, 0.6);
+    }
+    
+    &:active {
+      transform: translateY(0);
     }
   }
 }

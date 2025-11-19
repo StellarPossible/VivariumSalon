@@ -6,24 +6,45 @@
           <img src="/images/vivariumlogo.png" alt="Vivarium Salon" />
         </NuxtLink>
       </div>
-      <nav class="main-nav">
-        <NuxtLink to="/">Home</NuxtLink>
-        <NuxtLink to="/about">About</NuxtLink>
-        <NuxtLink to="/products">Products</NuxtLink>
-        <NuxtLink to="/contact">Contact</NuxtLink>
+      
+      <!-- Hamburger Menu Button -->
+      <button class="hamburger" :class="{ open: mobileMenuOpen }" @click="toggleMobileMenu" aria-label="Toggle menu">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+      
+      <!-- Navigation -->
+      <nav class="main-nav" :class="{ open: mobileMenuOpen }">
+        <NuxtLink to="/" @click="closeMobileMenu">Home</NuxtLink>
+        <NuxtLink to="/about" @click="closeMobileMenu">About</NuxtLink>
+        <NuxtLink to="/products" @click="closeMobileMenu">Products</NuxtLink>
+        <NuxtLink to="/contact" @click="closeMobileMenu">Contact</NuxtLink>
       </nav>
     </div>
   </header>
 </template>
 
 <script setup lang="ts">
+import { ref } from 'vue'
+
 defineProps<{
   scrolled: boolean
 }>()
+
+const mobileMenuOpen = ref(false)
+
+function toggleMobileMenu() {
+  mobileMenuOpen.value = !mobileMenuOpen.value
+}
+
+function closeMobileMenu() {
+  mobileMenuOpen.value = false
+}
 </script>
 
 <style scoped lang="scss">
-@use '@/assets/scss/variables.scss' as *;
+@import '@/assets/scss/variables.scss';
 
 .site-header {
   position: fixed;
@@ -33,52 +54,141 @@ defineProps<{
   z-index: 1000;
   background-color: rgba($primary-color, 0.05);
   backdrop-filter: blur(10px);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  -webkit-backdrop-filter: blur(10px);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
   transition: all 0.3s ease;
 
   &.scrolled {
     background-color: rgba($primary-color, 0.95);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 2px 20px rgba(0, 0, 0, 0.15);
   }
 
   .container {
-    max-width: 1200px;
+    max-width: 1400px;
     margin: 0 auto;
-    padding: $spacing-md $spacing-lg;
+    padding: 1.5rem 2rem;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    position: relative;
   }
 
-  .logo a {
-    display: flex;
-    align-items: center;
-    text-decoration: none;
+  .logo {
+    z-index: 1001;
     
     img {
       height: 50px;
       width: auto;
-      transition: transform 0.2s ease;
       filter: brightness(0) invert(1);
+      transition: opacity 0.3s ease;
+
+      &:hover {
+        opacity: 0.8;
+      }
     }
-    
-    &:hover img {
-      transform: scale(1.05);
+  }
+
+  // Hamburger Menu Button
+  .hamburger {
+    display: none;
+    flex-direction: column;
+    gap: 6px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 8px;
+    z-index: 1001;
+    transition: transform 0.3s ease;
+
+    span {
+      display: block;
+      width: 28px;
+      height: 3px;
+      background-color: $white;
+      border-radius: 2px;
+      transition: all 0.3s ease;
+    }
+
+    &.open {
+      span:nth-child(1) {
+        transform: translateY(9px) rotate(45deg);
+      }
+
+      span:nth-child(2) {
+        opacity: 0;
+      }
+
+      span:nth-child(3) {
+        transform: translateY(-9px) rotate(-45deg);
+      }
+    }
+
+    @media (max-width: 768px) {
+      display: flex;
     }
   }
 
   .main-nav {
     display: flex;
-    gap: $spacing-lg;
+    gap: 2.5rem;
 
     a {
       color: $white;
       text-decoration: none;
       font-weight: 500;
-      transition: all 0.2s;
+      font-size: 1rem;
+      transition: color 0.3s ease;
+      position: relative;
 
       &:hover {
         color: $accent-gold;
+      }
+
+      &::after {
+        content: '';
+        position: absolute;
+        bottom: -5px;
+        left: 0;
+        width: 0;
+        height: 2px;
+        background-color: $accent-gold;
+        transition: width 0.3s ease;
+      }
+
+      &:hover::after {
+        width: 100%;
+      }
+    }
+
+    // Mobile Menu Styles
+    @media (max-width: 768px) {
+      position: fixed;
+      top: 0;
+      right: -100%;
+      width: 100%;
+      max-width: 300px;
+      height: 100vh;
+      background-color: rgba($primary-color, 0.98);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      flex-direction: column;
+      gap: 0;
+      padding: 100px 2rem 2rem;
+      box-shadow: -5px 0 20px rgba(0, 0, 0, 0.3);
+      transition: right 0.3s ease;
+
+      &.open {
+        right: 0;
+      }
+
+      a {
+        font-size: 1.25rem;
+        padding: 1rem 0;
+        border-bottom: 1px solid rgba($white, 0.1);
+
+        &::after {
+          display: none;
+        }
       }
     }
   }

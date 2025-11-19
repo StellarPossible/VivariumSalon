@@ -4,7 +4,7 @@
       <div class="footer-content">
         <div class="footer-section">
           <h3>Vivarium Salon</h3>
-          <p>Your premier destination for beauty and wellness</p>
+          <p class="tagline">Your Premier Destination for Beauty and Wellness</p>
           <div class="social-links">
             <a 
               href="https://www.instagram.com/vivariumsalon" 
@@ -110,6 +110,10 @@
       opacity: 0.9;
       margin-bottom: $spacing-md;
       line-height: 1.4;
+    }
+
+    .tagline {
+      font-family: 'Charm', cursive;
     }
 
     address {
