@@ -175,7 +175,7 @@ const specialists = ref([
 
 .section-subtitle {
   font-family: 'Charm', cursive;
-  font-size: clamp(0.95rem, 1.8vw, 1.2rem);
+  font-size: clamp(1.2rem, 1.8vw, 1.2rem);
   color: rgba($white, 0.8);
   line-height: 1.2;
 }

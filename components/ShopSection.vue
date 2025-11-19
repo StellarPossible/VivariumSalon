@@ -92,7 +92,7 @@
 }
 
 .section-subtitle {
-  font-size: clamp(0.95rem, 1.8vw, 1.2rem);
+  font-size: clamp(1.5rem, 1.8vw, 1.8rem);
   color: rgba($white, 0.8);
   line-height: 1.4;
 }

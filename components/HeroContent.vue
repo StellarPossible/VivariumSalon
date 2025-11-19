@@ -70,12 +70,11 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: $spacing-md;
+  gap: $spacing-md * .25;
   margin-bottom: $spacing-xl * 1.5;
-  font-size: clamp(0.85rem, 1.8vw, 1.1rem);
+  font-size: clamp(1.2rem, 1.8vw, 1.5rem);
   color: $white;
-  font-weight: 600;
-  letter-spacing: 1px;
+  font-weight: 700;
   text-transform: uppercase;
   text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
   
@@ -99,7 +98,7 @@
 }
 
 .hero-subtitle {
-  margin: 3rem 0 2rem 0;
+  margin: 1rem 0 2rem 0;
   font-family: 'Charm', cursive;
   font-size: clamp(1.25rem, 3.2vw, 2.5rem);
   color: rgba($white, 0.9);
