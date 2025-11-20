@@ -103,12 +103,12 @@
   transform: translateX(-50%);
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  gap: $spacing-lg;
+  gap: $spacing-sm;
   width: 100%;
   background: transparent;
   border: none;
-  backdrop-filter: blur(5px);
   box-shadow: 0 10px 30px rgba($black, 0.45);
+  padding: 5px;
 }
 
 .feature-card {
@@ -121,6 +121,7 @@
   border: none;
   transition: transform 0.3s ease;
   justify-content: center;
+  backdrop-filter: blur(5px);
 
   &:hover {
     transform: translateY(-3px);
