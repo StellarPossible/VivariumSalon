@@ -200,7 +200,7 @@
   padding: $spacing-md $spacing-xl;
   border-radius: 50px;
   font-family: $font-family;
-  font-size: 1.1rem;
+  font-size: 1.5rem;
   font-weight: 600;
   text-decoration: none;
   transition: all 0.3s ease;

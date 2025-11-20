@@ -70,10 +70,15 @@ export default defineNuxtConfig({
     // Public keys (client-side accessible)
     public: {
       wpUser: process.env.WP_USER || '',
-      // Updated for headless CMS subdirectory
-      wpGraphqlEndpoint: process.env.WP_GRAPHQL_ENDPOINT || 'https://stellarpossible.com/cms/graphql',
-      wpRestEndpoint: process.env.WP_REST_ENDPOINT || 'https://stellarpossible.com/cms/wp-json',
-      useJWT: process.env.USE_JWT || 'true'
+      // Updated for vivarium subdomain
+      wpGraphqlEndpoint: process.env.WP_GRAPHQL_ENDPOINT || 'https://vivarium.stellarpossible.com/cms/graphql',
+      wpRestEndpoint: process.env.WP_REST_ENDPOINT || 'https://vivarium.stellarpossible.com/cms/wp-json',
+      useJWT: process.env.USE_JWT || 'true',
+      
+      // Shopify configuration
+      shopifyStoreDomain: process.env.SHOPIFY_STORE_DOMAIN || '',
+      shopifyStorefrontToken: process.env.SHOPIFY_STOREFRONT_ACCESS_TOKEN || '',
+      shopifyApiVersion: process.env.SHOPIFY_API_VERSION || '2024-01'
     },
 
     // Email/private server-side config

@@ -47,7 +47,7 @@ const props = defineProps<{
 .container {
   max-width: 1400px;
   margin: 0 auto;
-  padding: 1.25rem 2rem;
+  padding: 1rem;
   display: flex;
   justify-content: center;
   align-items: center;

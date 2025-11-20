@@ -124,7 +124,7 @@
 .featured-label {
   text-transform: uppercase;
   letter-spacing: 0.25rem;
-  font-size: 0.75rem;
+  font-size: 1rem;
   color: rgba($white, 0.6);
 }
 
@@ -319,7 +319,6 @@
 
   .featured-label {
     letter-spacing: 0.18rem;
-    font-size: 0.7rem;
   }
   
   .featured-content {
