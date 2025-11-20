@@ -2,7 +2,7 @@
   <section class="hero-content" id="home">
     <div class="hero-inner">
       <div class="hero-cta">
-        <a href="#shop" class="btn btn-primary">Shop Now</a>
+        <NuxtLink to="/shop" class="btn btn-primary">Shop Now</NuxtLink>
         <a href="#specialists" class="btn btn-secondary">Book Services</a>
       </div>
       <div class="hero-logo">

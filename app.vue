@@ -5,17 +5,7 @@
 
     <main class="main-content">
       <div class="page-content">
-        <!-- Hero Section -->
-        <HeroContent />
-        
-        <!-- About Section -->
-        <AboutSection />
-        
-        <!-- Shop Section (Priority) -->
-        <ShopSection />
-        
-        <!-- Service Specialists Section -->
-        <ServiceSpecialists />
+        <NuxtPage />
       </div>
     </main>
   </div>

@@ -21,7 +21,22 @@
           </div>
         </div>
       </div>
-      
+
+      <div class="category-gallery" role="list">
+        <a
+          v-for="category in categoryLinks"
+          :key="category.name"
+          class="category-card"
+          :href="category.href"
+          target="_blank"
+          rel="noopener noreferrer"
+          role="listitem"
+        >
+          <span class="category-name">{{ category.name }}</span>
+          <span class="category-arrow" aria-hidden="true">→</span>
+        </a>
+      </div>
+
       <div class="shop-content">
         <div class="shop-message">
           <div class="icon">
@@ -45,21 +60,6 @@
               <span>Personalized recommendations</span>
             </div>
           </div>
-        </div>
-        
-        <div class="category-gallery" role="list">
-          <a
-            v-for="category in categoryLinks"
-            :key="category.name"
-            class="category-card"
-            :href="category.href"
-            target="_blank"
-            rel="noopener noreferrer"
-            role="listitem"
-          >
-            <span class="category-name">{{ category.name }}</span>
-            <span class="category-arrow" aria-hidden="true">→</span>
-          </a>
         </div>
       </div>
     </div>
@@ -110,7 +110,6 @@ const categoryLinks = categoryNames.map((name) => ({
 .section-title {
   font-size: clamp(2rem, 4vw, 2.8rem);
   color: $white;
-  margin-bottom: $spacing-md;
   font-weight: 700;
   line-height: 1.2;
 }
