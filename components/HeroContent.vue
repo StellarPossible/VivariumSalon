@@ -104,7 +104,7 @@
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
   gap: $spacing-lg;
-  width: min(100%, 1100px);
+  width: 100%;
   background: transparent;
   border: none;
   backdrop-filter: blur(5px);
@@ -120,6 +120,7 @@
   background: transparent;
   border: none;
   transition: transform 0.3s ease;
+  justify-content: center;
 
   &:hover {
     transform: translateY(-3px);
@@ -151,7 +152,6 @@
 }
 
 .feature-copy p {
-  margin: $spacing-xs 0 0;
   color: rgba($white, 0.75);
   font-size: 0.85rem;
 }
@@ -272,7 +272,7 @@
   }
 
   .feature-card {
-    padding: $spacing-md;
+    padding: $spacing-sm;
   }
 }
 </style>

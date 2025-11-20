@@ -54,7 +54,6 @@
   .section-title {
     font-size: clamp(2.2rem, 4.5vw, 3rem);
     color: $white;
-    margin-bottom: $spacing-xl * 1.5;
     font-weight: 700;
     text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
     line-height: 1.2;
@@ -73,7 +72,8 @@
       font-size: clamp(1.05rem, 1.6vw, 1.25rem);
       font-weight: 500;
       color: $white;
-      margin-bottom: $spacing-xl;
+      margin-bottom: $spacing-lg;
+      font-style: italic;
     }
   }
 }

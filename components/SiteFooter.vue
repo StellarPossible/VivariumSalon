@@ -71,7 +71,7 @@
   background: linear-gradient(180deg, rgba($black, 0.9) 0%, rgba($black, 0.98) 100%);
   backdrop-filter: blur(20px);
   color: $white;
-  padding: $spacing-xl * 2.5 0 $spacing-lg;
+  padding: $spacing-xl 0 $spacing-lg;
   margin-top: auto;
   border-top: 1px solid rgba($accent-color, 0.3);
   position: relative;
@@ -87,13 +87,13 @@
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
     gap: $spacing-xl * 1.5;
-    margin-bottom: $spacing-xl * 1.5;
+    margin-bottom: $spacing-xl;
   }
 
   .footer-section {
     h3 {
       font-size: 1.8rem;
-      margin-bottom: $spacing-md;
+      margin-bottom: $spacing-sm;
       background: linear-gradient(135deg, $white 0%, $accent-color 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
@@ -101,14 +101,14 @@
     }
 
     h4 {
-      margin-bottom: $spacing-lg;
+      margin-bottom: 0;
       font-size: 1.2rem;
       font-weight: 600;
     }
 
     p {
       opacity: 0.9;
-      margin-bottom: $spacing-md;
+      margin-bottom: 0;
       line-height: 1.4;
     }
 
@@ -120,7 +120,7 @@
       font-style: normal;
       
       p {
-        margin-bottom: $spacing-sm;
+        margin-bottom: 0;
       }
     }
 
@@ -164,11 +164,6 @@
     border-radius: 50%;
     background: rgba($white, 0.1);
     transition: all 0.3s ease;
-
-    svg {
-      width: 20px;
-      height: 20px;
-    }
 
     &.instagram:hover {
       background: linear-gradient(135deg, $accent-gold 0%, $accent-color 100%);
