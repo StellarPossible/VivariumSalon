@@ -47,29 +47,19 @@
           </div>
         </div>
         
-        <!-- Placeholder for future product grid -->
-        <div class="shop-grid">
-          <div class="product-card placeholder">
-            <div class="product-image"></div>
-            <div class="product-info">
-              <h4>Premium Hair Care</h4>
-              <p>Coming Soon</p>
-            </div>
-          </div>
-          <div class="product-card placeholder">
-            <div class="product-image"></div>
-            <div class="product-info">
-              <h4>Styling Products</h4>
-              <p>Coming Soon</p>
-            </div>
-          </div>
-          <div class="product-card placeholder">
-            <div class="product-image"></div>
-            <div class="product-info">
-              <h4>Wellness Essentials</h4>
-              <p>Coming Soon</p>
-            </div>
-          </div>
+        <div class="category-gallery" role="list">
+          <a
+            v-for="category in categoryLinks"
+            :key="category.name"
+            class="category-card"
+            :href="category.href"
+            target="_blank"
+            rel="noopener noreferrer"
+            role="listitem"
+          >
+            <span class="category-name">{{ category.name }}</span>
+            <span class="category-arrow" aria-hidden="true">→</span>
+          </a>
         </div>
       </div>
     </div>
@@ -77,7 +67,25 @@
 </template>
 
 <script setup lang="ts">
-// This component will be integrated with Shopify API in the future
+const categoryNames = [
+  'Alchemic System',
+  'Authentic',
+  'Essential Haircare',
+  'Essential Haircare Shampoo Bars',
+  'Hair Refresher',
+  'Heart of Glass',
+  'Liquid Spell',
+  'Naturaltech',
+  'Pasta & Love',
+  'OI',
+  'SU',
+  'The Circle Chronicles',
+];
+
+const categoryLinks = categoryNames.map((name) => ({
+  name,
+  href: `https://davinespro.com/search?q=${encodeURIComponent(name)}`,
+}));
 </script>
 
 <style scoped lang="scss">
@@ -254,58 +262,63 @@
   }
 }
 
-.shop-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: $spacing-xl;
-}
+.category-gallery {
+  display: flex;
+  gap: $spacing-lg;
+  overflow-x: auto;
+  padding: $spacing-md 0;
+  margin: 0 calc(-1 * $spacing-md);
+  scroll-snap-type: x mandatory;
+  padding-inline: $spacing-md;
 
-.product-card {
-  background: rgba($white, 0.05);
-  backdrop-filter: blur(20px);
-  border: 1px solid rgba($white, 0.1);
-  border-radius: 15px;
-  overflow: hidden;
-  transition: all 0.3s ease;
-  
-  &:hover {
-    transform: translateY(-5px);
-    border-color: rgba($white, 0.2);
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  &::-webkit-scrollbar {
+    height: 6px;
   }
-  
-  &.placeholder {
-    opacity: 0.6;
-  }
-}
 
-.product-image {
-  width: 100%;
-  height: 250px;
-  background: linear-gradient(135deg, rgba($primary-color, 0.2) 0%, rgba($accent-color, 0.2) 100%);
-  position: relative;
-  
-  &::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  &::-webkit-scrollbar-track {
+    background: rgba($white, 0.08);
+    border-radius: 999px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: rgba($accent-gold, 0.6);
+    border-radius: 999px;
   }
 }
 
-.product-info {
+.category-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-width: 220px;
   padding: $spacing-lg;
-  
-  h4 {
-    font-size: 1.3rem;
-    color: $white;
-    margin-bottom: $spacing-sm;
+  border-radius: 18px;
+  text-decoration: none;
+  color: $white;
+  background: linear-gradient(145deg, rgba($accent-color, 0.4) 0%, rgba($primary-color, 0.3) 100%);
+  border: 1px solid rgba($white, 0.12);
+  backdrop-filter: blur(16px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.25);
+  transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+  scroll-snap-align: center;
+
+  &:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 25px 45px rgba(0, 0, 0, 0.35);
+    border-color: rgba($white, 0.3);
   }
-  
-  p {
-    color: rgba($white, 0.7);
-    font-size: 1rem;
-  }
+}
+
+.category-name {
+  font-size: 1.4rem;
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+.category-arrow {
+  margin-top: $spacing-lg;
+  font-size: 1.8rem;
+  opacity: 0.7;
 }
 
 @media (max-width: $breakpoint-md) {
@@ -325,8 +338,14 @@
     gap: $spacing-sm;
   }
   
-  .shop-grid {
-    grid-template-columns: 1fr;
+  .category-gallery {
+    margin: 0;
+    padding-inline: 0;
+  }
+  
+  .category-card {
+    min-width: 180px;
+    padding: $spacing-md;
   }
 }
 </style>
