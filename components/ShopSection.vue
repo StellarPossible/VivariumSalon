@@ -2,8 +2,24 @@
   <section class="shop-section" id="shop">
     <div class="container">
       <div class="section-header">
-        <h2 class="section-title">Shop Our Collection</h2>
+        <h2 class="section-title">Shop Beauty by Vivarium</h2>
         <p class="section-subtitle">Discover premium beauty and wellness products</p>
+        <div class="featured-brand">
+          <span class="featured-label">Featuring</span>
+          <div class="featured-content">
+            <a
+              href="https://davinespro.com/collections/we-sustain-beauty"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="featured-cta"
+            >
+              <span class="brand-mark">
+              <img src="https://davinespro.com/wp-content/uploads/davinespro-logo.svg" alt="Davines Pro" />
+            </span>
+            <div class="davines-copy"><i>We Sustain</i> Beauty Collection</div>
+            </a>
+          </div>
+        </div>
       </div>
       
       <div class="shop-content">
@@ -95,6 +111,72 @@
   font-size: clamp(1.5rem, 1.8vw, 1.8rem);
   color: rgba($white, 0.8);
   line-height: 1.4;
+}
+
+.featured-brand {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: $spacing-sm;
+  margin-top: $spacing-lg;
+}
+
+.featured-label {
+  text-transform: uppercase;
+  letter-spacing: 0.25rem;
+  font-size: 0.75rem;
+  color: rgba($white, 0.6);
+}
+
+.featured-content {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: $spacing-md;
+}
+
+.brand-mark {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: $spacing-sm * .5;
+  border-radius: 999px;
+  backdrop-filter: blur(15px);
+}
+
+.brand-mark img {
+  height: 28px;
+  width: auto;
+  filter: invert(1);
+}
+.davines-copy {
+  color: $white;
+/* Min: 1.5rem | Ideal: 4% of screen width | Max: 3rem */
+  font-size: clamp(1rem, 4vw, 1.5rem);  font-weight: 600;
+  margin-top: 4px;
+  opacity: 0.95;
+}
+
+.featured-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: $spacing-sm;
+  padding: $spacing-xs $spacing-lg;
+  border-radius: 999px;
+  border: 1px solid rgba($accent-gold, 0.6);
+  color: $white;
+  font-weight: 600;
+  font-size: 1.2rem;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  background: linear-gradient(135deg, rgba($accent-gold, 0.4) 0%, rgba($accent-color, 0.35) 100%);
+  box-shadow: 0 6px 18px rgba($accent-gold, 0.25);
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 24px rgba($accent-gold, 0.4);
+  }
 }
 
 .shop-content {
@@ -229,6 +311,19 @@
 @media (max-width: $breakpoint-md) {
   .shop-section {
     padding: $spacing-xl * .5 $spacing-md * .5;
+  }
+
+  .featured-brand {
+    gap: $spacing-xs;
+  }
+
+  .featured-label {
+    letter-spacing: 0.18rem;
+    font-size: 0.7rem;
+  }
+  
+  .featured-content {
+    gap: $spacing-sm;
   }
   
   .shop-grid {
