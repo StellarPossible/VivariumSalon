@@ -1,21 +1,14 @@
 <template>
   <section class="hero-content" id="home">
     <div class="hero-inner">
-      <p class="hero-subtitle">Your Premier Destination for Beauty and Wellness</p>
-      <div class="hero-logo">
-        <img src="/images/vivariumlogo.png" alt="Vivarium Salon" />
-      </div>
-      <div class="hero-values">
-        <span>Quality</span>
-        <span class="separator">•</span>
-        <span>Integrity</span>
-        <span class="separator">•</span>
-        <span>Authenticity</span>
-      </div>
       <div class="hero-cta">
         <a href="#shop" class="btn btn-primary">Shop Now</a>
         <a href="#specialists" class="btn btn-secondary">Book Services</a>
       </div>
+      <div class="hero-logo">
+        <img src="/images/vivariumlogo.png" alt="Vivarium Salon" />
+      </div>
+      <p class="hero-subtitle">Your Premier Destination for Beauty and Wellness</p>
     </div>
     <div class="hero-features">
       <div class="feature-card">
@@ -26,7 +19,7 @@
         </div>
         <div class="feature-copy">
           <h4>Eco-Friendly</h4>
-          <p>Sustainable beauty brands</p>
+          <p>Sustainable Beauty Brands</p>
         </div>
       </div>
       <div class="feature-card">
@@ -37,7 +30,7 @@
         </div>
         <div class="feature-copy">
           <h4>Community</h4>
-          <p>Inclusive, supportive space</p>
+          <p>Inclusive, Supportive Space</p>
         </div>
       </div>
       <div class="feature-card">
@@ -48,7 +41,7 @@
         </div>
         <div class="feature-copy">
           <h4>Independents</h4>
-          <p>Professionals with expertise</p>
+          <p>Professionals with Expertise</p>
         </div>
       </div>
       <div class="feature-card">
@@ -59,7 +52,7 @@
         </div>
         <div class="feature-copy">
           <h4>Woman-Owned</h4>
-          <p>Built by a stylist</p>
+          <p>Built by a Stylist</p>
         </div>
       </div>
     </div>
@@ -82,7 +75,7 @@
   position: relative;
   background: url('/images/vivariumhero.png') no-repeat center center;
   background-size: cover;
-  padding: $spacing-xl * 2 $spacing-lg $spacing-xl * 6;
+  scroll-margin-top: $spacing-xl * 3;
   
   &::before {
     content: '';
@@ -94,26 +87,27 @@
 }
 
 .hero-inner {
-  max-width: 75%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: $spacing-lg;
   width: 100%;
-  margin: 0 auto;
   position: relative;
   z-index: 1;
 }
 
 .hero-features {
   position: absolute;
-  bottom: $spacing-xl * 1.5;
+  bottom: $spacing-sm;
   left: 50%;
   transform: translateX(-50%);
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  gap: $spacing-md;
-  width: min(90%, 1100px);
-  border-radius: 20px;
+  gap: $spacing-lg;
+  width: min(100%, 1100px);
   background: transparent;
   border: none;
-  backdrop-filter: blur(18px);
+  backdrop-filter: blur(5px);
   box-shadow: 0 10px 30px rgba($black, 0.45);
 }
 
@@ -174,28 +168,6 @@
   }
 }
 
-.hero-values {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: $spacing-md * .25;
-  margin-bottom: $spacing-xl * 1.5;
-  font-size: clamp(1.2rem, 1.8vw, 1.5rem);
-  color: $white;
-  font-weight: 700;
-  text-transform: uppercase;
-  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
-  
-  span {
-    opacity: 0.95;
-  }
-  
-  .separator {
-    opacity: 0.5;
-    font-weight: 300;
-  }
-}
-
 .hero-title {
   font-size: clamp(2rem, 4.5vw, 3.5rem);
   margin-bottom: $spacing-md;
@@ -206,7 +178,7 @@
 }
 
 .hero-subtitle {
-  margin: 1rem 0 2rem 0;
+  margin: 0 0 $spacing-xl 0;
   font-family: 'Charm', cursive;
   font-size: clamp(1.25rem, 3.2vw, 2.5rem);
   color: rgba($white, 0.9);
@@ -220,6 +192,7 @@
   gap: $spacing-lg;
   justify-content: center;
   flex-wrap: wrap;
+  margin-bottom: $spacing-lg;
 }
 
 .btn {
@@ -274,7 +247,11 @@
 
 @media (max-width: $breakpoint-md) {
   .hero-content {
-    padding: $spacing-xl * 1.5 $spacing-md $spacing-xl * 3;
+    scroll-margin-top: $spacing-xl * 2;
+  }
+
+  .hero-inner {
+    margin-top: 8rem;
   }
 
   .hero-cta {
@@ -290,7 +267,6 @@
   .hero-features {
     position: static;
     transform: none;
-    margin-top: $spacing-xl * 2;
     width: 100%;
     background: transparent;
   }

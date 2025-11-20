@@ -5,6 +5,13 @@
         <NuxtLink to="/">
           <img src="/images/vivariumlogo.png" alt="Vivarium Salon" />
         </NuxtLink>
+        <p class="header-values">
+          <span>Quality</span>
+          <span class="separator">•</span>
+          <span>Integrity</span>
+          <span class="separator">•</span>
+          <span>Authenticity</span>
+        </p>
       </div>
       
       <!-- Hamburger Menu Button -->
@@ -74,6 +81,10 @@ function closeMobileMenu() {
   }
 
   .logo {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.35rem;
     z-index: 1001;
     
     img {
@@ -86,6 +97,22 @@ function closeMobileMenu() {
         opacity: 0.8;
       }
     }
+  }
+
+  .header-values {
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+    margin: 0;
+    font-size: 0.8rem;
+    letter-spacing: 0.12rem;
+    text-transform: uppercase;
+    color: rgba($white, 0.85);
+    font-weight: 600;
+  }
+
+  .header-values .separator {
+    opacity: 0.6;
   }
 
   // Hamburger Menu Button
@@ -190,6 +217,17 @@ function closeMobileMenu() {
           display: none;
         }
       }
+    }
+  }
+
+  @media (max-width: 768px) {
+    .logo {
+      align-items: center;
+    }
+
+    .header-values {
+      font-size: 0.75rem;
+      letter-spacing: 0.1rem;
     }
   }
 }
