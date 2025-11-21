@@ -1,22 +1,27 @@
 <template>
-  <div class="layout-wrapper">
-    <!-- Header with scroll prop -->
-    <SiteHeader :scrolled="scrolledPastThreshold" />
+  <div>
+    <div class="layout-wrapper">
+      <!-- Header with scroll prop -->
+      <SiteHeader :scrolled="scrolledPastThreshold" />
 
-    <main class="main-content">
-      <div class="page-content">
-        <NuxtPage />
-      </div>
-    </main>
+      <main class="main-content">
+        <div class="page-content">
+          <NuxtPage />
+        </div>
+      </main>
+    </div>
+
+    <!-- Floating Book Now button -->
+    <FloatingHelp @open-booking="openBookingModal" />
+
+    <!-- Contact modal -->
+    <ContactModal ref="bookingModal" />
+
+    <SiteFooter />
+
+    <!-- Only show in development -->
+    <ShopifyDebug v-if="isDev" />
   </div>
-
-  <!-- Floating Book Now button -->
-  <FloatingHelp @open-booking="openBookingModal" />
-
-  <!-- Contact modal -->
-  <ContactModal ref="bookingModal" />
-
-  <SiteFooter />
 </template>
 
 <script setup lang="ts">
@@ -25,6 +30,7 @@ import { ref, onMounted, onBeforeUnmount } from 'vue'
 
 const scrolledPastThreshold = ref(false)
 const bookingModal = ref<any>(null)
+const isDev = process.dev
 
 function handleScroll() {
   const y = window.scrollY

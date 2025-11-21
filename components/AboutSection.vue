@@ -1,129 +1,102 @@
 <template>
-  <section class="about-section" id="about">
-    <div class="container">
-      <div class="about-content">
-        <div class="about-text">
-          <h2 class="section-title">Welcome to Vivarium</h2>
-          <div class="about-description">
-            <p class="lead">
-              A modern, full-service salon offering chair rentals with a fresh take on beauty. Located in the heart of Annapolis, MD, we provide a warm and stylish space where creativity thrives.
-            </p>
-            <p>
-              At Vivarium, we're not just about style — we're about sustainability. Our talented team of independent professionals use the best eco-friendly and sustainable beauty brands, ensuring you get exceptional results while caring for the planet. We invite you to experience a space where beauty, community, and the environment come together.
-            </p>
-            <div class="highlight-box">
-              <h3>Join Our Community</h3>
-              <p>
-                We're always excited to welcome new stylists to the Vivarium community. As a woman-owned salon built by a stylist for stylists, we're focused on empowering independents in an inclusive, supportive space. Here, everyone is celebrated, and we're committed to helping you thrive on your own terms.
-              </p>
-              <div class="highlight-actions">
-                <a href="#available-spaces" class="cta-button">View Available Spaces</a>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
+	<section class="about-section" id="about">
+		<div class="about-section__content">
+			<header class="about-section__header">
+				<h2 class="about-section__title">Vivarium Defined</h2>
+				<p class="about-section__definition">
+					<span class="about-section__definition-term">Vivarium</span>
+					stems from the Latin <em>vivere</em>, "to live." Traditionally, it describes a carefully tended
+					environment where life is nurtured, observed, and allowed to flourish.
+				</p>
+			</header>
+
+			<div class="about-section__philosophy">
+				<h3 class="about-section__subtitle">Our Philosophy</h3>
+				<p>
+					Vivarium Salon is built on the belief that a salon can be more than a place for services—it can be
+					a living environment that honors each guest’s natural rhythm and evolving sense of self. Just as a
+					vivarium provides the conditions for growth, we create space for personal expression through
+					intentional craftsmanship, mindful product choices, and an atmosphere of genuine hospitality.
+				</p>
+			</div>
+
+			<div class="about-section__mission">
+				<h3 class="about-section__subtitle">Our Mission</h3>
+				<p>
+					We cultivate beauty experiences that are restorative, inclusive, and sustainably minded. Our team
+					listens deeply, collaborates transparently, and guides every guest with education that empowers
+					them beyond the chair. By weaving artistry with care for our community and environment, Vivarium
+					Salon becomes a sanctuary where growth feels natural and every visit leaves you more connected to
+					your own vitality.
+				</p>
+			</div>
+		</div>
+	</section>
 </template>
 
-<script setup lang="ts">
-</script>
-
 <style scoped lang="scss">
-@use '@/assets/scss/variables.scss' as *;
-
 .about-section {
-  padding: $spacing-xl $spacing-lg $spacing-xl;
-  position: relative;
-  background: linear-gradient(180deg, transparent 0%, rgba($black, 0.2) 100%);
+	padding: 4rem 1.5rem;
+	background-color: #e6e3de;
+	color: #353637;
 }
 
-.container {
-  max-width: 1300px;
-  margin: 0 auto;
+.about-section__content {
+	margin: 0 auto;
+	max-width: 960px;
+	display: flex;
+	flex-direction: column;
+	gap: 2.5rem;
 }
 
-.about-content {
-  display: flex;
-  flex-direction: column;
-  gap: $spacing-xl * 2;
+.about-section__header {
+	display: flex;
+	flex-direction: column;
+	gap: 1rem;
 }
 
-.about-text {
-  .section-title {
-    font-size: clamp(2.2rem, 4.5vw, 3rem);
-    color: $white;
-    font-weight: 700;
-    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
-    line-height: 1.2;
-  }
+.about-section__title {
+	font-size: 2.5rem;
+	letter-spacing: 0.04em;
+	text-transform: uppercase;
+	font-weight: 400;
 }
 
-.about-description {
-  p {
-    font-size: clamp(0.95rem, 1.4vw, 1.1rem);
-    line-height: 1.2;
-    color: rgba($white, 0.95);
-    margin-bottom: $spacing-lg;
-    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
-    
-    &.lead {
-      font-size: clamp(1.05rem, 1.6vw, 1.25rem);
-      font-weight: 500;
-      color: $white;
-      margin-bottom: $spacing-lg;
-      font-style: italic;
-    }
-  }
+.about-section__definition {
+	font-size: 1.125rem;
+	line-height: 1.7;
+	max-width: 52ch;
 }
 
-.highlight-box {
-  background: linear-gradient(135deg, rgba($accent-color, 0.2) 0%, rgba($accent-color, 0.15) 100%);
-  backdrop-filter: blur(20px);
-  border: 2px solid rgba($accent-color, 0.4);
-  border-radius: 20px;
-  padding: $spacing-xl * .75;
-  margin-top: $spacing-xl;
-  
-  h3 {
-    font-size: clamp(1.3rem, 2vw, 1.6rem);
-    color: $white;
-    margin-bottom: $spacing-md;
-    font-weight: 700;
-  }
-  
-  p {
-    margin-bottom: 0;
-    font-size: clamp(1rem, 1.5vw, 1.1rem);
-  }
+.about-section__definition-term {
+	font-weight: 600;
+}
 
-  .highlight-actions {
-    margin-top: $spacing-lg;
-    display: flex;
-    justify-content: center;
-  }
+.about-section__subtitle {
+	font-size: 1.75rem;
+	font-weight: 400;
+	margin-bottom: 1rem;
+	text-transform: uppercase;
+	letter-spacing: 0.06em;
+}
 
-  .cta-button {
-    padding: $spacing-sm $spacing-xl;
-    border-radius: 40px;
-    font-size: 1rem;
-    font-weight: 600;
-    color: $white;
-    text-decoration: none;
-    background: linear-gradient(135deg, $accent-gold 0%, darken($accent-gold, 10%) 100%);
-    box-shadow: 0 4px 15px rgba($accent-gold, 0.3);
-    transition: all 0.3s ease;
+.about-section__philosophy,
+.about-section__mission {
+	font-size: 1.05rem;
+	line-height: 1.8;
+}
 
-    &:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 20px rgba($accent-gold, 0.5);
-    }
+@media (max-width: 768px) {
+	.about-section {
+		padding: 3rem 1rem;
+	}
 
-    &:focus-visible {
-      outline: 2px solid rgba($white, 0.9);
-      outline-offset: 3px;
-    }
-  }
+	.about-section__title {
+		font-size: 2rem;
+	}
+
+	.about-section__subtitle {
+		font-size: 1.5rem;
+	}
 }
 </style>
