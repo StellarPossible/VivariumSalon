@@ -61,8 +61,9 @@ const props = defineProps<{
 
 const navLinks = [
   { label: 'Home', to: '/' },
+  { label: 'Our Team', to: '/our-team' },
   { label: 'Shop', to: '/shop' },
-  { label: 'About', to: '/#about' },
+  { label: 'About', to: '/about' },
 ]
 
 const isMenuOpen = ref(false)
@@ -73,8 +74,9 @@ function toggleMenu() {
 }
 
 function isActive(target: string) {
-  if (target === '/#about') {
-    return route.path === '/' && route.hash === '#about'
+  if (target.includes('#')) {
+    const [path, hash] = target.split('#')
+    return route.path === path && route.hash === `#${hash}`
   }
   return route.path === target
 }
@@ -177,7 +179,7 @@ watch(
   }
 
   &.active {
-    color: $accent-gold;
+    color: #445347;
   }
 }
 

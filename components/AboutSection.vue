@@ -42,7 +42,7 @@
 .about-section {
 	padding: 4rem 1.5rem;
 	background-color: #e6e3de;
-	color: #353637;
+	color: #445347;
 }
 
 .about-section__layout {
@@ -91,6 +91,7 @@
 	font-size: 1.5rem;
 	line-height: 1.1;
 	max-width: 52ch;
+	color: #445347;
 }
 
 .about-section__definition-term {

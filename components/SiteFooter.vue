@@ -53,6 +53,15 @@
             </a>
           </p>
         </div>
+        <div class="footer-section footer-links">
+          <h4>Explore</h4>
+          <ul>
+            <li><NuxtLink to="/">Home</NuxtLink></li>
+            <li><NuxtLink to="/our-team">Our Team</NuxtLink></li>
+            <li><NuxtLink to="/shop">Shop</NuxtLink></li>
+            <li><NuxtLink to="/about">About</NuxtLink></li>
+          </ul>
+        </div>
       </div>
       <div class="footer-bottom">
         <p>&copy; {{ new Date().getFullYear() }} Vivarium Salon. All rights reserved.</p>
@@ -146,6 +155,22 @@
       &:hover {
         color: $accent-color;
       }
+    }
+  }
+
+  .footer-links {
+    ul {
+      list-style: none;
+      padding: 0;
+      margin: $spacing-sm 0 0;
+      display: grid;
+      gap: $spacing-sm;
+    }
+
+    li a {
+      letter-spacing: 0.08rem;
+      text-transform: uppercase;
+      font-size: 0.85rem;
     }
   }
 

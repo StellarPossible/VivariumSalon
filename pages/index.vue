@@ -1,8 +1,6 @@
 <template>
   <div>
     <HeroContent />
-    <AboutSection />
-    <ServiceSpecialists />
   </div>
 </template>
 
