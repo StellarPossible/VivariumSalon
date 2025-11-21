@@ -2,8 +2,10 @@
   <footer class="site-footer">
     <div class="container">
       <div class="footer-content">
-        <div class="footer-section">
-          <h3>Vivarium Salon</h3>
+        <div class="footer-section footer-brand">
+          <NuxtLink to="/" class="footer-logo" aria-label="Vivarium Salon Home">
+            <img src="/images/vivariumlogo.png" alt="Vivarium Salon" />
+          </NuxtLink>
           <p class="tagline">Your Premier Destination for Beauty and Wellness</p>
           <div class="social-links">
             <a 
@@ -100,15 +102,6 @@
   }
 
   .footer-section {
-    h3 {
-      font-size: 1.8rem;
-      margin-bottom: $spacing-sm;
-      background: linear-gradient(135deg, $white 0%, $accent-color 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
-
     h4 {
       margin-bottom: 0;
       font-size: 1.2rem;
@@ -154,6 +147,21 @@
 
       &:hover {
         color: $accent-color;
+      }
+    }
+  }
+
+  .footer-brand {
+    .footer-logo {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: $spacing-sm;
+      img {
+        max-width: 180px;
+        width: 100%;
+        height: auto;
+        filter: brightness(0) invert(1);
       }
     }
   }
