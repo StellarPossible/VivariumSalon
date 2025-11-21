@@ -2,7 +2,6 @@
 	<section class="about-section" id="about">
 		<div class="about-section__content">
 			<header class="about-section__header">
-				<h2 class="about-section__title">Vivarium Defined</h2>
 				<p class="about-section__definition">
 					<span class="about-section__definition-term">Vivarium</span>
 					stems from the Latin <em>vivere</em>, "to live." Traditionally, it describes a carefully tended
@@ -63,13 +62,14 @@
 }
 
 .about-section__definition {
-	font-size: 1.125rem;
-	line-height: 1.7;
+	font-size: 1.5rem;
+	line-height: 1.1;
 	max-width: 52ch;
 }
 
 .about-section__definition-term {
 	font-weight: 600;
+  font-size: 2.5rem;
 }
 
 .about-section__subtitle {
@@ -83,7 +83,7 @@
 .about-section__philosophy,
 .about-section__mission {
 	font-size: 1.05rem;
-	line-height: 1.8;
+	line-height: 1.2;
 }
 
 @media (max-width: 768px) {
