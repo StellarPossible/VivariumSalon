@@ -13,6 +13,7 @@
 
     <!-- Floating Book Now button -->
     <FloatingHelp />
+    <BackToTop />
 
     <SiteFooter />
 

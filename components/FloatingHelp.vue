@@ -18,18 +18,16 @@
   position: fixed;
   bottom: $spacing-xl;
   right: $spacing-xl;
-  display: flex;
+  display: inline-flex;
   align-items: center;
   gap: $spacing-sm;
   padding: $spacing-md $spacing-xl;
-  border-radius: 50px;
-  background: linear-gradient(135deg, $accent-gold 0%, darken($accent-gold, 10%) 100%);
-  color: $white;
   border: none;
-  font-size: 1.1rem;
-  font-weight: 700;
+  border-radius: 50px;
+  background: linear-gradient(135deg, rgba($primary-color, 0.9), rgba($accent-color, 0.85));
+  color: $white;
   cursor: pointer;
-  box-shadow: 0 8px 24px rgba($accent-gold, 0.4);
+  box-shadow: 0 12px 30px rgba($black, 0.35);
   transition: all 0.3s ease;
   z-index: 1500;
 
@@ -40,7 +38,7 @@
 
   &:hover {
     transform: translateY(-4px);
-    box-shadow: 0 12px 32px rgba($accent-gold, 0.6);
+    box-shadow: 0 16px 34px rgba($black, 0.45);
   }
 
   &:active {
@@ -53,11 +51,10 @@
     bottom: $spacing-lg;
     right: $spacing-lg;
     padding: $spacing-md $spacing-lg;
-    font-size: 1rem;
 
     svg {
-      width: 20px;
-      height: 20px;
+      width: 24px;
+      height: 24px;
     }
   }
 }
