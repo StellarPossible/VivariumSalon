@@ -1,18 +1,14 @@
 <template>
-  <button class="floating-book-now" @click="openBooking" title="Book an appointment">
+  <NuxtLink to="/our-team#specialists" class="floating-book-now" title="Book an appointment">
     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
     </svg>
     <span>Book Now</span>
-  </button>
+  </NuxtLink>
 </template>
 
 <script setup lang="ts">
-const emit = defineEmits(['open-booking'])
-
-function openBooking() {
-  emit('open-booking')
-}
+// No additional logic required
 </script>
 
 <style scoped lang="scss">

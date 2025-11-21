@@ -9,7 +9,7 @@
             Meet the artists, educators, and collaborators who nurture a living space for beauty to thrive.
           </p>
           <div class="hero__actions">
-            <NuxtLink to="/#specialists" class="hero__link">Meet the Specialists</NuxtLink>
+            <a href="#specialists" class="hero__link">Meet the Specialists</a>
             <a href="#available-spaces" class="hero__link hero__link--outline">View Open Chairs</a>
           </div>
         </div>
@@ -183,10 +183,11 @@
   max-width: 720px;
   text-align: center;
   background: rgba($white, 0.65);
-  padding: $spacing-xl * 1.5;
+  padding: $spacing-md;
   border-radius: 28px;
   border: 1px solid rgba($accent-gold, 0.3);
   box-shadow: 0 18px 36px rgba($accent-gold, 0.2);
+  line-height: 2rem;
 }
 
 .cta__content h2 {
@@ -198,7 +199,7 @@
 
 .cta__content p {
   font-size: 1.05rem;
-  line-height: 1.6;
+  line-height: 1.1;
   margin-bottom: $spacing-xl;
   color: rgba($primary-color, 0.85);
 }
@@ -242,7 +243,7 @@
   }
 
   .cta__content {
-    padding: $spacing-xl;
+    padding: $spacing-sm;
   }
 }
 

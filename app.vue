@@ -12,10 +12,7 @@
     </div>
 
     <!-- Floating Book Now button -->
-    <FloatingHelp @open-booking="openBookingModal" />
-
-    <!-- Contact modal -->
-    <ContactModal ref="bookingModal" />
+    <FloatingHelp />
 
     <SiteFooter />
 
@@ -29,18 +26,11 @@ import { ref, onMounted, onBeforeUnmount } from 'vue'
 // Components are auto-imported by Nuxt
 
 const scrolledPastThreshold = ref(false)
-const bookingModal = ref<any>(null)
 const isDev = process.dev
 
 function handleScroll() {
   const y = window.scrollY
   scrolledPastThreshold.value = y > 50
-}
-
-function openBookingModal() {
-  if (bookingModal.value) {
-    bookingModal.value.open()
-  }
 }
 
 onMounted(() => {

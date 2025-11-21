@@ -164,7 +164,6 @@
       padding: 0;
       margin: $spacing-sm 0 0;
       display: grid;
-      gap: $spacing-sm;
     }
 
     li a {

@@ -3,7 +3,7 @@
     <div class="hero-inner">
       <div class="hero-cta">
         <NuxtLink to="/shop" class="btn btn-primary">Shop Now</NuxtLink>
-        <a href="#specialists" class="btn btn-secondary">Book Services</a>
+        <NuxtLink to="/our-team#specialists" class="btn btn-secondary">Book Services</NuxtLink>
       </div>
       <div class="hero-logo">
         <img src="/images/vivariumlogo.png" alt="Vivarium Salon" />
