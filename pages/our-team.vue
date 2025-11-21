@@ -114,13 +114,14 @@
   flex-wrap: wrap;
   justify-content: center;
   gap: $spacing-md;
+  font-size: 1.1rem;
 }
 
 .hero__link {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: $spacing-md $spacing-lg;
+  padding:1rem 1.2rem;
   border-radius: 999px;
   background: rgba($accent-color, 0.9);
   color: $white;

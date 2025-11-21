@@ -15,3 +15,8 @@ body {
 }
 
 // Add your global styles here
+
+img[src$="vivariumlogo.png"],
+img[src$="vivariumlogo.jpg"] {
+  opacity: 0.9;
+}
