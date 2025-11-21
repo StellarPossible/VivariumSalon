@@ -187,15 +187,15 @@ const firstAvailableIndex = computed(() =>
 
 .specialists-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: $spacing-xl * 1.25;
+  grid-template-columns: repeat(auto-fit, minmax(225px, 1fr));
+  gap: $spacing-xl;
 }
 
 .specialist-card {
   background: rgba($white, 0.05);
   backdrop-filter: blur(20px);
   border: 1px solid rgba($white, 0.1);
-  border-radius: 20px;
+  border-radius: 16px;
   overflow: hidden;
   transition: all 0.3s ease;
   
@@ -216,7 +216,7 @@ const firstAvailableIndex = computed(() =>
 
 .specialist-image {
   width: 100%;
-  height: 350px;
+  height: 260px;
   overflow: hidden;
   position: relative;
   background: linear-gradient(135deg, rgba($primary-color, 0.3) 0%, rgba($accent-color, 0.3) 100%);
@@ -244,11 +244,11 @@ const firstAvailableIndex = computed(() =>
 }
 
 .specialist-info {
-  padding: $spacing-lg $spacing-xl $spacing-xl;
+  padding: calc(#{$spacing-lg} * 0.75) calc(#{$spacing-xl} * 0.75) calc(#{$spacing-xl} * 0.75);
 }
 
 .specialist-name {
-  font-size: 1.4rem;
+  font-size: 1.05rem;
   color: $white;
   margin-bottom: $spacing-xs;
   font-weight: 700;
@@ -256,33 +256,33 @@ const firstAvailableIndex = computed(() =>
 }
 
 .specialist-title {
-  font-size: 1rem;
+  font-size: 0.85rem;
   color: rgba($white, 0.7);
-  margin-bottom: $spacing-md;
+  margin-bottom: calc(#{$spacing-md} * 0.75);
   font-style: italic;
 }
 
 .specialties {
   display: flex;
   flex-wrap: wrap;
-  gap: $spacing-xs;
-  margin-bottom: $spacing-md;
+  gap: calc(#{$spacing-xs} * 0.75);
+  margin-bottom: calc(#{$spacing-md} * 0.75);
 }
 
 .specialty-tag {
-  padding: $spacing-xs $spacing-md;
+  padding: calc(#{$spacing-xs} * 0.75) calc(#{$spacing-md} * 0.75);
   background: rgba($primary-color, 0.6);
   border: 1px solid rgba($accent-color, 0.4);
   border-radius: 20px;
-  font-size: 0.85rem;
+  font-size: 0.75rem;
   color: $white;
 }
 
 .booking-options {
   display: flex;
   flex-direction: column;
-  gap: $spacing-md;
-  margin-top: $spacing-lg;
+  gap: calc(#{$spacing-md} * 0.75);
+  margin-top: calc(#{$spacing-lg} * 0.75);
 }
 
 .booking-btn {
@@ -290,17 +290,17 @@ const firstAvailableIndex = computed(() =>
   align-items: center;
   justify-content: center;
   gap: $spacing-sm;
-  padding: $spacing-md $spacing-lg;
+  padding: calc(#{$spacing-md} * 0.75) calc(#{$spacing-lg} * 0.75);
   border-radius: 50px;
-  font-size: 1rem;
+  font-size: 0.85rem;
   font-weight: 600;
   text-decoration: none;
   transition: all 0.3s ease;
   cursor: pointer;
   
   svg {
-    width: 20px;
-    height: 20px;
+    width: 18px;
+    height: 18px;
   }
   
   &.booking-text {
@@ -340,7 +340,7 @@ const firstAvailableIndex = computed(() =>
 
 @media (max-width: $breakpoint-lg) {
   .specialists-grid {
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
   }
 }
 
@@ -348,11 +348,11 @@ const firstAvailableIndex = computed(() =>
   
   .specialists-grid {
     grid-template-columns: 1fr;
-    gap: $spacing-xl;
+    gap: calc(#{$spacing-xl} * 0.75);
   }
   
   .specialist-image {
-    height: 300px;
+    height: 220px;
   }
 }
 </style>
