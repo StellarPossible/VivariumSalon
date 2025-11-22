@@ -103,12 +103,13 @@
   transform: translateX(-50%);
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  gap: $spacing-sm;
   width: 100%;
-  background: transparent;
+  background: rgba($white, 0.1);
   border: none;
   box-shadow: 0 10px 30px rgba($black, 0.45);
   padding: 5px;
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
 }
 
 .feature-card {
@@ -121,7 +122,6 @@
   border: none;
   transition: transform 0.3s ease;
   justify-content: center;
-  backdrop-filter: blur(5px);
 
   &:hover {
     transform: translateY(-3px);
@@ -135,8 +135,8 @@
   align-items: center;
   justify-content: center;
   border-radius: 12px;
-  background: linear-gradient(135deg, rgba($accent-color, 0.7) 0%, rgba($accent-color, 0.5) 100%);
   flex-shrink: 0;
+  background-color: $accent-sage;
 
   svg {
     width: 22px;
@@ -269,7 +269,6 @@
     position: static;
     transform: none;
     width: 100%;
-    background: transparent;
   }
 
   .feature-card {

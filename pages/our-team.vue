@@ -3,27 +3,23 @@
     <section class="hero">
       <div class="hero__overlay">
         <div class="hero__content">
-          <p class="hero__eyebrow">Vivarium Salon</p>
+          <p class="hero__eyebrow">Vivarium</p>
           <h1 class="hero__title">Our Team</h1>
-          <p class="hero__subtitle">
-            Meet the artists, educators, and collaborators who nurture a living space for beauty to thrive.
-          </p>
           <div class="hero__actions">
             <a href="#specialists" class="hero__link">Meet the Specialists</a>
-            <a href="#available-spaces" class="hero__link hero__link--outline">View Open Chairs</a>
+            <a href="#available-spaces" class="hero__link hero__link--outline">Join Vivarium</a>
           </div>
         </div>
       </div>
-    </section>
-
-    <section class="intro">
-      <div class="intro__content">
-        <h2>Craftsmanship Rooted in Care</h2>
-        <p>
-          Our collective is grounded in mindful service and continual growth. Each specialist brings a
-          unique perspective, backed by years of training and a dedication to holistic wellbeing. Together,
-          we cultivate restorative experiences that honor every guest&#39;s individual rhythm and expression.
-        </p>
+      <div class="hero__banner">
+        <div class="hero__banner-content">
+          <h2>Craftsmanship Rooted in Care</h2>
+          <p>
+            Our collective is grounded in mindful service and continual growth. Each specialist brings a unique perspective,
+            backed by years of training and a dedication to holistic wellbeing. Together, we cultivate restorative experiences
+            that honor every guest&#39;s individual rhythm and expression.
+          </p>
+        </div>
       </div>
     </section>
 
@@ -45,7 +41,25 @@
 </template>
 
 <script setup lang="ts">
-// Components are auto-imported by Nuxt
+import { useRoute, onMounted, watch, nextTick } from '#imports'
+
+const route = useRoute()
+
+const scrollToHash = async () => {
+  if (!route.hash) return
+  await nextTick()
+  const target = document.getElementById(route.hash.slice(1))
+  target?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+}
+
+onMounted(scrollToHash)
+
+watch(
+  () => route.hash,
+  () => {
+    scrollToHash()
+  }
+)
 </script>
 
 <style scoped lang="scss">
@@ -60,20 +74,23 @@
   position: relative;
   min-height: 60vh;
   display: flex;
-  align-items: stretch;
+  flex-direction: column;
+  align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, rgba($primary-color, 0.75), rgba($accent-sage, 0.2)),
+  background: linear-gradient(135deg, rgba($primary-color, 0.9), rgba($accent-color, 0.85)),
     url('/images/site_images/monstera2.jpg') center/cover no-repeat;
   padding: $spacing-xl $spacing-lg;
   margin-top: 5rem;
+  gap: $spacing-xl;
 }
 
 .hero__overlay {
-  flex: 1;
   display: flex;
   align-items: center;
   justify-content: center;
-  backdrop-filter: blur(6px);
+  width: 100%;
+  position: relative;
+  z-index: 1;
 }
 
 .hero__content {
@@ -90,8 +107,8 @@
 .hero__eyebrow {
   letter-spacing: 0.28em;
   text-transform: uppercase;
-  font-size: 0.85rem;
-  margin-bottom: $spacing-md;
+  font-size: 1.5rem;
+  margin-bottom: $spacing-sm;
   color: rgba($white, 0.75);
 }
 
@@ -103,7 +120,7 @@
 
 .hero__subtitle {
   font-size: 1.1rem;
-  line-height: 1.5;
+  line-height: 1.1;
   margin: 0 auto $spacing-xl;
   max-width: 48ch;
   color: rgba($white, 0.85);
@@ -114,63 +131,68 @@
   flex-wrap: wrap;
   justify-content: center;
   gap: $spacing-md;
-  font-size: 1.1rem;
+  font-size: 1.2rem;
 }
 
 .hero__link {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding:1rem 1.2rem;
+  padding: 1rem .9rem;
   border-radius: 999px;
-  background: rgba($accent-color, 0.9);
+  background: rgba($primary-color, 0.9);
   color: $white;
   text-decoration: none;
   font-weight: 600;
   letter-spacing: 0.05em;
   transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
-  box-shadow: 0 8px 18px rgba($accent-color, 0.4);
+  box-shadow: 0 12px 30px rgba($black, 0.35);
 
   &:hover {
     transform: translateY(-2px);
-    background: rgba($accent-color, 1);
-    box-shadow: 0 10px 22px rgba($accent-color, 0.55);
+    background: rgba($primary-color, 1);
+    box-shadow: 0 16px 34px rgba($black, 0.45);
   }
+}
+
+.hero__banner {
+  margin: 0 auto;
+  border-radius: 24px;
+  box-shadow: 0 10px 30px rgba($black, 0.35);
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+  color: rgba($white, 0.8);
+}
+
+.hero__banner-content {
+  padding: $spacing-lg $spacing-xl;
+  text-align: center;
+  line-height: 1;
+}
+
+.hero__banner-content h2 {
+  font-size: clamp(1.8rem, 3vw, 2.4rem);
+  margin-bottom: $spacing-sm;
+  letter-spacing: 0.04em;
+}
+
+.hero__banner-content p {
+  font-size: 1.05rem;
+  line-height: 1;
+  margin: 0;
 }
 
 .hero__link--outline {
-  background: transparent;
+  background: rgba($white, 0.95);
   border: 2px solid rgba($white, 0.6);
-  box-shadow: none;
+  color: rgba($primary-color, 0.85);
+  box-shadow: 0 12px 30px rgba($black, 0.2);
 
   &:hover {
-    background: rgba($white, 0.15);
-    box-shadow: 0 10px 22px rgba($black, 0.25);
+    background: rgba($white, 1);
+    border-color: rgba($white, 0.75);
+    box-shadow: 0 14px 32px rgba($black, 0.3);
   }
-}
-
-.intro {
-  padding: $spacing-xl * 2 $spacing-lg;
-  display: flex;
-  justify-content: center;
-  background: linear-gradient(180deg, rgba($white, 0.6) 0%, rgba($white, 0) 100%);
-}
-
-.intro__content {
-  max-width: 780px;
-  text-align: center;
-}
-
-.intro__content h2 {
-  font-size: clamp(2rem, 3.5vw, 2.8rem);
-  letter-spacing: 0.04em;
-  color: $primary-color;
-}
-
-.intro__content p {
-  font-size: 1.1rem;
-  line-height: 1.1;
-  color: rgba($primary-color, 0.85);
 }
 
 .cta {
@@ -234,9 +256,8 @@
   .hero__content {
     padding: $spacing-xl;
   }
-
-  .intro {
-    padding: $spacing-xl $spacing-md;
+  .hero__banner-content {
+    padding: $spacing-lg;
   }
 
   .cta {
@@ -255,6 +276,10 @@
 
   .hero__actions {
     flex-direction: column;
+  }
+
+  .hero__banner-content {
+    padding: $spacing-md $spacing-lg;
   }
 
   .cta__button {

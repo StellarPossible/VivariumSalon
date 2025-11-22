@@ -46,7 +46,7 @@
           </p>
           <p>
             <a 
-              href="https://vivarium.glossgenius.com" 
+              href="https://vivarium.glossgenius.com/services" 
               target="_blank"
               rel="noopener noreferrer"
               class="book-link"

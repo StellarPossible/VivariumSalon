@@ -1,5 +1,10 @@
 <template>
-  <NuxtLink to="/our-team#specialists" class="floating-book-now" title="Book an appointment">
+  <NuxtLink
+    to="/our-team#specialists"
+    class="floating-book-now"
+    title="Book an appointment"
+    @click.prevent="handleClick"
+  >
     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
     </svg>
@@ -8,7 +13,35 @@
 </template>
 
 <script setup lang="ts">
-// No additional logic required
+import { useRoute, useRouter, nextTick } from '#imports'
+
+const route = useRoute()
+const router = useRouter()
+
+const scrollToSpecialists = async () => {
+  await nextTick()
+  const target = document.getElementById('specialists')
+  if (target) {
+    target.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  }
+}
+
+const handleClick = async () => {
+  if (route.path === '/our-team') {
+    await scrollToSpecialists()
+    return
+  }
+
+  try {
+    await router.push({ path: '/our-team', hash: '#specialists' })
+  } catch (error) {
+    // Ignore navigation errors such as navigating to the same route
+  }
+
+  requestAnimationFrame(() => {
+    scrollToSpecialists()
+  })
+}
 </script>
 
 <style scoped lang="scss">
@@ -24,8 +57,9 @@
   padding: $spacing-md $spacing-xl;
   border: none;
   border-radius: 50px;
-  background: linear-gradient(135deg, rgba($primary-color, 0.9), rgba($accent-color, 0.85));
+  background: linear-gradient(135deg, rgba($primary-color, 0.85) 0%, rgba($primary-color, 0.35) 100%);
   color: $white;
+  text-decoration: none;
   cursor: pointer;
   box-shadow: 0 12px 30px rgba($black, 0.35);
   transition: all 0.3s ease;

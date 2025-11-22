@@ -13,8 +13,17 @@
           class="specialist-card"
           :id="index === firstAvailableIndex ? 'available-spaces' : undefined"
         >
-          <div class="specialist-image">
-            <img :src="specialist.image" :alt="specialist.name" />
+          <div
+            class="specialist-image"
+            :class="{ 'is-available': specialist.isAvailable || !shouldShowImage(specialist) }"
+          >
+            <img v-if="shouldShowImage(specialist)" :src="specialist.image" :alt="specialist.name" />
+            <span
+              v-if="specialist.isAvailable || !shouldShowImage(specialist)"
+              class="specialist-placeholder-label"
+            >
+              {{ specialist.name }}
+            </span>
           </div>
           <div class="specialist-info">
             <h3 class="specialist-name">{{ specialist.name }}</h3>
@@ -43,11 +52,26 @@
                 v-if="specialist.bookingPhone" 
                 :href="`sms:${specialist.bookingPhone}`"
                 class="booking-btn booking-text"
+                :class="{ revealed: isPhoneRevealed(specialist.id) }"
+                @click="handleTextClick($event, specialist.id)"
               >
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
                 </svg>
-                Text to Book
+                <span class="booking-text__content" aria-live="polite">
+                  <span
+                    class="booking-text__label"
+                    :aria-hidden="isPhoneRevealed(specialist.id) ? 'true' : 'false'"
+                  >
+                    Text to Book
+                  </span>
+                  <span
+                    class="booking-text__phone"
+                    :aria-hidden="isPhoneRevealed(specialist.id) ? 'false' : 'true'"
+                  >
+                    {{ specialist.bookingPhone }}
+                  </span>
+                </span>
               </a>
               <a 
                 v-if="specialist.bookingUrl" 
@@ -77,7 +101,7 @@ const specialists = ref([
     title: 'Owner / Stylist',
     image: '/images/staff/vivariumjessica.jpg',
     bookingPhone: '443-717-3313',
-    bookingUrl: 'https://vivarium.glossgenius.com',
+    bookingUrl: 'https://vivarium.glossgenius.com/services',
     specialties: ['Salon Owner', 'Hair Styling', 'Color Services']
   },
   {
@@ -117,7 +141,7 @@ const specialists = ref([
     name: 'Emma Wingert',
     title: 'Stylist',
     image: '/images/staff/vivariumemma.png',
-    bookingUrl: 'https://vivarium.glossgenius.com',
+    bookingUrl: 'https://vivarium.glossgenius.com/services',
     specialties: ['Hair Styling', 'Color', 'Cuts']
   },
   {
@@ -149,6 +173,33 @@ const specialists = ref([
 const firstAvailableIndex = computed(() =>
   specialists.value.findIndex((specialist) => specialist.isAvailable)
 )
+
+const revealedPhones = ref<Record<number, boolean>>({})
+
+function isPhoneRevealed(id: number) {
+  return Boolean(revealedPhones.value[id])
+}
+
+function handleTextClick(event: MouseEvent, id: number) {
+  if (isPhoneRevealed(id)) {
+    return
+  }
+
+  event.preventDefault()
+  revealedPhones.value = { ...revealedPhones.value, [id]: true }
+}
+
+function shouldShowImage(specialist: { image?: string; isAvailable?: boolean }) {
+  if (!specialist?.image) {
+    return false
+  }
+
+  if (specialist.isAvailable) {
+    return false
+  }
+
+  return !/placeholder/i.test(specialist.image)
+}
 </script>
 
 <style scoped lang="scss">
@@ -157,7 +208,7 @@ const firstAvailableIndex = computed(() =>
 .specialists-section {
   padding: $spacing-xl $spacing-lg $spacing-xl;
   position: relative;
-  background: linear-gradient(180deg, rgba(0, 0, 0, 0.3) 0%, rgba(0, 0, 0, 0.5) 100%);
+  background: rgba(68, 83, 71, 0.8);
 }
 
 .container {
@@ -173,7 +224,7 @@ const firstAvailableIndex = computed(() =>
 .section-title {
   font-size: clamp(2rem, 4vw, 2.8rem);
   color: $white;
-  margin-bottom: $spacing-md;
+  margin-bottom: $spacing-sm;
   font-weight: 700;
   line-height: 1.2;
 }
@@ -192,9 +243,9 @@ const firstAvailableIndex = computed(() =>
 }
 
 .specialist-card {
-  background: rgba($white, 0.05);
+  background: rgba(68, 83, 71, 0.85);
   backdrop-filter: blur(20px);
-  border: 1px solid rgba($white, 0.1);
+  border: 1px solid rgba($white, 0.12);
   border-radius: 16px;
   overflow: hidden;
   transition: all 0.3s ease;
@@ -241,6 +292,24 @@ const firstAvailableIndex = computed(() =>
     background-size: 60%;
     z-index: 0;
   }
+}
+
+.specialist-placeholder-label {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 $spacing-md;
+  font-size: 1.05rem;
+  font-weight: 700;
+  text-align: center;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba($white, 0.9);
+  opacity: 0.8;
+  z-index: 2;
+  pointer-events: none;
 }
 
 .specialist-info {
@@ -299,29 +368,66 @@ const firstAvailableIndex = computed(() =>
   cursor: pointer;
   
   svg {
-    width: 18px;
-    height: 18px;
+    width: 20px;
+    height: 20px;
   }
   
   &.booking-text {
-    background: linear-gradient(135deg, $accent-gold 0%, darken($accent-gold, 10%) 100%);
+    background: rgba($primary-color, 0.85);
     color: $white;
-    box-shadow: 0 4px 15px rgba($accent-gold, 0.3);
-    
+    box-shadow: 0 12px 30px rgba($black, 0.35);
+    position: relative;
+    overflow: hidden;
+
     &:hover {
       transform: translateY(-2px);
-      box-shadow: 0 6px 20px rgba($accent-gold, 0.5);
+      box-shadow: 0 16px 34px rgba($black, 0.45);
+    }
+
+    &.revealed {
+      background: linear-gradient(135deg, rgba($primary-color, 0.85) 0%, rgba($accent-color, 0.7) 100%);
+    }
+
+    .booking-text__content {
+      display: grid;
+      position: relative;
+      min-width: 8.5rem;
+    }
+
+    .booking-text__label,
+    .booking-text__phone {
+      grid-area: 1 / 1 / 2 / 2;
+      transition: opacity 0.3s ease, transform 0.3s ease;
+    }
+
+    .booking-text__phone {
+      opacity: 0;
+      transform: translateY(10px);
+      font-weight: 600;
+      letter-spacing: 0.04em;
+    }
+
+    &.revealed {
+      .booking-text__label {
+        opacity: 0;
+        transform: translateY(-10px);
+      }
+
+      .booking-text__phone {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
   }
   
   &.booking-online {
-    background: rgba($white, 0.1);
-    color: $white;
-    border: 2px solid rgba($white, 0.3);
+    background: rgba($white, 0.9);
+    color: $black;
+    border: 2px solid rgba($white, 0.4);
     
     &:hover {
-      background: rgba($white, 0.2);
-      border-color: rgba($white, 0.5);
+      background: rgba($white, 1);
+      border-color: rgba($white, 0.6);
       transform: translateY(-2px);
     }
   }

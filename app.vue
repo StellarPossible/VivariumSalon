@@ -18,7 +18,7 @@
     <SiteFooter />
 
     <!-- Only show in development -->
-    <ShopifyDebug v-if="isDev" />
+    <!-- <ShopifyDebug v-if="isDev" /> -->
   </div>
 </template>
 

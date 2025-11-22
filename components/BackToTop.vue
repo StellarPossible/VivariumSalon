@@ -49,7 +49,7 @@ onBeforeUnmount(() => {
   height: 52px;
   border-radius: 50%;
   border: none;
-  background: linear-gradient(135deg, rgba($primary-color, 0.9), rgba($accent-color, 0.85));
+  background: linear-gradient(135deg, rgba($primary-color, 0.85) 0%, rgba($primary-color, 0.35) 100%);
   color: $white;
   display: flex;
   align-items: center;

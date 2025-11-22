@@ -172,7 +172,13 @@ watch(
   color: rgba($white, 0.85);
   text-decoration: none;
   font-weight: 600;
-  transition: color 0.25s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.35rem 0.9rem;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  transition: color 0.25s ease, border-color 0.25s ease, background-color 0.25s ease;
 
   &:hover {
     color: $white;
@@ -180,6 +186,8 @@ watch(
 
   &.active {
     color: #445347;
+    border-color: rgba($white, 0.8);
+    background-color: rgba($white, 0.8);
   }
 }
 
