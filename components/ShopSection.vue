@@ -38,29 +38,33 @@
       </div>
 
       <div class="shop-content">
-        <div class="shop-message">
-          <div class="icon">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
-            </svg>
-          </div>
-          <h3>Coming Soon</h3>
-          <p>Our exclusive product collection will be available soon. Stay tuned for premium hair care, beauty products, and wellness essentials.</p>
-          <div class="features">
-            <div class="feature-item">
-              <span class="check-icon">✓</span>
-              <span>Professional-grade products</span>
+        <ShopifyProductGrid :limit="20">
+          <template #empty>
+            <div class="shop-message">
+              <div class="icon">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+                </svg>
+              </div>
+              <h3>Coming Soon</h3>
+              <p>Our exclusive product collection will be available soon. Stay tuned for premium hair care, beauty products, and wellness essentials.</p>
+              <div class="features">
+                <div class="feature-item">
+                  <span class="check-icon">✓</span>
+                  <span>Professional-grade products</span>
+                </div>
+                <div class="feature-item">
+                  <span class="check-icon">✓</span>
+                  <span>Exclusive salon brands</span>
+                </div>
+                <div class="feature-item">
+                  <span class="check-icon">✓</span>
+                  <span>Personalized recommendations</span>
+                </div>
+              </div>
             </div>
-            <div class="feature-item">
-              <span class="check-icon">✓</span>
-              <span>Exclusive salon brands</span>
-            </div>
-            <div class="feature-item">
-              <span class="check-icon">✓</span>
-              <span>Personalized recommendations</span>
-            </div>
-          </div>
-        </div>
+          </template>
+        </ShopifyProductGrid>
       </div>
     </div>
   </section>
