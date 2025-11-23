@@ -38,7 +38,7 @@
       </div>
 
       <div class="shop-content">
-        <ShopifyProductGrid>
+        <ShopifyProductGrid :debug="true">
           <template #empty>
             <div class="shop-message">
               <div class="icon">
