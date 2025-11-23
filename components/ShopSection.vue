@@ -14,7 +14,7 @@
               class="featured-cta"
             >
               <span class="brand-mark">
-              <img src="https://davinespro.com/wp-content/uploads/davinespro-logo.svg" alt="Davines Pro" />
+              <img src="/public/images/site_images/davinesLogo.jpg" alt="Davines Pro" />
             </span>
             <div class="davines-copy"><i>We Sustain</i> Beauty Collection</div>
             </a>

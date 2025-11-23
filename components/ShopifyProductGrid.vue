@@ -48,6 +48,7 @@ type ProductImageEdge = {
 }
 
 type ProductEdge = {
+  cursor: string
   node: {
     id: string
     title: string
@@ -68,7 +69,11 @@ type ProductEdge = {
 const props = defineProps({
   limit: {
     type: Number,
-    default: 20,
+    default: Number.POSITIVE_INFINITY,
+  },
+  pageSize: {
+    type: Number,
+    default: 50,
   },
   descriptionLength: {
     type: Number,
@@ -81,11 +86,17 @@ const products = ref<ProductEdge[]>([])
 const loading = ref(true)
 const error = ref<string | null>(null)
 
+type ShopifyProductsConnection = {
+  edges?: ProductEdge[]
+  pageInfo?: {
+    hasNextPage: boolean
+    endCursor: string | null
+  }
+}
+
 type ShopifyProductsResponse = {
   data?: {
-    products?: {
-      edges?: ProductEdge[]
-    }
+    products?: ShopifyProductsConnection
   }
 }
 
@@ -113,16 +124,44 @@ const formatPrice = (amount: string, currency: string) => {
   }
 }
 
-onMounted(async () => {
+const loadProducts = async () => {
   try {
-    const data = (await fetchProducts(props.limit)) as ShopifyProductsResponse
-    products.value = data.data?.products?.edges ?? []
+    const maxProducts = props.limit
+    if (maxProducts <= 0) {
+      loading.value = false
+      return
+    }
+
+    const maxPageSize = 250
+    let hasNextPage = true
+    let after: string | null = null
+
+    while (hasNextPage && products.value.length < maxProducts) {
+      const remaining = maxProducts - products.value.length
+      const first = Math.min(props.pageSize, remaining, maxPageSize)
+      const data = (await fetchProducts({ first, after })) as ShopifyProductsResponse
+      const connection = data.data?.products
+      const newEdges = connection?.edges ?? []
+
+      if (!newEdges.length) {
+        hasNextPage = false
+        break
+      }
+
+      products.value = products.value.concat(newEdges)
+      hasNextPage = Boolean(connection?.pageInfo?.hasNextPage)
+      after = connection?.pageInfo?.endCursor ?? null
+    }
   } catch (err) {
     const message = err instanceof Error ? err.message : 'Unable to load products right now.'
     error.value = message
   } finally {
     loading.value = false
   }
+}
+
+onMounted(() => {
+  loadProducts()
 })
 </script>
 

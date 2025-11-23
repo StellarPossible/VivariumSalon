@@ -7,7 +7,7 @@
           <p class="section-subtitle">Discover premium beauty and wellness products</p>
         </div>
 
-        <ShopifyProductGrid :limit="24" />
+        <ShopifyProductGrid />
       </div>
     </section>
   </div>
