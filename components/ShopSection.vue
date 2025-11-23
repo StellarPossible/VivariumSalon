@@ -14,7 +14,7 @@
               class="featured-cta"
             >
               <span class="brand-mark">
-              <img src="/public/images/site_images/davinesLogo.jpg" alt="Davines Pro" />
+              <img src="" alt="Davines Pro" />
             </span>
             <div class="davines-copy"><i>We Sustain</i> Beauty Collection</div>
             </a>
@@ -38,7 +38,7 @@
       </div>
 
       <div class="shop-content">
-        <ShopifyProductGrid :limit="20">
+        <ShopifyProductGrid>
           <template #empty>
             <div class="shop-message">
               <div class="icon">
