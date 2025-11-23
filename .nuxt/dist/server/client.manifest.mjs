@@ -1,0 +1,1 @@
+export { default } from "file:///Users/marievalentonis/Desktop/StellarPossible,%20LLC/GitHub%20Repos/VivariumSalon/node_modules/@nuxt/vite-builder/dist/runtime/client.manifest.mjs"
