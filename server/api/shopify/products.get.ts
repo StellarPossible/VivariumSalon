@@ -61,7 +61,7 @@ export default defineEventHandler(async () => {
         },
         body: JSON.stringify({
           query: shopifyQuery,
-          variables: { first: 10 },
+          variables: { first: 250 },
         }),
       },
     )
