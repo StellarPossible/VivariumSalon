@@ -98,15 +98,17 @@ watch(
   left: 0;
   right: 0;
   z-index: 1000;
-  background-color: rgba($primary-color, 0.08);
+  background-color: rgba($black, 0.85);
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
   transition: all 0.3s ease;
 
   &.scrolled {
-    background-color: rgba($primary-color, 0.9);
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    background-color: transparent;
+    box-shadow: none;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
   }
 }
 
