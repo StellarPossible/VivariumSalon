@@ -1,157 +1,218 @@
 <template>
   <div class="shopify-product-grid">
-    <div v-if="loading" class="status-message loading">Loading products...</div>
-    <div v-else-if="error" class="status-message error">{{ error }}</div>
+    <div v-if="loading" class="status-message loading">
+      <span class="status-label">Loading products...</span>
+      <span class="status-helper">We&apos;re preparing the Vivarium collection for you.</span>
+    </div>
+    <div v-else-if="error" class="status-message error">
+      <span class="status-label">There was a hiccup</span>
+      <span class="status-helper">{{ error }}</span>
+    </div>
     <div v-else-if="!products.length" class="status-message empty">
       <slot name="empty">
         <p>No products are available right now. Please check back soon.</p>
       </slot>
     </div>
     <div v-else class="product-experience">
-      <section
-        ref="categorySectionRef"
-        class="category-section"
-        aria-labelledby="category-browser-heading"
-      >
-        <header class="section-head">
-          <h3 id="category-browser-heading">Shop by Category</h3>
-          <p>Explore nine salon-curated families tailored to every ritual.</p>
-        </header>
-        <div class="category-display">
-          <nav class="category-selector" aria-label="Product categories">
-            <button
-              v-for="group in categorizedProducts"
-              :key="group.category"
-              class="category-chip"
-              type="button"
-              :class="{
-                'is-active': group.category === activeCategoryName,
-                'is-empty': !group.products.length,
-              }"
-              :aria-pressed="group.category === activeCategoryName"
-              @click="selectCategory(group.category)"
+      <Transition name="view-fade" mode="out-in">
+        <section
+          v-if="isAllProductsView"
+          key="all-products"
+          class="all-products-section"
+          aria-labelledby="all-products-heading"
+        >
+          <header class="section-head">
+            <span class="section-kicker">Full catalog</span>
+            <h3 id="all-products-heading">All Products</h3>
+            <p class="section-description">Browse every Vivarium favorite in one streamlined view.</p>
+          </header>
+          <div class="product-grid all-products-grid" role="list">
+            <article
+              v-for="product in allProductsList"
+              :key="product.node.id"
+              class="product-card product-card--all"
+              role="listitem"
             >
-              <span class="chip-label">{{ group.category }}</span>
-              <span class="chip-tagline">
-                {{ categoryDetailLookup[group.category]?.tagline }}
-              </span>
-              <span class="chip-count">{{ formatItemCount(group.products.length) }}</span>
-            </button>
-          </nav>
-          <Transition name="category-fade" mode="out-in">
-            <div
-              v-if="activeCategoryGroup"
-              :key="activeCategoryName || 'unselected'"
-              class="category-products"
-            >
-              <header class="category-summary">
-                <div class="category-overview">
-                  <p class="category-kicker">
-                    {{ activeCategoryDetail?.tagline }}
+              <NuxtLink :to="`/products/${product.node.handle}`" class="product-link">
+                <div class="product-image" aria-hidden="true">
+                  <template v-if="product.node.images.edges.length">
+                    <img
+                      :src="product.node.images.edges[0].node.url"
+                      :alt="product.node.images.edges[0].node.altText || product.node.title"
+                    />
+                  </template>
+                  <template v-else>
+                    <div class="image-placeholder">{{ product.node.title.charAt(0) }}</div>
+                  </template>
+                </div>
+                <div class="product-info">
+                  <span class="product-category-pill">{{ resolveCategoryForProduct(product) }}</span>
+                  <h4 class="product-title">{{ product.node.title }}</h4>
+                  <p class="price">
+                    {{
+                      formatPrice(
+                        product.node.priceRange.minVariantPrice.amount,
+                        product.node.priceRange.minVariantPrice.currencyCode,
+                      )
+                    }}
                   </p>
-                  <h4 class="category-title">{{ activeCategoryName }}</h4>
-                  <p class="category-description">
-                    {{ activeCategoryDetail?.description }}
+                  <p class="description">
+                    {{ truncate(product.node.description, descriptionLength) }}
                   </p>
                 </div>
-                <span class="category-total">
-                  {{ formatItemCount(activeProducts.length) }}
-                </span>
-              </header>
-              <div v-if="activeProducts.length" class="product-grid" role="list">
-                <article
-                  v-for="product in activeProducts"
-                  :key="product.node.id"
-                  class="product-card"
-                  role="listitem"
-                >
-                  <NuxtLink :to="`/products/${product.node.handle}`" class="product-link">
-                    <div class="product-image" aria-hidden="true">
-                      <template v-if="product.node.images.edges.length">
-                        <img
-                          :src="product.node.images.edges[0].node.url"
-                          :alt="product.node.images.edges[0].node.altText || product.node.title"
-                        />
-                      </template>
-                      <template v-else>
-                        <div class="image-placeholder">{{ product.node.title.charAt(0) }}</div>
-                      </template>
-                    </div>
-                    <div class="product-info">
-                      <h4 class="product-title">{{ product.node.title }}</h4>
-                      <p class="price">
-                        {{
-                          formatPrice(
-                            product.node.priceRange.minVariantPrice.amount,
-                            product.node.priceRange.minVariantPrice.currencyCode,
-                          )
-                        }}
-                      </p>
-                      <p class="description">
-                        {{ truncate(product.node.description, descriptionLength) }}
-                      </p>
-                    </div>
-                  </NuxtLink>
-                </article>
-              </div>
-              <div v-else class="category-empty">
-                <p>We&apos;re curating this collection. Check back soon for new arrivals.</p>
-              </div>
-            </div>
-          </Transition>
-        </div>
-      </section>
-
-      <section
-        v-if="collectionSpotlights.length"
-        class="collection-section"
-        aria-labelledby="collection-spotlights-heading"
-      >
-        <header class="section-head">
-          <h3 id="collection-spotlights-heading">Collection Spotlights</h3>
-          <p>Press play for an immersive look at our signature rituals.</p>
-        </header>
-        <div class="collection-grid">
-          <article
-            v-for="collection in collectionSpotlights"
-            :key="collection.id"
-            class="collection-card"
+              </NuxtLink>
+            </article>
+          </div>
+        </section>
+        <div v-else key="category-view" class="category-view">
+          <section
+            ref="categorySectionRef"
+            class="category-section"
+            aria-labelledby="category-browser-heading"
           >
-            <div class="collection-media">
-              <iframe
-                v-if="collection.media.type === 'video'"
-                :src="collection.mediaSrc"
-                :title="collection.media.title || collection.title"
-                frameborder="0"
-                allow="autoplay; fullscreen; picture-in-picture"
-                allowfullscreen
-              ></iframe>
-              <img
-                v-else
-                :src="collection.media.url"
-                :alt="collection.media.title || collection.title"
-              />
-            </div>
-            <div class="collection-body">
-              <span class="collection-pill">{{ collection.category }}</span>
-              <h4 class="collection-title">{{ collection.title }}</h4>
-              <p class="collection-description">{{ collection.description }}</p>
-              <div class="collection-meta">
-                <span class="collection-count">
-                  {{ formatItemCount(collection.productCount) }}
-                </span>
+            <header class="section-head">
+              <span class="section-kicker">Curated edits</span>
+              <h3 id="category-browser-heading">Shop by Category</h3>
+              <p class="section-description">Select a ritual to explore salon-trusted essentials.</p>
+            </header>
+            <div class="category-display">
+              <nav class="category-selector" aria-label="Product categories">
                 <button
+                  v-for="group in categorizedProducts"
+                  :key="group.category"
+                  class="category-chip"
                   type="button"
-                  class="collection-cta"
-                  @click="selectCollection(collection)"
+                  :class="{
+                    'is-active': group.category === activeCategoryName,
+                    'is-empty': !group.products.length,
+                  }"
+                  :aria-pressed="group.category === activeCategoryName"
+                  @click="selectCategory(group.category)"
                 >
-                  Shop {{ collection.category }}
+                  <span class="chip-label">{{ group.category }}</span>
+                  <span class="chip-tagline">
+                    {{ categoryDetailLookup[group.category]?.tagline }}
+                  </span>
+                  <span class="chip-count">{{ formatItemCount(group.products.length) }}</span>
                 </button>
-              </div>
+              </nav>
+              <Transition name="category-fade" mode="out-in">
+                <div
+                  v-if="activeCategoryGroup"
+                  :key="activeCategoryName || 'unselected'"
+                  class="category-products"
+                >
+                  <header class="category-summary">
+                    <div class="category-overview">
+                      <p class="category-kicker">
+                        {{ activeCategoryDetail?.tagline }}
+                      </p>
+                      <h4 class="category-title">{{ activeCategoryName }}</h4>
+                      <p class="category-description">
+                        {{ activeCategoryDetail?.description }}
+                      </p>
+                    </div>
+                    <span class="category-total">
+                      {{ formatItemCount(activeProducts.length) }}
+                    </span>
+                  </header>
+                  <div v-if="activeProducts.length" class="product-grid" role="list">
+                    <article
+                      v-for="product in activeProducts"
+                      :key="product.node.id"
+                      class="product-card"
+                      role="listitem"
+                    >
+                      <NuxtLink :to="`/products/${product.node.handle}`" class="product-link">
+                        <div class="product-image" aria-hidden="true">
+                          <template v-if="product.node.images.edges.length">
+                            <img
+                              :src="product.node.images.edges[0].node.url"
+                              :alt="product.node.images.edges[0].node.altText || product.node.title"
+                            />
+                          </template>
+                          <template v-else>
+                            <div class="image-placeholder">{{ product.node.title.charAt(0) }}</div>
+                          </template>
+                        </div>
+                        <div class="product-info">
+                          <h4 class="product-title">{{ product.node.title }}</h4>
+                          <p class="price">
+                            {{
+                              formatPrice(
+                                product.node.priceRange.minVariantPrice.amount,
+                                product.node.priceRange.minVariantPrice.currencyCode,
+                              )
+                            }}
+                          </p>
+                          <p class="description">
+                            {{ truncate(product.node.description, descriptionLength) }}
+                          </p>
+                        </div>
+                      </NuxtLink>
+                    </article>
+                  </div>
+                  <div v-else class="category-empty">
+                    <p>We&apos;re curating this collection. Check back soon for new arrivals.</p>
+                  </div>
+                </div>
+              </Transition>
             </div>
-          </article>
+          </section>
+
+          <section
+            v-if="collectionSpotlights.length"
+            class="collection-section"
+            aria-labelledby="collection-spotlights-heading"
+          >
+            <header class="section-head">
+              <span class="section-kicker">Experience the ritual</span>
+              <h3 id="collection-spotlights-heading">Collection Spotlights</h3>
+              <p class="section-description">Press play for an immersive look at our signature routines.</p>
+            </header>
+            <div class="collection-grid">
+              <article
+                v-for="collection in collectionSpotlights"
+                :key="collection.id"
+                class="collection-card"
+              >
+                <div class="collection-media">
+                  <iframe
+                    v-if="collection.media.type === 'video'"
+                    :src="collection.mediaSrc"
+                    :title="collection.media.title || collection.title"
+                    frameborder="0"
+                    allow="autoplay; fullscreen; picture-in-picture"
+                    allowfullscreen
+                  ></iframe>
+                  <img
+                    v-else
+                    :src="collection.media.url"
+                    :alt="collection.media.title || collection.title"
+                  />
+                </div>
+                <div class="collection-body">
+                  <span class="collection-pill">{{ collection.category }}</span>
+                  <h4 class="collection-title">{{ collection.title }}</h4>
+                  <p class="collection-description">{{ collection.description }}</p>
+                  <div class="collection-meta">
+                    <span class="collection-count">
+                      {{ formatItemCount(collection.productCount) }}
+                    </span>
+                    <button
+                      type="button"
+                      class="collection-cta"
+                      @click="selectCollection(collection)"
+                    >
+                      Shop {{ collection.category }}
+                    </button>
+                  </div>
+                </div>
+              </article>
+            </div>
+          </section>
         </div>
-      </section>
+      </Transition>
     </div>
     <div v-if="debugEnabled" class="debug-panel">
       <div class="debug-header">
@@ -196,6 +257,7 @@
 </template>
 
 <script setup lang="ts">
+import type { PropType } from 'vue'
 type ProductImageEdge = {
   node: {
     url: string
@@ -246,6 +308,11 @@ const props = defineProps({
   debug: {
     type: Boolean,
     default: false,
+  },
+  viewMode: {
+    type: String as PropType<'categories' | 'all'>,
+    default: 'categories',
+    validator: (value: string) => ['categories', 'all'].includes(value),
   },
 })
 
@@ -311,6 +378,12 @@ type CollectionSpotlight = {
 
 const debugEnabled = computed(() => props.debug || process.dev)
 const formattedProducts = computed(() => JSON.stringify(products.value, null, 2))
+const isAllProductsView = computed(() => props.viewMode === 'all')
+const allProductsList = computed(() =>
+  [...products.value].sort((a, b) =>
+    a.node.title.localeCompare(b.node.title, 'en', { sensitivity: 'base' })
+  ),
+)
 
 const categoryOrder = [
   'Essential Haircare',
@@ -420,7 +493,11 @@ const categoryRules: CategoryRule[] = [
   },
   { label: 'Heart of Glass', match: (handle) => handle.startsWith('heart-of-glass') },
   { label: 'Liquid Spell', match: (handle) => handle.startsWith('liquid-spell') },
-  { label: 'Naturaltech', match: (handle) => handle.startsWith('naturaltech') },
+  {
+    label: 'Naturaltech',
+    match: (handle) =>
+      handle.startsWith('naturaltech') || handle.includes('naturaltech-') || handle.includes('natural-tech'),
+  },
   {
     label: 'Pasta & Love',
     match: (handle) => handle.includes('pasta') || handle.startsWith('pasta-love'),
@@ -432,7 +509,31 @@ const categoryRules: CategoryRule[] = [
   },
 ]
 
-const categoryLabelLookup = new Map(categoryRules.map((rule) => [rule.label.toLowerCase(), rule.label]))
+const canonicalizeCategory = (label: string) => label.toLowerCase().replace(/[^a-z0-9]/g, '')
+
+const categoryLabelLookup = new Map(
+  categoryRules.map((rule) => [canonicalizeCategory(rule.label), rule.label]),
+)
+
+const findKnownCategory = (label: string) => {
+  const canonical = canonicalizeCategory(label)
+  if (!canonical.length) {
+    return null
+  }
+
+  const directMatch = categoryLabelLookup.get(canonical)
+  if (directMatch) {
+    return directMatch
+  }
+
+  for (const [storedKey, storedLabel] of categoryLabelLookup.entries()) {
+    if (canonical.startsWith(storedKey) || storedKey.startsWith(canonical)) {
+      return storedLabel
+    }
+  }
+
+  return null
+}
 
 const deriveCategoryFromHandle = (handle: string) => {
   const normalized = handle.toLowerCase()
@@ -503,9 +604,8 @@ const normalizeCategoryLabel = (label: string) => {
     return null
   }
 
-  const spacingNormalized = cleaned.replace(/[-_]+/g, ' ')
-  const lower = spacingNormalized.toLowerCase()
-  const known = categoryLabelLookup.get(lower)
+  const spacingNormalized = cleaned.replace(/[-_]+/g, ' ').replace(/\s+/g, ' ').trim()
+  const known = findKnownCategory(spacingNormalized)
   if (known) {
     return known
   }
@@ -527,14 +627,26 @@ const getCategoryFromMetafield = (edge: ProductEdge) => {
     return null
   }
 
-  const prioritized = normalized.find((value) =>
-    categoryLabelLookup.has(value.toLowerCase()),
-  )
+  for (const value of normalized) {
+    const known = findKnownCategory(value)
+    if (known) {
+      return known
+    }
+  }
 
-  return prioritized || normalized[0]
+  return normalized[0]
 }
 
-const tagCategoryPrefixes = ['category:', 'collection:', 'line:', 'series:', 'range:', 'family:']
+const tagCategoryPrefixes = [
+  'category:',
+  'category -',
+  'collection:',
+  'collections:',
+  'line:',
+  'series:',
+  'range:',
+  'family:',
+]
 
 const getCategoryFromTags = (edge: ProductEdge) => {
   const tags = Array.isArray(edge.node.tags) ? edge.node.tags : []
@@ -578,11 +690,14 @@ const getCategoryFromTags = (edge: ProductEdge) => {
     return null
   }
 
-  const prioritized = normalized.find((value) =>
-    categoryLabelLookup.has(value.toLowerCase()),
-  )
+  for (const value of normalized) {
+    const known = findKnownCategory(value)
+    if (known) {
+      return known
+    }
+  }
 
-  return prioritized || normalized[0]
+  return normalized[0]
 }
 
 const resolveCategoryForProduct = (edge: ProductEdge) => {
@@ -922,68 +1037,115 @@ onMounted(() => {
   display: flex;
   flex-direction: column;
   gap: $spacing-xl * 1.5;
-  margin-top: $spacing-xl * 1.5;
 }
 
 .status-message {
+  display: grid;
+  gap: $spacing-xs;
   text-align: center;
   padding: $spacing-xl;
-  border-radius: 18px;
-  backdrop-filter: blur(18px);
-  background: rgba($white, 0.05);
-  border: 1px solid rgba($white, 0.08);
-  color: rgba($white, 0.9);
-  font-size: 1.1rem;
+  border-radius: 22px;
+  background: rgba($white, 0.96);
+  border: 1px solid rgba($accent-sage, 0.14);
+  box-shadow: 0 18px 44px rgba($accent-sage, 0.12);
+  color: $accent-sage;
+  font-size: 1.05rem;
 
   &.loading {
-    color: rgba($white, 0.75);
+    .status-label {
+      color: darken($accent-sage, 5%);
+    }
+
+    .status-helper {
+      color: rgba($accent-sage, 0.65);
+    }
   }
 
   &.error {
-    color: lighten($danger-color, 10%);
-    border-color: rgba($danger-color, 0.4);
+    background: rgba($danger-color, 0.08);
+    border-color: rgba($danger-color, 0.25);
+    color: darken($danger-color, 5%);
+
+    .status-helper {
+      color: rgba($danger-color, 0.8);
+    }
   }
 
   &.empty {
-    display: flex;
-    flex-direction: column;
-    gap: $spacing-md;
-    color: rgba($white, 0.85);
+    color: $accent-sage;
   }
+}
+
+.status-label {
+  font-weight: 600;
+  letter-spacing: 0.01em;
+}
+
+.status-helper {
+  font-size: 0.95rem;
+  color: rgba($accent-sage, 0.7);
 }
 
 .product-experience {
   display: flex;
   flex-direction: column;
-  gap: $spacing-xl * 2;
+  gap: $spacing-xl * 1.5;
 }
 
+.view-fade-enter-active,
+.view-fade-leave-active {
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.view-fade-enter-from,
+.view-fade-leave-to {
+  opacity: 0;
+  transform: translateY(16px);
+}
+
+.all-products-section,
 .category-section,
 .collection-section {
-  background: rgba($white, 0.05);
-  border: 1px solid rgba($white, 0.12);
-  border-radius: 26px;
-  padding: $spacing-xl * 1.25 $spacing-xl;
-  backdrop-filter: blur(24px);
-  box-shadow: 0 22px 48px rgba(0, 0, 0, 0.25);
+  background: rgba($white, 0.97);
+  border: 1px solid rgba($accent-sage, 0.12);
+  border-radius: 32px;
+  padding: $spacing-xl * 1.2 $spacing-xl * 1.25;
+  box-shadow: 0 30px 70px rgba($accent-sage, 0.12);
 }
 
 .section-head {
   text-align: center;
   margin-bottom: $spacing-xl;
+  display: grid;
+  gap: $spacing-xs;
+  justify-items: center;
 
   h3 {
     font-size: clamp(1.8rem, 3vw, 2.4rem);
-    color: $white;
-    font-weight: 700;
-    margin-bottom: $spacing-xs;
-  }
-
-  p {
-    color: rgba($white, 0.75);
-    font-size: 1.1rem;
+    color: $accent-sage;
+    font-weight: 600;
     margin: 0;
   }
+}
+
+.section-kicker {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.2rem 0.75rem;
+  border-radius: 999px;
+  background: rgba($accent-sage, 0.12);
+  color: rgba($accent-sage, 0.85);
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.section-description {
+  color: rgba($accent-sage, 0.7);
+  font-size: 1rem;
+  max-width: 48ch;
+  margin: 0;
 }
 
 .category-display {
@@ -1005,49 +1167,58 @@ onMounted(() => {
   gap: $spacing-xs;
   padding: $spacing-sm $spacing-md;
   border-radius: 18px;
-  border: 1px solid rgba($white, 0.12);
-  background: rgba($white, 0.04);
-  color: rgba($white, 0.85);
+  border: 1px solid rgba($accent-sage, 0.18);
+  background: rgba($accent-sage, 0.08);
+  color: $accent-sage;
   cursor: pointer;
   text-align: left;
-  transition: transform 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+  transition: transform 0.2s ease, border-color 0.2s ease, background 0.2s ease, color 0.2s ease;
 
   &:hover,
   &:focus-visible {
     transform: translateY(-2px);
-    border-color: rgba($accent-gold, 0.45);
-    background: rgba($accent-gold, 0.18);
+    border-color: rgba($accent-sage, 0.28);
+    background: rgba($accent-sage, 0.12);
     outline: none;
   }
 
   &.is-active {
-    border-color: rgba($accent-gold, 0.65);
-    background: linear-gradient(135deg, rgba($accent-gold, 0.35), rgba($accent-color, 0.25));
-    color: $white;
+    border-color: rgba($accent-sage, 0.45);
+    background: linear-gradient(135deg, rgba($accent-sage, 0.85), rgba($accent-sage, 0.75));
+    color: lighten($white, 6%);
+
+    .chip-tagline,
+    .chip-count {
+      color: lighten($white, 12%);
+    }
   }
 
   &.is-empty {
-    opacity: 0.6;
+    opacity: 0.45;
+    cursor: default;
   }
 }
 
 .chip-label {
   font-weight: 600;
   font-size: 1rem;
-  letter-spacing: 0.02em;
+  letter-spacing: 0.015em;
 }
 
 .chip-tagline {
   font-size: 0.85rem;
-  opacity: 0.75;
+  color: rgba($accent-sage, 0.7);
+  transition: color 0.2s ease;
 }
 
 .chip-count {
   margin-top: $spacing-xs;
-  font-size: 0.8rem;
-  padding: 0.15rem 0.55rem;
+  font-size: 0.75rem;
+  padding: 0.2rem 0.55rem;
   border-radius: 999px;
-  border: 1px solid rgba($white, 0.16);
+  border: 1px solid rgba($accent-sage, 0.2);
+  color: rgba($accent-sage, 0.75);
+  transition: color 0.2s ease, border-color 0.2s ease;
 }
 
 .category-products {
@@ -1070,22 +1241,22 @@ onMounted(() => {
 
 .category-kicker {
   text-transform: uppercase;
-  letter-spacing: 0.2em;
-  font-size: 0.82rem;
-  color: rgba($white, 0.6);
+  letter-spacing: 0.18em;
+  font-size: 0.8rem;
+  color: rgba($accent-sage, 0.55);
   margin: 0 0 $spacing-xs;
 }
 
 .category-title {
   font-size: clamp(1.8rem, 3vw, 2.3rem);
-  color: $white;
+  color: $accent-sage;
   margin: 0 0 $spacing-xs;
-  font-weight: 700;
+  font-weight: 600;
 }
 
 .category-description {
   font-size: 1rem;
-  color: rgba($white, 0.78);
+  color: rgba($accent-sage, 0.7);
   margin: 0;
   line-height: 1.6;
 }
@@ -1096,9 +1267,9 @@ onMounted(() => {
   gap: $spacing-xs;
   padding: $spacing-xs $spacing-md;
   border-radius: 999px;
-  border: 1px solid rgba($white, 0.22);
-  background: rgba($white, 0.08);
-  color: $white;
+  border: 1px solid rgba($accent-sage, 0.18);
+  background: rgba($accent-sage, 0.08);
+  color: $accent-sage;
   font-size: 0.9rem;
   font-weight: 600;
 }
@@ -1109,19 +1280,27 @@ onMounted(() => {
   gap: $spacing-xl;
 }
 
+.all-products-grid {
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+}
+
 .product-card {
-  backdrop-filter: blur(18px);
-  background: rgba($white, 0.08);
-  border: 1px solid rgba($white, 0.12);
-  border-radius: 18px;
+  background: rgba($white, 0.98);
+  border: 1px solid rgba($accent-sage, 0.12);
+  border-radius: 20px;
   overflow: hidden;
+  box-shadow: 0 16px 42px rgba($accent-sage, 0.1);
   transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
 
   &:hover {
     transform: translateY(-6px);
-    box-shadow: 0 18px 45px rgba(0, 0, 0, 0.35);
-    border-color: rgba($white, 0.22);
+    box-shadow: 0 24px 60px rgba($accent-sage, 0.16);
+    border-color: rgba($accent-sage, 0.26);
   }
+}
+
+.product-card--all .product-info {
+  gap: $spacing-sm;
 }
 
 .product-link {
@@ -1133,7 +1312,7 @@ onMounted(() => {
 }
 
 .product-image {
-  background: linear-gradient(135deg, rgba($primary-color, 0.35), rgba($accent-sage, 0.35));
+  background: linear-gradient(135deg, rgba($accent-sage, 0.18), rgba($accent-sage, 0.1));
   height: 280px;
   width: 100%;
   overflow: hidden;
@@ -1157,8 +1336,8 @@ onMounted(() => {
   align-items: center;
   justify-content: center;
   font-size: 3rem;
-  color: rgba($white, 0.6);
-  background: linear-gradient(135deg, rgba($accent-color, 0.2), rgba($primary-color, 0.25));
+  color: rgba($accent-sage, 0.35);
+  background: linear-gradient(135deg, rgba($accent-sage, 0.12), rgba($accent-sage, 0.08));
 }
 
 .product-info {
@@ -1168,8 +1347,22 @@ onMounted(() => {
   gap: $spacing-sm;
 }
 
+.product-category-pill {
+  align-self: flex-start;
+  padding: 0.2rem 0.75rem;
+  border-radius: 999px;
+  background: rgba($accent-sage, 0.12);
+  border: 1px solid rgba($accent-sage, 0.18);
+  color: rgba($accent-sage, 0.85);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-bottom: $spacing-xs;
+}
+
 .product-title {
-  color: $white;
+  color: $accent-sage;
   font-size: 1.25rem;
   font-weight: 600;
   margin: 0;
@@ -1183,7 +1376,7 @@ onMounted(() => {
 }
 
 .description {
-  color: rgba($white, 0.75);
+  color: rgba($accent-sage, 0.7);
   font-size: 0.95rem;
   line-height: 1.5;
   margin: 0;
@@ -1191,10 +1384,10 @@ onMounted(() => {
 
 .category-empty {
   border-radius: 16px;
-  border: 1px dashed rgba($white, 0.25);
+  border: 1px dashed rgba($accent-sage, 0.2);
   padding: $spacing-xl;
   text-align: center;
-  color: rgba($white, 0.7);
+  color: rgba($accent-sage, 0.7);
   font-size: 1rem;
 }
 
@@ -1220,16 +1413,16 @@ onMounted(() => {
   flex-direction: column;
   gap: $spacing-md;
   padding: $spacing-lg;
-  border-radius: 22px;
-  border: 1px solid rgba($white, 0.12);
-  background: rgba($white, 0.06);
-  backdrop-filter: blur(20px);
+  border-radius: 24px;
+  border: 1px solid rgba($accent-sage, 0.12);
+  background: rgba($white, 0.98);
+  box-shadow: 0 20px 52px rgba($accent-sage, 0.12);
   transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
 
   &:hover {
     transform: translateY(-6px);
-    border-color: rgba($accent-gold, 0.4);
-    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.35);
+    border-color: rgba($accent-sage, 0.28);
+    box-shadow: 0 28px 64px rgba($accent-sage, 0.16);
   }
 }
 
@@ -1238,7 +1431,7 @@ onMounted(() => {
   aspect-ratio: 16 / 9;
   border-radius: 18px;
   overflow: hidden;
-  background: rgba($white, 0.08);
+  background: rgba($accent-sage, 0.08);
 
   iframe,
   img {
@@ -1261,22 +1454,24 @@ onMounted(() => {
   align-self: flex-start;
   padding: 0.25rem 0.75rem;
   border-radius: 999px;
-  background: rgba($accent-color, 0.35);
-  color: $white;
+  background: rgba($accent-sage, 0.12);
+  border: 1px solid rgba($accent-sage, 0.18);
+  color: $accent-sage;
   font-size: 0.85rem;
   letter-spacing: 0.08em;
   text-transform: uppercase;
+  font-weight: 600;
 }
 
 .collection-title {
   font-size: 1.4rem;
-  color: $white;
+  color: $accent-sage;
   margin: 0;
   font-weight: 600;
 }
 
 .collection-description {
-  color: rgba($white, 0.78);
+  color: rgba($accent-sage, 0.7);
   margin: 0;
   line-height: 1.6;
   font-size: 1rem;
@@ -1292,39 +1487,40 @@ onMounted(() => {
 
 .collection-count {
   font-size: 0.9rem;
-  color: rgba($white, 0.8);
+  color: rgba($accent-sage, 0.65);
 }
 
 .collection-cta {
   appearance: none;
-  border: 1px solid rgba($accent-gold, 0.6);
-  background: linear-gradient(135deg, rgba($accent-gold, 0.4), rgba($accent-color, 0.35));
-  color: $white;
+  border: 1px solid rgba($accent-sage, 0.22);
+  background: $accent-sage;
+  color: lighten($white, 8%);
   padding: $spacing-xs $spacing-lg;
   border-radius: 999px;
   font-size: 0.95rem;
   font-weight: 600;
   cursor: pointer;
-  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  transition: transform 0.25s ease, box-shadow 0.25s ease, background 0.25s ease;
 
   &:hover,
   &:focus-visible {
     transform: translateY(-2px);
-    box-shadow: 0 12px 28px rgba($accent-gold, 0.35);
+    box-shadow: 0 16px 38px rgba($accent-sage, 0.25);
+    background: darken($accent-sage, 4%);
     outline: none;
   }
 }
 
 .debug-panel {
   padding: $spacing-lg;
-  border-radius: 16px;
-  background: rgba($white, 0.08);
-  border: 1px solid rgba($white, 0.12);
-  backdrop-filter: blur(14px);
-  color: $white;
+  border-radius: 18px;
+  background: rgba($white, 0.95);
+  border: 1px solid rgba($accent-sage, 0.14);
+  color: $accent-sage;
   display: flex;
   flex-direction: column;
   gap: $spacing-md;
+  box-shadow: 0 16px 42px rgba($accent-sage, 0.1);
 }
 
 .debug-header {
@@ -1335,18 +1531,19 @@ onMounted(() => {
 
 .debug-toggle {
   appearance: none;
-  border: 1px solid rgba($white, 0.2);
-  background: rgba($accent-color, 0.4);
-  color: $white;
+  border: 1px solid rgba($accent-sage, 0.2);
+  background: rgba($accent-sage, 0.12);
+  color: $accent-sage;
   padding: $spacing-xs $spacing-sm;
   border-radius: 999px;
   cursor: pointer;
   font-size: 0.85rem;
+  font-weight: 600;
   transition: all 0.2s ease;
 
   &:hover {
-    border-color: rgba($accent-gold, 0.4);
-    background: rgba($accent-gold, 0.35);
+    border-color: rgba($accent-sage, 0.3);
+    background: rgba($accent-sage, 0.18);
   }
 }
 
@@ -1361,8 +1558,8 @@ onMounted(() => {
 .debug-entry {
   padding: $spacing-sm;
   border-radius: 12px;
-  background: rgba($white, 0.06);
-  border: 1px solid rgba($white, 0.08);
+  background: rgba($accent-sage, 0.08);
+  border: 1px solid rgba($accent-sage, 0.12);
 }
 
 .debug-meta {
@@ -1370,12 +1567,12 @@ onMounted(() => {
   justify-content: space-between;
   font-size: 0.85rem;
   margin-bottom: $spacing-xs;
-  color: rgba($white, 0.75);
+  color: rgba($accent-sage, 0.7);
 }
 
 .debug-body {
   font-size: 0.8rem;
-  background: rgba(0, 0, 0, 0.35);
+  background: rgba($accent-sage, 0.08);
   border-radius: 8px;
   padding: $spacing-xs;
   max-height: 200px;
@@ -1393,7 +1590,7 @@ onMounted(() => {
 
 .debug-summary {
   font-size: 0.85rem;
-  color: rgba($white, 0.8);
+  color: rgba($accent-sage, 0.7);
 }
 
 @media (max-width: $breakpoint-lg) {
@@ -1412,11 +1609,11 @@ onMounted(() => {
 }
 
 @media (max-width: $breakpoint-md) {
-  .shopify-product-grid {
-    margin-top: $spacing-xl;
+  .product-experience {
     gap: $spacing-xl;
   }
 
+  .all-products-section,
   .category-section,
   .collection-section {
     padding: $spacing-xl $spacing-lg;
@@ -1425,6 +1622,10 @@ onMounted(() => {
   .product-grid {
     grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
     gap: $spacing-lg;
+  }
+
+  .all-products-grid {
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
   }
 
   .product-image {
@@ -1441,9 +1642,18 @@ onMounted(() => {
     grid-template-columns: 1fr;
   }
 
+  .all-products-section,
   .category-section,
   .collection-section {
     padding: $spacing-lg;
+  }
+
+  .all-products-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .collection-card {
+    padding: $spacing-md;
   }
 }
 </style>

@@ -1,253 +1,217 @@
 <template>
   <section class="shop-section" id="shop">
-    <div class="container">
-      <div class="section-header">
-        <h2 class="section-title">Shop Beauty by Vivarium</h2>
-        <p class="section-subtitle">Discover premium beauty and wellness products</p>
-        <div class="featured-brand">
-          <span class="featured-label">Featuring</span>
-          <div class="featured-content">
-            <a
-              href="https://davinespro.com/collections/we-sustain-beauty"
-              target="_blank"
-              rel="noopener noreferrer"
-              class="featured-cta"
-            >
-              <span class="brand-mark">
-              <img src="//us.davines.com/cdn/shop/t/6/assets/davines-svg-logo_mobile.svg?v=143346469123084526961564744212" alt="Davines Pro" />
-            </span>
-            <div class="davines-copy"><i>We Sustain</i> Beauty Collection</div>
-            </a>
-          </div>
+    <div class="shop-section__shell">
+      <div class="shop-section__intro">
+        <span class="shop-section__eyebrow">Shop Vivarium</span>
+        <h2 class="shop-section__title">Curated haircare and rituals for everyday vitality</h2>
+        <p class="shop-section__subtitle">
+          Explore salon-favorite essentials, mindful treatments, and grooming staples selected to extend the Vivarium
+          experience between visits.
+        </p>
+        <div class="shop-section__actions">
+          <button
+            type="button"
+            class="shop-section__cta shop-section__cta--primary"
+            @click="setView('all')"
+          >
+            Shop all products
+          </button>
+          <button
+            type="button"
+            class="shop-section__cta shop-section__cta--ghost"
+            @click="setView('categories')"
+          >
+            Browse categories
+          </button>
         </div>
       </div>
 
-      <div class="shop-content">
-        <ShopifyProductGrid :debug="true">
-          <template #empty>
-            <div class="shop-message">
-              <div class="icon">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
-                </svg>
-              </div>
-              <h3>Coming Soon</h3>
-              <p>Our exclusive product collection will be available soon. Stay tuned for premium hair care, beauty products, and wellness essentials.</p>
-              <div class="features">
-                <div class="feature-item">
-                  <span class="check-icon">✓</span>
-                  <span>Professional-grade products</span>
-                </div>
-                <div class="feature-item">
-                  <span class="check-icon">✓</span>
-                  <span>Exclusive salon brands</span>
-                </div>
-                <div class="feature-item">
-                  <span class="check-icon">✓</span>
-                  <span>Personalized recommendations</span>
-                </div>
-              </div>
-            </div>
-          </template>
-        </ShopifyProductGrid>
+      <div class="shop-section__content">
+        <ShopifyProductGrid :view-mode="activeView" />
       </div>
     </div>
   </section>
 </template>
 
 <script setup lang="ts">
-// no-op: component relies on ShopifyProductGrid for dynamic content
+import { nextTick, ref } from 'vue'
+
+type ShopView = 'categories' | 'all'
+
+const activeView = ref<ShopView>('categories')
+
+const scrollToView = (view: ShopView) => {
+  if (typeof window === 'undefined') {
+    return
+  }
+
+  const targetId = view === 'all' ? 'all-products-heading' : 'category-browser-heading'
+
+  nextTick(() => {
+    const target = document.getElementById(targetId)
+    if (target) {
+      target.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    }
+  })
+}
+
+const setView = (view: ShopView) => {
+  if (activeView.value === view) {
+    scrollToView(view)
+    return
+  }
+
+  activeView.value = view
+  scrollToView(view)
+}
 </script>
 
 <style scoped lang="scss">
 @use '@/assets/scss/variables.scss' as *;
 
 .shop-section {
-  padding: $spacing-xl * .5 $spacing-lg * .5 $spacing-xl * .5;
   position: relative;
-  background: linear-gradient(180deg, transparent 0%, rgba(0, 0, 0, 0.3) 100%);
+  padding: $spacing-xl * 1.5 $spacing-lg;
+  background: linear-gradient(180deg, lighten($white, 4%) 0%, $white 60%, lighten($white, 2%) 100%);
 }
 
-.container {
-  max-width: 1200px;
+.shop-section__shell {
+  max-width: 1160px;
   margin: 0 auto;
-}
-
-.section-header {
-  text-align: center;
-  margin-bottom: $spacing-xl;
-}
-
-.section-title {
-  font-size: clamp(2rem, 4vw, 2.8rem);
-  color: $white;
-  font-weight: 700;
-  line-height: 1.2;
-}
-
-.section-subtitle {
-  font-size: clamp(1.5rem, 1.8vw, 1.8rem);
-  color: rgba($white, 0.8);
-  line-height: 1.4;
-}
-
-.featured-brand {
   display: flex;
   flex-direction: column;
-  align-items: center;
+  gap: $spacing-xl * 1.5;
+}
+
+.shop-section__intro {
+  text-align: center;
+  display: grid;
   gap: $spacing-sm;
-  margin-top: $spacing-lg;
+  justify-items: center;
 }
 
-.featured-label {
-  text-transform: uppercase;
-  letter-spacing: 0.25rem;
-  font-size: 1rem;
-  color: rgba($white, 0.6);
-}
-
-.featured-content {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: center;
-  gap: $spacing-md;
-}
-
-.brand-mark {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: $spacing-sm * .5;
-  border-radius: 999px;
-  backdrop-filter: blur(15px);
-}
-
-.brand-mark img {
-  height: 28px;
-  width: auto;
-  filter: invert(1);
-}
-.davines-copy {
-  color: $white;
-/* Min: 1.5rem | Ideal: 4% of screen width | Max: 3rem */
-  font-size: clamp(1rem, 4vw, 1.5rem);  font-weight: 600;
-  margin-top: 4px;
-  opacity: 0.95;
-}
-
-.featured-cta {
+.shop-section__eyebrow {
   display: inline-flex;
   align-items: center;
-  gap: $spacing-sm;
-  padding: $spacing-xs $spacing-lg;
+  gap: $spacing-xs;
+  padding: $spacing-xs $spacing-sm;
   border-radius: 999px;
-  border: 1px solid rgba($accent-gold, 0.6);
-  color: $white;
+  background: rgba($accent-sage, 0.12);
+  color: $accent-sage;
+  font-size: 0.85rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.shop-section__title {
+  font-size: clamp(2.25rem, 4vw, 3rem);
+  color: $accent-sage;
   font-weight: 600;
-  font-size: 1.2rem;
-  text-decoration: none;
-  transition: all 0.3s ease;
-  background: linear-gradient(135deg, rgba($accent-gold, 0.4) 0%, rgba($accent-color, 0.35) 100%);
-  box-shadow: 0 6px 18px rgba($accent-gold, 0.25);
-
-  &:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 10px 24px rgba($accent-gold, 0.4);
-  }
+  line-height: 1.15;
+  margin: 0;
 }
 
-.shop-content {
+.shop-section__subtitle {
+  max-width: 52ch;
+  font-size: clamp(1.05rem, 2vw, 1.25rem);
+  color: rgba($accent-sage, 0.75);
+  line-height: 1.6;
+  margin: 0;
+}
+
+.shop-section__actions {
   display: flex;
-  flex-direction: column;
-  gap: $spacing-xl * 2;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: $spacing-sm;
+  margin-top: $spacing-md;
 }
 
-.shop-message {
-  background: rgba($white, 0.05);
-  backdrop-filter: blur(20px);
-  border: 1px solid rgba($white, 0.1);
-  border-radius: 20px;
-  padding: $spacing-xl;
-  text-align: center;
-  
-  .icon {
-    width: 80px;
-    height: 80px;
-    margin: 0 auto $spacing-xl;
-    background: linear-gradient(135deg, $primary-color 0%, darken($primary-color, 5%) 100%);
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    
-    svg {
-      width: 40px;
-      height: 40px;
-      color: $white;
+.shop-section__cta {
+  appearance: none;
+  border: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: $spacing-xs;
+  padding: ($spacing-sm + 0.1rem) ($spacing-lg + 0.25rem);
+  border-radius: 999px;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.95rem;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease, color 0.2s ease;
+  cursor: pointer;
+
+  &--primary {
+    background: $accent-sage;
+    color: lighten($white, 8%);
+    box-shadow: 0 12px 30px rgba($accent-sage, 0.18);
+    border: 1px solid rgba($accent-sage, 0.2);
+
+    &:hover,
+    &:focus-visible {
+      transform: translateY(-2px);
+      box-shadow: 0 16px 36px rgba($accent-sage, 0.22);
+      color: lighten($white, 12%);
     }
   }
-  
-  h3 {
-    font-size: 2rem;
-    color: $white;
-    margin-bottom: $spacing-md;
-  }
-  
-  p {
-    font-size: 1.1rem;
-    color: rgba($white, 0.8);
-    margin-bottom: $spacing-xl;
-    max-width: 600px;
-    margin-left: auto;
-    margin-right: auto;
+
+  &--ghost {
+    background: rgba($accent-sage, 0.1);
+    color: $accent-sage;
+    border: 1px solid rgba($accent-sage, 0.18);
+
+    &:hover,
+    &:focus-visible {
+      transform: translateY(-2px);
+      background: rgba($accent-sage, 0.16);
+    }
   }
 }
 
-.features {
-  display: flex;
-  flex-direction: column;
-  gap: $spacing-md;
-  max-width: 500px;
-  margin: $spacing-xl auto 0;
+.shop-section__content {
+  background: rgba($white, 0.92);
+  border-radius: 28px;
+  border: 1px solid rgba($accent-sage, 0.1);
+  padding: $spacing-xl;
+  box-shadow: 0 30px 70px rgba($accent-sage, 0.12);
 }
 
-.feature-item {
-  display: flex;
-  align-items: center;
-  gap: $spacing-md;
-  font-size: 1.1rem;
-  color: rgba($white, 0.9);
-  
-  .check-icon {
-    width: 24px;
-    height: 24px;
-    background: linear-gradient(135deg, $accent-color 0%, darken($accent-color, 5%) 100%);
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: bold;
-    flex-shrink: 0;
+.shop-section__content :deep(.shopify-product-grid) {
+  margin-top: 0;
+}
+
+@media (max-width: $breakpoint-lg) {
+  .shop-section {
+    padding: $spacing-xl $spacing-md;
+  }
+
+  .shop-section__content {
+    padding: $spacing-lg;
   }
 }
 
 @media (max-width: $breakpoint-md) {
+  .shop-section__title {
+    font-size: clamp(2rem, 6vw, 2.5rem);
+  }
+
+  .shop-section__content {
+    padding: $spacing-lg;
+  }
+}
+
+@media (max-width: $breakpoint-sm) {
   .shop-section {
-    padding: $spacing-xl * .5 $spacing-md * .5;
+    padding: $spacing-xl $spacing-sm;
   }
 
-  .featured-brand {
-    gap: $spacing-xs;
+  .shop-section__content {
+    padding: $spacing-md;
   }
 
-  .featured-label {
-    letter-spacing: 0.18rem;
+  .shop-section__actions {
+    flex-direction: column;
   }
-  
-  .featured-content {
-    gap: $spacing-sm;
-  }
-  
 }
 </style>
