@@ -1,6 +1,36 @@
 export const useShopify = () => {
   const config = useRuntimeConfig()
 
+  const parseMetafieldDescriptor = (descriptor?: string | null) => {
+    if (!descriptor) {
+      return null
+    }
+    const parts = descriptor.split('.')
+    if (parts.length < 2) {
+      return null
+    }
+    const namespace = parts.shift()?.trim() || ''
+    const key = parts.join('.').trim()
+    if (!namespace || !key) {
+      return null
+    }
+    const isValid = /^[A-Za-z0-9_.-]+$/.test(namespace) && /^[A-Za-z0-9_.-]+$/.test(key)
+    return isValid ? { namespace, key } : null
+  }
+
+  const categoryMetafield = parseMetafieldDescriptor(
+    config.public.shopifyProductCategoryMetafield,
+  )
+
+  const categoryMetafieldSelection = categoryMetafield
+    ? `
+              categoryMetafield: metafield(namespace: ${JSON.stringify(categoryMetafield.namespace)}, key: ${JSON.stringify(categoryMetafield.key)}) {
+                value
+                type
+              }
+            `
+    : ''
+
   type FetchProductsOptions = {
     first?: number
     after?: string | null
@@ -17,6 +47,8 @@ export const useShopify = () => {
               title
               handle
               description
+              productType
+              tags
               priceRange {
                 minVariantPrice {
                   amount
@@ -31,6 +63,7 @@ export const useShopify = () => {
                   }
                 }
               }
+              ${categoryMetafieldSelection}
               variants(first: 1) {
                 edges {
                   node {

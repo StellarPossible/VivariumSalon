@@ -14,7 +14,7 @@
               class="featured-cta"
             >
               <span class="brand-mark">
-              <img src="" alt="Davines Pro" />
+              <img src="//us.davines.com/cdn/shop/t/6/assets/davines-svg-logo_mobile.svg?v=143346469123084526961564744212" alt="Davines Pro" />
             </span>
             <div class="davines-copy"><i>We Sustain</i> Beauty Collection</div>
             </a>
@@ -22,23 +22,8 @@
         </div>
       </div>
 
-      <div class="category-gallery" role="list">
-        <a
-          v-for="category in categoryLinks"
-          :key="category.name"
-          class="category-card"
-          :href="category.href"
-          target="_blank"
-          rel="noopener noreferrer"
-          role="listitem"
-        >
-          <span class="category-name">{{ category.name }}</span>
-          <span class="category-arrow" aria-hidden="true">→</span>
-        </a>
-      </div>
-
       <div class="shop-content">
-        <ShopifyProductGrid>
+        <ShopifyProductGrid :debug="true">
           <template #empty>
             <div class="shop-message">
               <div class="icon">
@@ -71,25 +56,7 @@
 </template>
 
 <script setup lang="ts">
-const categoryNames = [
-  'Alchemic System',
-  'Authentic',
-  'Essential Haircare',
-  'Essential Haircare Shampoo Bars',
-  'Hair Refresher',
-  'Heart of Glass',
-  'Liquid Spell',
-  'Naturaltech',
-  'Pasta & Love',
-  'OI',
-  'SU',
-  'The Circle Chronicles',
-];
-
-const categoryLinks = categoryNames.map((name) => ({
-  name,
-  href: `https://davinespro.com/search?q=${encodeURIComponent(name)}`,
-}));
+// no-op: component relies on ShopifyProductGrid for dynamic content
 </script>
 
 <style scoped lang="scss">
@@ -265,65 +232,6 @@ const categoryLinks = categoryNames.map((name) => ({
   }
 }
 
-.category-gallery {
-  display: flex;
-  gap: $spacing-lg;
-  overflow-x: auto;
-  padding: $spacing-md 0;
-  margin: 0 calc(-1 * $spacing-md);
-  scroll-snap-type: x mandatory;
-  padding-inline: $spacing-md;
-
-  &::-webkit-scrollbar {
-    height: 6px;
-  }
-
-  &::-webkit-scrollbar-track {
-    background: rgba($white, 0.08);
-    border-radius: 999px;
-  }
-
-  &::-webkit-scrollbar-thumb {
-    background: rgba($accent-gold, 0.6);
-    border-radius: 999px;
-  }
-}
-
-.category-card {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  min-width: 220px;
-  padding: $spacing-lg;
-  border-radius: 18px;
-  text-decoration: none;
-  color: $white;
-  background: linear-gradient(145deg, rgba($accent-color, 0.4) 0%, rgba($primary-color, 0.3) 100%);
-  border: 1px solid rgba($white, 0.12);
-  backdrop-filter: blur(16px);
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.25);
-  transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
-  scroll-snap-align: center;
-
-  &:hover {
-    transform: translateY(-6px);
-    box-shadow: 0 25px 45px rgba(0, 0, 0, 0.35);
-    border-color: rgba($white, 0.3);
-  }
-}
-
-.category-name {
-  font-size: 1.4rem;
-  font-weight: 600;
-  line-height: 1.3;
-}
-
-.category-arrow {
-  margin-top: $spacing-lg;
-  font-size: 1.8rem;
-  opacity: 0.7;
-}
-
 @media (max-width: $breakpoint-md) {
   .shop-section {
     padding: $spacing-xl * .5 $spacing-md * .5;
@@ -341,14 +249,5 @@ const categoryLinks = categoryNames.map((name) => ({
     gap: $spacing-sm;
   }
   
-  .category-gallery {
-    margin: 0;
-    padding-inline: 0;
-  }
-  
-  .category-card {
-    min-width: 180px;
-    padding: $spacing-md;
-  }
 }
 </style>

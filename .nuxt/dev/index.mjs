@@ -690,7 +690,8 @@ const _inlineRuntimeConfig = {
     "useJWT": "true",
     "shopifyStoreDomain": "vivarium-8261.myshopify.com",
     "shopifyStorefrontToken": "a94e519294dcce81055ce45df5d4900d",
-    "shopifyApiVersion": "2024-01"
+    "shopifyApiVersion": "2024-01",
+    "shopifyProductCategoryMetafield": "custom.category"
   },
   "wpAppPassword": "JZfIpaBuNwSmPUnS8qHLfyLc",
   "jwtSecret": "eRez4BHeVisaN2hmxhqwR+PAdJKSHpIdMRvAQEo/CuU=",
@@ -1891,6 +1892,70 @@ const products_get = defineEventHandler(async () => {
   var _a;
   const config = useRuntimeConfig();
   const storeDomain = (_a = config.public.shopifyStoreDomain) == null ? void 0 : _a.replace(/^https?:\/\//, "");
+  const parseMetafieldDescriptor = (descriptor) => {
+    var _a2;
+    if (!descriptor) {
+      return null;
+    }
+    const parts = descriptor.split(".");
+    if (parts.length < 2) {
+      return null;
+    }
+    const namespace = ((_a2 = parts.shift()) == null ? void 0 : _a2.trim()) || "";
+    const key = parts.join(".").trim();
+    if (!namespace || !key) {
+      return null;
+    }
+    const isValid = /^[A-Za-z0-9_.-]+$/.test(namespace) && /^[A-Za-z0-9_.-]+$/.test(key);
+    return isValid ? { namespace, key } : null;
+  };
+  const categoryMetafield = parseMetafieldDescriptor(
+    config.public.shopifyProductCategoryMetafield
+  );
+  const categoryMetafieldSelection = categoryMetafield ? `
+            categoryMetafield: metafield(namespace: ${JSON.stringify(categoryMetafield.namespace)}, key: ${JSON.stringify(categoryMetafield.key)}) {
+              value
+              type
+            }
+          ` : "";
+  const extractMetafieldValues = (metafield) => {
+    if (!(metafield == null ? void 0 : metafield.value)) {
+      return [];
+    }
+    const rawValue = metafield.value.trim();
+    if (!rawValue) {
+      return [];
+    }
+    const type = metafield.type || "";
+    const parseJson = () => {
+      try {
+        const parsed = JSON.parse(rawValue);
+        if (Array.isArray(parsed)) {
+          return parsed.map((item) => typeof item === "string" ? item : String(item)).filter((item) => item.trim().length);
+        }
+        if (parsed && typeof parsed === "object") {
+          return Object.values(parsed).map((item) => typeof item === "string" ? item : String(item)).filter((item) => item.trim().length);
+        }
+        if (parsed !== null && parsed !== void 0) {
+          return [String(parsed)];
+        }
+      } catch (error) {
+        return [];
+      }
+      return [];
+    };
+    if (type.startsWith("list.") || type === "json") {
+      const parsed = parseJson();
+      if (parsed.length) {
+        return parsed;
+      }
+    }
+    if (type === "number_integer" || type === "number_decimal") {
+      return [rawValue];
+    }
+    const segments = rawValue.split(",").map((item) => item.trim()).filter((item) => item.length);
+    return segments.length ? segments : [rawValue];
+  };
   if (!storeDomain || !config.public.shopifyStorefrontToken) {
     console.error("Shopify credentials not configured");
     throw createError({
@@ -1907,6 +1972,8 @@ const products_get = defineEventHandler(async () => {
             title
             description
             handle
+            productType
+            tags
             priceRange {
               minVariantPrice {
                 amount
@@ -1921,6 +1988,7 @@ const products_get = defineEventHandler(async () => {
                 }
               }
             }
+            ${categoryMetafieldSelection}
             variants(first: 1) {
               edges {
                 node {
@@ -1974,18 +2042,28 @@ const products_get = defineEventHandler(async () => {
     }
     console.log(`Successfully fetched ${data.data.products.edges.length} products`);
     const products = data.data.products.edges.map((edge) => {
-      var _a2, _b, _c, _d;
+      var _a2, _b, _c, _d, _e;
+      const categoryMetafieldValues = extractMetafieldValues(
+        (_a2 = edge.node.categoryMetafield) != null ? _a2 : null
+      );
       return {
         id: edge.node.id,
         title: edge.node.title,
         description: edge.node.description,
         handle: edge.node.handle,
+        productType: edge.node.productType,
+        tags: edge.node.tags || [],
         price: edge.node.priceRange.minVariantPrice.amount,
         currency: edge.node.priceRange.minVariantPrice.currencyCode,
-        image: ((_a2 = edge.node.images.edges[0]) == null ? void 0 : _a2.node.url) || null,
-        imageAlt: ((_b = edge.node.images.edges[0]) == null ? void 0 : _b.node.altText) || edge.node.title,
-        available: ((_c = edge.node.variants.edges[0]) == null ? void 0 : _c.node.availableForSale) || false,
-        variantId: (_d = edge.node.variants.edges[0]) == null ? void 0 : _d.node.id
+        image: ((_b = edge.node.images.edges[0]) == null ? void 0 : _b.node.url) || null,
+        imageAlt: ((_c = edge.node.images.edges[0]) == null ? void 0 : _c.node.altText) || edge.node.title,
+        available: ((_d = edge.node.variants.edges[0]) == null ? void 0 : _d.node.availableForSale) || false,
+        variantId: (_e = edge.node.variants.edges[0]) == null ? void 0 : _e.node.id,
+        categoryMetafield: edge.node.categoryMetafield ? {
+          value: edge.node.categoryMetafield.value,
+          type: edge.node.categoryMetafield.type
+        } : null,
+        categories: categoryMetafieldValues
       };
     });
     return {
