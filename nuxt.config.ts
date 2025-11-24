@@ -85,7 +85,9 @@ export default defineNuxtConfig({
       // Shopify configuration
       shopifyStoreDomain: process.env.SHOPIFY_STORE_DOMAIN || '',
       shopifyStorefrontToken: process.env.SHOPIFY_STOREFRONT_ACCESS_TOKEN || '',
-      shopifyApiVersion: process.env.SHOPIFY_API_VERSION || '2024-01'
+      shopifyApiVersion: process.env.SHOPIFY_API_VERSION || '2024-01',
+      shopifyProductCategoryMetafield:
+        process.env.SHOPIFY_PRODUCT_CATEGORY_METAFIELD || 'custom.category'
     },
 
     // Email/private server-side config

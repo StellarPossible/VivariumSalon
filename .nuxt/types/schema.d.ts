@@ -123,6 +123,8 @@ declare module 'nuxt/schema' {
    shopifyStorefrontToken: string,
 
    shopifyApiVersion: string,
+
+   shopifyProductCategoryMetafield: string,
   }
 }
 declare module 'vue' {
