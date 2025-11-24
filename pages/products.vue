@@ -4,7 +4,7 @@
       <div class="container">
         <div class="section-header">
           <h2 class="section-title">Shop Our Collection</h2>
-          <p class="section-subtitle">Discover premium beauty and wellness products</p>
+          <p class="section-subtitle">Discover Premium Beauty & Wellness Products</p>
         </div>
 
         <ShopifyProductGrid />

@@ -3,16 +3,15 @@
 		<div class="about-section__layout">
 			<figure class="about-section__media">
 				<img src="/images/site_images/monstera.jpg" alt="Monstera leaf arrangement at Vivarium Salon" />
-			</figure>
-			<div class="about-section__content">
-				<header class="about-section__header">
+				<figcaption class="about-section__definition-card">
 					<p class="about-section__definition">
 						<span class="about-section__definition-term">Vivarium</span>
 						stems from the Latin <em>vivere</em>, "to live." Traditionally, it describes a carefully tended
 						environment where life is nurtured, observed, and allowed to flourish.
 					</p>
-				</header>
-
+				</figcaption>
+			</figure>
+			<div class="about-section__content">
 				<div class="about-section__philosophy">
 					<h3 class="about-section__subtitle">Our Philosophy</h3>
 					<p>
@@ -49,7 +48,7 @@
 	margin: 0 auto;
 	max-width: 1040px;
 	display: flex;
-	align-items: flex-start;
+	align-items: center;
 	gap: 2.5rem;
 }
 
@@ -57,6 +56,8 @@
 	flex: 0 0 320px;
 	max-width: 320px;
 	margin: 0;
+	position: relative;
+	overflow: visible;
 }
 
 .about-section__media img {
@@ -67,17 +68,27 @@
 	box-shadow: 0 18px 35px rgba(53, 54, 55, 0.25);
 }
 
+.about-section__definition-card {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	width: min(85%, 360px);
+	padding: 1.75rem 2rem;
+	background: rgba(248, 246, 241, 0.7);
+	border-radius: 18px;
+	box-shadow: 0 20px 40px rgba(53, 54, 55, 0.3);
+	backdrop-filter: blur(6px);
+	color: #2f3d33;
+	border: 1px solid rgba(68, 83, 71, 0.12);
+	z-index: 1;
+}
+
 .about-section__content {
 	display: flex;
 	flex-direction: column;
 	gap: 2.5rem;
 	flex: 1;
-}
-
-.about-section__header {
-	display: flex;
-	flex-direction: column;
-	gap: 1rem;
 }
 
 .about-section__title {
@@ -88,15 +99,17 @@
 }
 
 .about-section__definition {
-	font-size: 1.5rem;
-	line-height: 1.1;
+	font-size: 1.45rem;
+	line-height: 1.3;
 	max-width: 52ch;
 	color: #445347;
+	text-align: center;
+	margin: 0;
 }
 
 .about-section__definition-term {
 	font-weight: 600;
-  font-size: 2.5rem;
+	font-size: 2.5rem;
 }
 
 .about-section__subtitle {
@@ -130,12 +143,33 @@
 		width: 100%;
 	}
 
+	.about-section__definition-card {
+		width: min(90%, 320px);
+	}
+
 	.about-section__title {
 		font-size: 2rem;
 	}
 
 	.about-section__subtitle {
 		font-size: 1.5rem;
+	}
+}
+
+@media (max-width: 600px) {
+	.about-section__definition-card {
+		padding: 1.5rem 1.75rem;
+	}
+
+	.about-section__definition {
+		font-size: 1.3rem;
+	}
+}
+
+@media (max-width: 480px) {
+	
+	.about-section__definition {
+		font-size: 1.2rem;
 	}
 }
 </style>
