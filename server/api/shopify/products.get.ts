@@ -109,6 +109,10 @@ export default defineEventHandler(async () => {
                 amount
                 currencyCode
               }
+              maxVariantPrice {
+                amount
+                currencyCode
+              }
             }
             images(first: 1) {
               edges {

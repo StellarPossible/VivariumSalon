@@ -19,9 +19,9 @@
           <button
             type="button"
             class="shop-section__cta shop-section__cta--ghost"
-            @click="setView('categories')"
+            @click="setView('collections')"
           >
-            Browse categories
+            Browse collections
           </button>
         </div>
       </div>
@@ -36,16 +36,16 @@
 <script setup lang="ts">
 import { nextTick, ref } from 'vue'
 
-type ShopView = 'categories' | 'all'
+type ShopView = 'collections' | 'all'
 
-const activeView = ref<ShopView>('categories')
+const activeView = ref<ShopView>('collections')
 
 const scrollToView = (view: ShopView) => {
   if (typeof window === 'undefined') {
     return
   }
 
-  const targetId = view === 'all' ? 'all-products-heading' : 'category-browser-heading'
+  const targetId = view === 'all' ? 'all-products-heading' : 'collection-browser-heading'
 
   nextTick(() => {
     const target = document.getElementById(targetId)

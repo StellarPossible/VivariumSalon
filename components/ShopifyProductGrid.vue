@@ -46,7 +46,7 @@
                   </template>
                 </div>
                 <div class="product-info">
-                  <span class="product-category-pill">{{ resolveCategoryForProduct(product) }}</span>
+                  <span class="product-collection-pill">{{ resolveCategoryForProduct(product) }}</span>
                   <h4 class="product-title">{{ product.node.title }}</h4>
                   <p class="price">
                     {{
@@ -64,19 +64,19 @@
             </article>
           </div>
         </section>
-        <div v-else key="category-view" class="category-view">
+        <div v-else key="collection-view" class="category-view">
           <section
             ref="categorySectionRef"
             class="category-section"
-            aria-labelledby="category-browser-heading"
+            aria-labelledby="collection-browser-heading"
           >
             <header class="section-head">
               <span class="section-kicker">Curated edits</span>
-              <h3 id="category-browser-heading">Shop by Category</h3>
+              <h3 id="collection-browser-heading">Shop by Collection</h3>
               <p class="section-description">Select a ritual to explore salon-trusted essentials.</p>
             </header>
             <div class="category-display">
-              <nav class="category-selector" aria-label="Product categories">
+              <nav class="category-selector" aria-label="Product collections">
                 <button
                   v-for="group in categorizedProducts"
                   :key="group.category"
@@ -90,10 +90,27 @@
                   @click="selectCategory(group.category)"
                 >
                   <span class="chip-label">{{ group.category }}</span>
-                  <span class="chip-tagline">
+                  <span
+                    v-if="categoryDetailLookup[group.category]?.tagline"
+                    class="chip-tagline"
+                  >
                     {{ categoryDetailLookup[group.category]?.tagline }}
                   </span>
-                  <span class="chip-count">{{ formatItemCount(group.products.length) }}</span>
+                  <span v-if="group.highlight" class="chip-highlight" aria-live="polite">
+                    <span class="chip-highlight-media" aria-hidden="true">
+                      <img
+                        v-if="group.highlight.product.node.images.edges.length"
+                        :src="group.highlight.product.node.images.edges[0].node.url"
+                        :alt="group.highlight.product.node.images.edges[0].node.altText || group.highlight.product.node.title"
+                      />
+                      <span v-else class="chip-highlight-placeholder">
+                        {{ group.highlight.product.node.title.charAt(0) }}
+                      </span>
+                    </span>
+                    <span class="chip-highlight-product">
+                      {{ group.highlight.product.node.title }}
+                    </span>
+                  </span>
                 </button>
               </nav>
               <Transition name="category-fade" mode="out-in">
@@ -113,7 +130,7 @@
                       </p>
                     </div>
                     <span class="category-total">
-                      {{ formatItemCount(activeProducts.length) }}
+                        {{ activeProducts.length === 1 ? '1 product' : `${activeProducts.length} products` }}
                     </span>
                   </header>
                   <div v-if="activeProducts.length" class="product-grid" role="list">
@@ -197,7 +214,7 @@
                   <p class="collection-description">{{ collection.description }}</p>
                   <div class="collection-meta">
                     <span class="collection-count">
-                      {{ formatItemCount(collection.productCount) }}
+                      {{ collection.productCount === 1 ? '1 product' : `${collection.productCount} products` }}
                     </span>
                     <button
                       type="button"
@@ -217,7 +234,7 @@
     <div v-if="debugEnabled" class="debug-panel">
       <div class="debug-header">
         <span class="debug-summary">
-          Debug: {{ products.length }} products • {{ categorizedProducts.length }} categories • {{ debugLogs.length }} fetches
+          Debug: {{ products.length }} products • {{ categorizedProducts.length }} collections • {{ debugLogs.length }} fetches
         </span>
         <button class="debug-toggle" type="button" @click="showDebug = !showDebug">
           {{ showDebug ? 'Hide Debug' : 'Show Debug' }}
@@ -285,6 +302,10 @@ type ProductEdge = {
         amount: string
         currencyCode: string
       }
+      maxVariantPrice?: {
+        amount: string
+        currencyCode: string
+      }
     }
     images: {
       edges: ProductImageEdge[]
@@ -310,9 +331,9 @@ const props = defineProps({
     default: false,
   },
   viewMode: {
-    type: String as PropType<'categories' | 'all'>,
-    default: 'categories',
-    validator: (value: string) => ['categories', 'all'].includes(value),
+    type: String as PropType<'collections' | 'all'>,
+    default: 'collections',
+    validator: (value: string) => ['collections', 'all'].includes(value),
   },
 })
 
@@ -325,9 +346,16 @@ const showDebug = ref(false)
 const activeCategory = ref<string | null>(null)
 const categorySectionRef = ref<HTMLElement | null>(null)
 
+type CollectionHighlight = {
+  product: ProductEdge
+  amount: string
+  currency: string
+}
+
 type CategorizedProductGroup = {
   category: string
   products: ProductEdge[]
+  highlight: CollectionHighlight | null
 }
 
 type DebugLogEntry = {
@@ -389,6 +417,7 @@ const categoryOrder = [
   'Essential Haircare',
   'Naturaltech',
   'OI',
+  'More Inside',
   'Heart of Glass',
   'Pasta & Love',
   'Alchemic System',
@@ -421,6 +450,12 @@ const categoryDetailLookup: Record<string, CategoryDetail> = {
     tagline: 'Iconic Shine Ritual',
     description:
       'Multi-tasking favorites that deliver instant gloss, softness, and signature fragrance.',
+  },
+  'More Inside': {
+    title: 'More Inside',
+    tagline: 'Styling Storytellers',
+    description:
+      'High-performance styling formulas that sculpt, define, and finish every look with touchable texture.',
   },
   'Heart of Glass': {
     title: 'Heart of Glass',
@@ -502,6 +537,11 @@ const categoryRules: CategoryRule[] = [
     label: 'Pasta & Love',
     match: (handle) => handle.includes('pasta') || handle.startsWith('pasta-love'),
   },
+  {
+    label: 'More Inside',
+    match: (handle) =>
+      handle.includes('more-inside') || handle.startsWith('moreinside') || handle.includes('moreinside-'),
+  },
   { label: 'OI', match: (handle) => handle.startsWith('oi') || handle.includes('oi-') },
   {
     label: 'Essential Haircare',
@@ -543,6 +583,45 @@ const deriveCategoryFromHandle = (handle: string) => {
   }
 
   return 'Essential Haircare'
+}
+
+const parsePriceAmount = (amount: string | null | undefined) => {
+  if (!amount) {
+    return null
+  }
+
+  const numeric = Number.parseFloat(amount)
+  return Number.isFinite(numeric) ? numeric : null
+}
+
+type ProductPriceDetails = {
+  amount: string
+  currency: string
+  numeric: number
+}
+
+const getProductMaxPrice = (edge: ProductEdge): ProductPriceDetails | null => {
+  const range = edge.node.priceRange
+  if (!range) {
+    return null
+  }
+
+  const maxNode = range.maxVariantPrice ?? null
+  const minNode = range.minVariantPrice ?? null
+
+  const amount = maxNode?.amount ?? minNode?.amount ?? null
+  const currency = maxNode?.currencyCode ?? minNode?.currencyCode ?? null
+
+  if (!amount || !currency) {
+    return null
+  }
+
+  const numeric = parsePriceAmount(amount)
+  if (numeric === null) {
+    return null
+  }
+
+  return { amount, currency, numeric }
 }
 
 const parseMetafieldValues = (metafield: ProductCategoryMetafield): string[] => {
@@ -676,7 +755,7 @@ const getCategoryFromTags = (edge: ProductEdge) => {
     }
 
     candidates.push(cleaned)
-  })
+})
 
   if (!candidates.length) {
     return null
@@ -730,16 +809,56 @@ const categorizedProducts = computed<CategorizedProductGroup[]>(() => {
   })
 
   return Array.from(groups.entries())
-    .map(([category, items]) => ({
-      category,
-      products: [...items].sort((a, b) =>
+    .map(([category, items]) => {
+      const sortedProducts = [...items].sort((a, b) =>
         a.node.title.localeCompare(b.node.title, 'en', { sensitivity: 'base' })
-      ),
-    }))
+      )
+
+      const highlightCandidate = items.reduce<
+        (CollectionHighlight & { numeric: number }) | null
+      >((selected, edge) => {
+        const priceDetails = getProductMaxPrice(edge)
+        if (!priceDetails) {
+          return selected
+        }
+
+        if (!selected || priceDetails.numeric > selected.numeric) {
+          return {
+            product: edge,
+            amount: priceDetails.amount,
+            currency: priceDetails.currency,
+            numeric: priceDetails.numeric,
+          }
+        }
+
+        return selected
+      }, null)
+
+      return {
+        category,
+        products: sortedProducts,
+        highlight: highlightCandidate
+          ? {
+              product: highlightCandidate.product,
+              amount: highlightCandidate.amount,
+              currency: highlightCandidate.currency,
+            }
+          : null,
+      }
+    })
     .filter((group) => categoryDetailLookup[group.category])
     .sort((a, b) => {
       const aIndex = categoryOrder.indexOf(a.category)
       const bIndex = categoryOrder.indexOf(b.category)
+      if (aIndex === -1 && bIndex === -1) {
+        return a.category.localeCompare(b.category, 'en', { sensitivity: 'base' })
+      }
+      if (aIndex === -1) {
+        return 1
+      }
+      if (bIndex === -1) {
+        return -1
+      }
       return aIndex - bIndex
     })
 })
@@ -789,9 +908,7 @@ watch(
   { immediate: true },
 )
 
-const formatItemCount = (count: number) => (count === 1 ? '1 item' : `${count} items`)
-
-const scrollToCategories = () => {
+const scrollToCollections = () => {
   if (typeof window === 'undefined') {
     return
   }
@@ -812,12 +929,12 @@ const selectCategory = (category: string) => {
   }
 
   if (activeCategory.value === category) {
-    scrollToCategories()
+    scrollToCollections()
     return
   }
 
   activeCategory.value = category
-  scrollToCategories()
+  scrollToCollections()
 }
 
 const withVideoParams = (url: string, params: Record<string, string>) => {
@@ -941,7 +1058,7 @@ const collectionSpotlights = computed<CollectionSpotlightView[]>(() => {
 const selectCollection = (collection: CollectionSpotlightView) => {
   selectCategory(collection.category)
   nextTick(() => {
-    scrollToCategories()
+    scrollToCollections()
   })
 }
 
@@ -1085,6 +1202,12 @@ onMounted(() => {
   font-size: 0.95rem;
   color: rgba($accent-sage, 0.7);
 }
+.chip-highlight-label {
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  color: rgba($accent-sage, 0.62);
+}
 
 .product-experience {
   display: flex;
@@ -1188,8 +1311,15 @@ onMounted(() => {
     color: lighten($white, 6%);
 
     .chip-tagline,
+    .chip-highlight,
+    .chip-highlight-product,
+    .chip-highlight-placeholder,
     .chip-count {
       color: lighten($white, 12%);
+    }
+
+    .chip-highlight-media {
+      background: rgba($white, 0.2);
     }
   }
 
@@ -1209,6 +1339,48 @@ onMounted(() => {
   font-size: 0.85rem;
   color: rgba($accent-sage, 0.7);
   transition: color 0.2s ease;
+}
+
+.chip-highlight {
+  display: flex;
+  align-items: center;
+  gap: $spacing-xs;
+  margin-top: $spacing-xs;
+  color: rgba($accent-sage, 0.82);
+  transition: color 0.2s ease;
+}
+
+.chip-highlight-media {
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  overflow: hidden;
+  background: rgba($accent-sage, 0.12);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+}
+
+.chip-highlight-placeholder {
+  font-weight: 600;
+  font-size: 1rem;
+  color: rgba($accent-sage, 0.6);
+}
+
+.chip-highlight-product {
+  font-weight: 600;
+  font-size: 0.9rem;
+  letter-spacing: 0.01em;
+  max-width: 12ch;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .chip-count {
@@ -1347,7 +1519,7 @@ onMounted(() => {
   gap: $spacing-sm;
 }
 
-.product-category-pill {
+.product-collection-pill {
   align-self: flex-start;
   padding: 0.2rem 0.75rem;
   border-radius: 999px;

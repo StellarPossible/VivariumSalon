@@ -105,7 +105,7 @@ watch(
   transition: all 0.3s ease;
 
   &.scrolled {
-    background-color: transparent;
+    background-color: rgba($black, 0.5);
     box-shadow: none;
     backdrop-filter: none;
     -webkit-backdrop-filter: none;
@@ -247,10 +247,15 @@ watch(
 
   .header-inner {
     position: relative;
+    justify-content: center;
   }
 
   .logo img {
     height: 52px;
+  }
+
+  .logo {
+    margin: 0 auto;
   }
 
   .header-values {
@@ -261,7 +266,7 @@ watch(
   .primary-nav {
     position: absolute;
     top: 100%;
-    right: 0;
+    right: clamp(0.5rem, 3vw, 1rem);
     flex-direction: column;
     align-items: flex-start;
     gap: $spacing-md;
@@ -287,6 +292,10 @@ watch(
     display: flex;
     align-items: center;
     justify-content: center;
+    position: absolute;
+    right: clamp(0.75rem, 4vw, 1.25rem);
+    top: 50%;
+    transform: translateY(-50%);
   }
 
   .nav-link {
