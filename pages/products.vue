@@ -19,10 +19,6 @@
   padding-top: 80px;
 }
 
-.shop-section {
-  padding: 4rem 1.5rem;
-}
-
 .container {
   max-width: 1200px;
   margin: 0 auto;

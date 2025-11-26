@@ -168,19 +168,10 @@ const setView = (view: ShopView) => {
   .shop-section__title {
     font-size: clamp(2rem, 6vw, 2.5rem);
   }
-
-  .shop-section__content {
-    padding: $spacing-lg;
-  }
 }
 
 @media (max-width: $breakpoint-sm) {
  
-
-  .shop-section__content {
-    padding: $spacing-md;
-  }
-
   .shop-section__actions {
     flex-direction: column;
   }
