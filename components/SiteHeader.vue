@@ -33,6 +33,29 @@
         </nav>
 
         <button
+          class="cart-button"
+          type="button"
+          aria-label="Open shopping cart"
+          @click="handleCartClick"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            aria-hidden="true"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"
+            />
+          </svg>
+          <span v-if="cartCountDisplay > 0" class="cart-badge">{{ cartCountDisplay }}</span>
+        </button>
+
+        <button
           class="menu-toggle"
           type="button"
           @click="toggleMenu"
@@ -52,8 +75,9 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { useRoute } from '#imports'
+import { useCart } from '@/composables/useCart'
 
 const props = defineProps<{
   scrolled: boolean
@@ -68,6 +92,13 @@ const navLinks = [
 
 const isMenuOpen = ref(false)
 const route = useRoute()
+const { cartCount, openCart } = useCart()
+const cartCountDisplay = computed(() => cartCount.value)
+
+const handleCartClick = () => {
+  openCart()
+  isMenuOpen.value = false
+}
 
 function toggleMenu() {
   isMenuOpen.value = !isMenuOpen.value
@@ -165,6 +196,55 @@ watch(
   display: flex;
   align-items: center;
   gap: $spacing-lg;
+}
+
+.cart-button {
+  position: relative;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: $spacing-sm;
+  color: rgba($white, 0.85);
+  transition: color 0.2s ease, transform 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  svg {
+    width: 28px;
+    height: 28px;
+    stroke-width: 2;
+  }
+
+  &:hover {
+    color: $accent-gold;
+    transform: scale(1.05);
+  }
+
+  &:focus-visible {
+    outline: 2px solid $accent-gold;
+    outline-offset: 2px;
+    border-radius: 6px;
+  }
+}
+
+.cart-badge {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  background: $accent-gold;
+  color: $white;
+  border-radius: 999px;
+  min-width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.7rem;
+  font-weight: 700;
+  border: 2px solid $black;
+  padding: 0 4px;
+  line-height: 1;
 }
 
 .nav-link {
@@ -300,6 +380,25 @@ watch(
 
   .nav-link {
     font-size: 0.9rem;
+  }
+
+  .cart-button {
+    position: absolute;
+    left: clamp(0.75rem, 4vw, 1.25rem);
+    top: 50%;
+    transform: translateY(-50%);
+    padding: $spacing-xs;
+
+    svg {
+      width: 24px;
+      height: 24px;
+    }
+  }
+
+  .cart-badge {
+    min-width: 18px;
+    height: 18px;
+    font-size: 0.65rem;
   }
 }
 </style>

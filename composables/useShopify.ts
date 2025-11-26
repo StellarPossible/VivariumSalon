@@ -114,6 +114,8 @@ export const useShopify = () => {
         title
         description
         handle
+        productType
+        tags
         priceRange {
           minVariantPrice {
             amount

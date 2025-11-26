@@ -45,7 +45,9 @@
                     <div class="image-placeholder">{{ product.node.title.charAt(0) }}</div>
                   </template>
                 </div>
-                <div class="product-info">
+              </NuxtLink>
+              <div class="product-info">
+                <NuxtLink :to="`/products/${product.node.handle}`" class="product-info__link">
                   <span class="product-collection-pill">{{ resolveCategoryForProduct(product) }}</span>
                   <h4 class="product-title">{{ product.node.title }}</h4>
                   <p class="price">
@@ -59,8 +61,16 @@
                   <p class="description">
                     {{ truncate(product.node.description, descriptionLength) }}
                   </p>
-                </div>
-              </NuxtLink>
+                </NuxtLink>
+                <button
+                  type="button"
+                  class="quick-add-btn"
+                  :disabled="!isVariantAvailable(product)"
+                  @click.prevent.stop="handleQuickAdd(product)"
+                >
+                  {{ isVariantAvailable(product) ? 'Add to Cart' : 'Out of Stock' }}
+                </button>
+              </div>
             </article>
           </div>
         </section>
@@ -152,7 +162,9 @@
                             <div class="image-placeholder">{{ product.node.title.charAt(0) }}</div>
                           </template>
                         </div>
-                        <div class="product-info">
+                      </NuxtLink>
+                      <div class="product-info">
+                        <NuxtLink :to="`/products/${product.node.handle}`" class="product-info__link">
                           <h4 class="product-title">{{ product.node.title }}</h4>
                           <p class="price">
                             {{
@@ -165,8 +177,16 @@
                           <p class="description">
                             {{ truncate(product.node.description, descriptionLength) }}
                           </p>
-                        </div>
-                      </NuxtLink>
+                        </NuxtLink>
+                        <button
+                          type="button"
+                          class="quick-add-btn"
+                          :disabled="!isVariantAvailable(product)"
+                          @click.prevent.stop="handleQuickAdd(product)"
+                        >
+                          {{ isVariantAvailable(product) ? 'Add to Cart' : 'Out of Stock' }}
+                        </button>
+                      </div>
                     </article>
                   </div>
                   <div v-else class="category-empty">
@@ -275,10 +295,19 @@
 
 <script setup lang="ts">
 import type { PropType } from 'vue'
+import { useCart } from '@/composables/useCart'
 type ProductImageEdge = {
   node: {
     url: string
     altText: string | null
+  }
+}
+
+type ProductVariantEdge = {
+  node: {
+    id: string
+    availableForSale: boolean
+    title?: string | null
   }
 }
 
@@ -310,6 +339,9 @@ type ProductEdge = {
     images: {
       edges: ProductImageEdge[]
     }
+    variants: {
+      edges: ProductVariantEdge[]
+    }
   }
 }
 
@@ -338,6 +370,7 @@ const props = defineProps({
 })
 
 const { fetchProducts } = useShopify()
+const { addToCart, openCart } = useCart()
 const products = ref<ProductEdge[]>([])
 const loading = ref(true)
 const error = ref<string | null>(null)
@@ -1062,6 +1095,46 @@ const selectCollection = (collection: CollectionSpotlightView) => {
   })
 }
 
+const getPrimaryVariant = (product: ProductEdge) =>
+  product.node.variants?.edges?.[0]?.node ?? null
+
+const isVariantAvailable = (product: ProductEdge) => {
+  const variant = getPrimaryVariant(product)
+  return Boolean(variant?.availableForSale)
+}
+
+const handleQuickAdd = (product: ProductEdge) => {
+  const variant = getPrimaryVariant(product)
+
+  if (!variant || !variant.availableForSale) {
+    return
+  }
+
+  const imageNode = product.node.images.edges[0]?.node
+
+  addToCart(
+    {
+      variantId: variant.id,
+      productId: product.node.id,
+      title: product.node.title,
+      variantTitle: variant.title ?? undefined,
+      price: product.node.priceRange.minVariantPrice.amount,
+      currencyCode: product.node.priceRange.minVariantPrice.currencyCode,
+      image: imageNode?.url,
+      handle: product.node.handle,
+    },
+    1,
+  )
+
+  if (process.client) {
+    setTimeout(() => {
+      openCart()
+    }, 300)
+  } else {
+    openCart()
+  }
+}
+
 const truncate = (text: string, length: number) => {
   if (!text) return ''
   return text.length > length ? `${text.substring(0, length)}...` : text
@@ -1457,6 +1530,9 @@ onMounted(() => {
 }
 
 .product-card {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
   background: rgba($white, 0.98);
   border: 1px solid rgba($accent-sage, 0.12);
   border-radius: 20px;
@@ -1476,11 +1552,9 @@ onMounted(() => {
 }
 
 .product-link {
-  display: flex;
-  flex-direction: column;
+  display: block;
   text-decoration: none;
   color: inherit;
-  height: 100%;
 }
 
 .product-image {
@@ -1517,6 +1591,25 @@ onMounted(() => {
   display: flex;
   flex-direction: column;
   gap: $spacing-sm;
+  flex: 1;
+}
+
+.product-info__link {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-sm;
+  text-decoration: none;
+  color: inherit;
+  flex: 1;
+
+  &:focus-visible {
+    outline: 2px solid rgba($accent-gold, 0.4);
+    outline-offset: 4px;
+  }
+}
+
+.product-info__link:hover .product-title {
+  text-decoration: underline;
 }
 
 .product-collection-pill {
@@ -1552,6 +1645,39 @@ onMounted(() => {
   font-size: 0.95rem;
   line-height: 1.5;
   margin: 0;
+}
+
+.quick-add-btn {
+  margin-top: auto;
+  padding: $spacing-sm $spacing-md;
+  background: linear-gradient(135deg, $accent-sage, darken($accent-sage, 8%));
+  color: $white;
+  border: none;
+  border-radius: 50px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 600;
+  transition: all 0.25s ease;
+  box-shadow: 0 4px 12px rgba($accent-sage, 0.3);
+
+  &:hover:not(:disabled),
+  &:focus-visible:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba($accent-sage, 0.4);
+  }
+
+  &:focus-visible {
+    outline: 2px solid rgba($accent-gold, 0.5);
+    outline-offset: 3px;
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    background: rgba($accent-sage, 0.3);
+    box-shadow: none;
+    transform: none;
+  }
 }
 
 .category-empty {
