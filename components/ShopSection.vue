@@ -2,28 +2,11 @@
   <section class="shop-section" id="shop">
     <div class="shop-section__shell">
       <div class="shop-section__intro">
-        <span class="shop-section__eyebrow">Shop Vivarium</span>
         <h2 class="shop-section__title">Curated haircare and rituals for everyday vitality</h2>
         <p class="shop-section__subtitle">
           Explore salon-favorite essentials, mindful treatments, and grooming staples selected to extend the Vivarium
           experience between visits.
         </p>
-        <div class="shop-section__actions">
-          <button
-            type="button"
-            class="shop-section__cta shop-section__cta--primary"
-            @click="setView('all')"
-          >
-            Shop all products
-          </button>
-          <button
-            type="button"
-            class="shop-section__cta shop-section__cta--ghost"
-            @click="setView('collections')"
-          >
-            Browse collections
-          </button>
-        </div>
       </div>
 
       <div class="shop-section__content">
@@ -71,7 +54,7 @@ const setView = (view: ShopView) => {
 
 .shop-section {
   position: relative;
-  padding: $spacing-xl * 1.5 $spacing-lg;
+  padding: $spacing-lg;
   background: linear-gradient(180deg, lighten($white, 4%) 0%, $white 60%, lighten($white, 2%) 100%);
 }
 
@@ -80,7 +63,7 @@ const setView = (view: ShopView) => {
   margin: 0 auto;
   display: flex;
   flex-direction: column;
-  gap: $spacing-xl * 1.5;
+  gap: $spacing-md;
 }
 
 .shop-section__intro {
@@ -115,7 +98,7 @@ const setView = (view: ShopView) => {
   max-width: 52ch;
   font-size: clamp(1.05rem, 2vw, 1.25rem);
   color: rgba($accent-sage, 0.75);
-  line-height: 1.6;
+  line-height: 1.1;
   margin: 0;
 }
 
@@ -173,7 +156,7 @@ const setView = (view: ShopView) => {
   background: rgba($white, 0.92);
   border-radius: 28px;
   border: 1px solid rgba($accent-sage, 0.1);
-  padding: $spacing-xl;
+  padding: $spacing-md;
   box-shadow: 0 30px 70px rgba($accent-sage, 0.12);
 }
 

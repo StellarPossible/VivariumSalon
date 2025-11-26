@@ -19,19 +19,58 @@
             @click.stop
           >
             <header class="cart-modal__header">
-              <button
-                ref="closeButtonRef"
-                type="button"
-                class="close-btn"
-                aria-label="Close cart"
-                @click="closeCart"
-              >
-                <span aria-hidden="true">&times;</span>
-              </button>
-
               <div class="cart-modal__title-group">
                 <h2 id="cart-modal-title" class="cart-modal__title">Your Cart</h2>
                 <span class="cart-modal__count" aria-live="polite">{{ itemCountLabel }}</span>
+              </div>
+
+              <div class="cart-modal__header-actions">
+                <button
+                  v-if="hasItems"
+                  type="button"
+                  class="clear-cart-icon"
+                  :disabled="!hasItems"
+                  aria-label="Clear cart"
+                  title="Clear Cart"
+                  @click="handleClearCart"
+                >
+                  <svg
+                    aria-hidden="true"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M3 6h18M9 6v-1a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v1m1 0l-.8 12.4A2 2 0 0 1 13.2 20H10.8a2 2 0 0 1-1.99-1.6L8 6"
+                      stroke="currentColor"
+                      stroke-width="1.8"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                    <path
+                      d="M10 10l4 8"
+                      stroke="currentColor"
+                      stroke-width="1.8"
+                      stroke-linecap="round"
+                    />
+                    <path
+                      d="M14 10l-4 8"
+                      stroke="currentColor"
+                      stroke-width="1.8"
+                      stroke-linecap="round"
+                    />
+                  </svg>
+                </button>
+
+                <button
+                  ref="closeButtonRef"
+                  type="button"
+                  class="close-btn"
+                  aria-label="Close cart"
+                  @click="closeCart"
+                >
+                  <span aria-hidden="true">&times;</span>
+                </button>
               </div>
             </header>
 
@@ -145,6 +184,7 @@ const {
   cartTotal,
   updateQuantity,
   removeFromCart,
+  clearCart,
   checkout,
   closeCart,
 } = useCart()
@@ -225,6 +265,14 @@ const decrementQuantity = (item: CartItem) => {
 
 const handleRemove = (variantId: string) => {
   removeFromCart(variantId)
+}
+
+const handleClearCart = () => {
+  if (!hasItems.value) {
+    return
+  }
+
+  clearCart()
 }
 
 const handleCheckout = async () => {
@@ -309,10 +357,10 @@ onBeforeUnmount(() => {
 }
 
 .cart-modal__header {
-  position: relative;
   display: flex;
-  flex-direction: column;
-  gap: $spacing-xs;
+  align-items: center;
+  justify-content: space-between;
+  gap: $spacing-md;
   margin-bottom: $spacing-lg;
 }
 
@@ -320,6 +368,46 @@ onBeforeUnmount(() => {
   display: flex;
   flex-direction: column;
   gap: $spacing-xxs;
+}
+
+.cart-modal__header-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: $spacing-sm;
+}
+
+.clear-cart-icon {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  border: 1px solid rgba($accent-gold, 0.35);
+  background: rgba($accent-gold, 0.12);
+  color: lighten($accent-gold, 10%);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: transform 0.2s ease, background 0.2s ease, color 0.2s ease;
+  box-shadow: 0 12px 28px rgba($accent-gold, 0.18);
+
+  svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  &:hover,
+  &:focus-visible {
+    background: rgba($accent-gold, 0.22);
+    color: lighten($accent-gold, 18%);
+    transform: translateY(-1px);
+  }
+
+  &:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+  }
 }
 
 .cart-modal__title {
@@ -337,11 +425,8 @@ onBeforeUnmount(() => {
 }
 
 .close-btn {
-  position: absolute;
-  top: 0;
-  right: 0;
-  width: 36px;
-  height: 36px;
+  width: 38px;
+  height: 38px;
   border-radius: 50%;
   border: 1px solid rgba($accent-sage, 0.2);
   background: rgba($accent-sage, 0.08);
