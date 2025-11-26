@@ -1979,6 +1979,10 @@ const products_get = defineEventHandler(async () => {
                 amount
                 currencyCode
               }
+              maxVariantPrice {
+                amount
+                currencyCode
+              }
             }
             images(first: 1) {
               edges {

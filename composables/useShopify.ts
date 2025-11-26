@@ -54,6 +54,10 @@ export const useShopify = () => {
                   amount
                   currencyCode
                 }
+                maxVariantPrice {
+                  amount
+                  currencyCode
+                }
               }
               images(first: 1) {
                 edges {
