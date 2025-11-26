@@ -30,7 +30,6 @@
 
 .section-header {
   text-align: center;
-  margin-bottom: 3rem;
 }
 
 .section-title {

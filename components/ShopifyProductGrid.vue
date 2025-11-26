@@ -14,6 +14,12 @@
       </slot>
     </div>
     <div v-else class="product-experience">
+      <header class="section-head">
+        <h3 v-if="viewMode === 'collections'" id="collection-browser-heading">Shop by Collection</h3>
+        <h3 v-else id="all-products-heading">All Products</h3>
+        <p v-if="viewMode === 'collections'" class="section-description">Select a ritual to explore salon-trusted essentials.</p>
+        <p v-else class="section-description">Browse every Vivarium favorite in one streamlined view.</p>
+      </header>
       <div class="view-toggle">
         <button
           type="button"
@@ -37,13 +43,7 @@
           v-if="viewMode === 'all'"
           key="all-products"
           class="all-products-section"
-          aria-labelledby="all-products-heading"
         >
-          <header class="section-head">
-            <span class="section-kicker">Full catalog</span>
-            <h3 id="all-products-heading">All Products</h3>
-            <p class="section-description">Browse every Vivarium favorite in one streamlined view.</p>
-          </header>
           <div class="product-grid all-products-grid" role="list">
             <article
               v-for="product in allProductsList"
@@ -67,7 +67,7 @@
                     <div class="image-placeholder">{{ product.node.title.charAt(0) }}</div>
                   </template>
                 </div>
-                <div class="product-content">
+                <div class="product-info">
                   <span class="product-category">{{ resolveCategoryForProduct(product) }}</span>
                   <h4 class="product-title">{{ product.node.title }}</h4>
                   <p class="product-price">
@@ -95,12 +95,7 @@
           <section
             ref="categorySectionRef"
             class="category-section"
-            aria-labelledby="collection-browser-heading"
           >
-            <header class="section-head">
-              <h3 id="collection-browser-heading">Shop by Collection</h3>
-              <p class="section-description">Select a ritual to explore salon-trusted essentials.</p>
-            </header>
             <div class="category-display">
               <aside class="category-nav" aria-label="Product collections">
                 <nav
@@ -132,9 +127,6 @@
                       class="tab-tagline"
                     >
                       {{ categoryDetailLookup[group.category]?.tagline }}
-                    </span>
-                    <span class="tab-count" aria-hidden="true">
-                      {{ group.products.length === 1 ? '1 product' : `${group.products.length} products` }}
                     </span>
                   </button>
                 </nav>
@@ -186,7 +178,7 @@
                             <div class="image-placeholder">{{ product.node.title.charAt(0) }}</div>
                           </template>
                         </div>
-                        <div class="product-content">
+                        <div class="product-info">
                           <h4 class="product-title">{{ product.node.title }}</h4>
                           <p class="product-price">
                             {{
@@ -1638,7 +1630,6 @@ onMounted(() => {
 
 .section-head {
   text-align: center;
-  margin-bottom: $spacing-xl;
   display: grid;
   gap: $spacing-xs;
   justify-items: center;
@@ -1755,11 +1746,6 @@ onMounted(() => {
   color: rgba($accent-sage, 0.6);
 }
 
-.tab-count {
-  font-size: 0.75rem;
-  color: rgba($accent-sage, 0.5);
-}
-
 .category-products {
   display: flex;
   flex-direction: column;
@@ -1839,7 +1825,7 @@ onMounted(() => {
 }
 
 .product-trigger {
-  display: block;
+  display: flex;
   width: 100%;
   text-decoration: none;
   color: inherit;
@@ -1847,6 +1833,7 @@ onMounted(() => {
   background: none;
   cursor: pointer;
   text-align: left;
+  flex-flow: column;
 
   &:focus-visible {
     outline: 2px solid rgba($accent-gold, 0.4);
@@ -1855,9 +1842,10 @@ onMounted(() => {
 }
 
 .product-image {
-  aspect-ratio: 1;
-  background: linear-gradient(135deg, rgba($accent-sage, 0.08), rgba($accent-sage, 0.04));
+  aspect-ratio: 0.75;
+  background: $white;
   overflow: hidden;
+  position: relative;
 
   img {
     width: 100%;
@@ -1879,34 +1867,33 @@ onMounted(() => {
   justify-content: center;
   font-size: 2.5rem;
   color: rgba($accent-sage, 0.3);
-  background: linear-gradient(135deg, rgba($accent-sage, 0.06), rgba($accent-sage, 0.03));
+  background: $white;
 }
 
-.product-content {
+.product-info {
   padding: $spacing-md;
-  display: flex;
-  flex-direction: column;
-  gap: $spacing-xs;
+  background: $white;
 }
 
 .product-category {
   font-size: 0.75rem;
   font-weight: 600;
-  color: rgba($accent-sage, 0.7);
+  color: rgba($black, 0.8);
   text-transform: uppercase;
   letter-spacing: 0.05em;
+  margin-bottom: $spacing-xs;
 }
 
 .product-title {
-  color: $accent-sage;
+  color: $black;
   font-size: 1.1rem;
   font-weight: 600;
-  margin: 0;
+  margin: 0 0 $spacing-xs 0;
   line-height: 1.3;
 }
 
 .product-price {
-  color: $accent-gold;
+  color: $black;
   font-size: 1rem;
   font-weight: 600;
   margin: 0;
