@@ -1,6 +1,7 @@
 import { computed, readonly } from 'vue'
 import type { CartItem, CartCreateResponse } from '~/types/cart'
 import { useToast } from '@/composables/useToast'
+import type { ToastAction } from '@/composables/useToast'
 
 const STORAGE_KEY = 'vivarium_cart'
 type CartLineItemInput = {
@@ -37,9 +38,6 @@ export const useCart = () => {
   const cartInitialized = useState<boolean>('vivarium-cart-initialized', () => false)
   const config = useRuntimeConfig()
   const { success: showSuccess, error: showError } = useToast()
-
-  const cartItemsReadonly = readonly(cartItems)
-  const isCartOpenReadonly = readonly(isCartOpen)
 
   const cartCount = computed(() =>
     cartItems.value.reduce((total, item) => total + item.quantity, 0),
@@ -109,16 +107,20 @@ export const useCart = () => {
       (cartItem) => cartItem.variantId === item.variantId,
     )
 
+    const toastAction: ToastAction = {
+      label: 'My Cart',
+      type: 'open-cart',
+    }
+
     if (existingIndex > -1) {
       cartItems.value[existingIndex].quantity += quantity
-      showSuccess(`Updated ${item.title} quantity`)
+      showSuccess(`Updated ${item.title} quantity`, { action: toastAction })
     } else {
       cartItems.value.push({ ...item, quantity })
-      showSuccess(`Added ${item.title} to cart`)
+      showSuccess(`Added ${item.title} to cart`, { action: toastAction })
     }
 
     saveCart()
-    openCart()
   }
 
   const removeFromCart = (variantId: string) => {

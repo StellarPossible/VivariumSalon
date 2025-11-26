@@ -15,60 +15,62 @@
           </p>
         </div>
 
-        <nav
-          id="primary-navigation"
-          class="primary-nav"
-          :class="{ open: isMenuOpen }"
-          aria-label="Primary"
-        >
-          <NuxtLink
-            v-for="link in navLinks"
-            :key="link.to"
-            :to="link.to"
-            class="nav-link"
-            :class="{ active: isActive(link.to) }"
+        <div class="nav-cluster">
+          <nav
+            id="primary-navigation"
+            class="primary-nav"
+            :class="{ open: isMenuOpen }"
+            aria-label="Primary"
           >
-            {{ link.label }}
-          </NuxtLink>
-        </nav>
+            <NuxtLink
+              v-for="link in navLinks"
+              :key="link.to"
+              :to="link.to"
+              class="nav-link"
+              :class="{ active: isActive(link.to) }"
+            >
+              {{ link.label }}
+            </NuxtLink>
+          </nav>
 
-        <button
-          class="cart-button"
-          type="button"
-          aria-label="Open shopping cart"
-          @click="handleCartClick"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-            aria-hidden="true"
+          <button
+            class="cart-button"
+            type="button"
+            aria-label="Open shopping cart"
+            @click="handleCartClick"
           >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"
-            />
-          </svg>
-          <span v-if="cartCountDisplay > 0" class="cart-badge">{{ cartCountDisplay }}</span>
-        </button>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              aria-hidden="true"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"
+              />
+            </svg>
+            <span v-if="cartCountDisplay > 0" class="cart-badge">{{ cartCountDisplay }}</span>
+          </button>
 
-        <button
-          class="menu-toggle"
-          type="button"
-          @click="toggleMenu"
-          :aria-expanded="isMenuOpen ? 'true' : 'false'"
-          aria-controls="primary-navigation"
-          aria-label="Toggle navigation"
-        >
-          <span class="menu-icon" :class="{ open: isMenuOpen }">
-            <span></span>
-            <span></span>
-            <span></span>
-          </span>
-        </button>
+          <button
+            class="menu-toggle"
+            type="button"
+            @click="toggleMenu"
+            :aria-expanded="isMenuOpen ? 'true' : 'false'"
+            aria-controls="primary-navigation"
+            aria-label="Toggle navigation"
+          >
+            <span class="menu-icon" :class="{ open: isMenuOpen }">
+              <span></span>
+              <span></span>
+              <span></span>
+            </span>
+          </button>
+        </div>
       </div>
     </div>
   </header>
@@ -146,7 +148,7 @@ watch(
 .container {
   max-width: 1400px;
   margin: 0 auto;
-  padding: 1rem;
+  padding: .5rem;
 }
 
 .header-inner {
@@ -190,6 +192,28 @@ watch(
 
 .header-values .separator {
   opacity: 0.6;
+}
+
+.nav-cluster {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: $spacing-lg;
+
+  > .primary-nav {
+    order: 1;
+    margin-left: auto;
+  }
+
+  > .cart-button {
+    order: 2;
+    margin-left: $spacing-md;
+  }
+
+  > .menu-toggle {
+    order: 3;
+    margin-left: $spacing-sm;
+  }
 }
 
 .primary-nav {
@@ -250,7 +274,6 @@ watch(
 .nav-link {
   font-size: 0.95rem;
   text-transform: uppercase;
-  letter-spacing: 0.16rem;
   color: rgba($white, 0.85);
   text-decoration: none;
   font-weight: 600;
@@ -258,6 +281,7 @@ watch(
   align-items: center;
   justify-content: center;
   padding: 0.35rem 0.9rem;
+  margin: -.5rem;
   border-radius: 999px;
   border: 1px solid transparent;
   transition: color 0.25s ease, border-color 0.25s ease, background-color 0.25s ease;
@@ -343,7 +367,15 @@ watch(
     letter-spacing: 0.14rem;
   }
 
+  .nav-cluster {
+    margin-left: 0;
+    position: relative;
+    gap: $spacing-sm;
+  }
+
   .primary-nav {
+    order: initial;
+    margin-left: 0;
     position: absolute;
     top: 100%;
     right: clamp(0.5rem, 3vw, 1rem);
@@ -369,6 +401,7 @@ watch(
   }
 
   .menu-toggle {
+    order: initial;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -383,6 +416,7 @@ watch(
   }
 
   .cart-button {
+    order: initial;
     position: absolute;
     left: clamp(0.75rem, 4vw, 1.25rem);
     top: 50%;

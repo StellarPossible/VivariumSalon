@@ -75,7 +75,7 @@
 	transform: translate(-50%, -50%);
 	width: min(85%, 360px);
 	padding: 1.75rem 2rem;
-	background: rgba(248, 246, 241, 0.7);
+	background: rgba(248, 246, 241, 0.5);
 	border-radius: 18px;
 	box-shadow: 0 20px 40px rgba(53, 54, 55, 0.3);
 	backdrop-filter: blur(6px);
@@ -100,7 +100,7 @@
 
 .about-section__definition {
 	font-size: 1.45rem;
-	line-height: 1.3;
+	line-height: 1.1;
 	max-width: 52ch;
 	color: #445347;
 	text-align: center;

@@ -29,7 +29,6 @@ declare global {
   const { useHydration }: typeof import('../../node_modules/nuxt/dist/app/composables/hydrate')
   const { useImage }: typeof import('../../node_modules/@nuxt/image/dist/runtime/composables')
   const { useLoadingIndicator }: typeof import('../../node_modules/nuxt/dist/app/composables/loading-indicator')
-  const { useNuxtDevTools }: typeof import('../../node_modules/@nuxt/devtools/dist/runtime/use-nuxt-devtools')
   const { usePreviewMode }: typeof import('../../node_modules/nuxt/dist/app/composables/preview')
   const { useRequestURL }: typeof import('../../node_modules/nuxt/dist/app/composables/url')
   const { useRouteAnnouncer }: typeof import('../../node_modules/nuxt/dist/app/composables/route-announcer')
@@ -44,7 +43,7 @@ declare global {
   export type { Component, ComponentPublicInstance, ComputedRef, DirectiveBinding, ExtractDefaultPropTypes, ExtractPropTypes, ExtractPublicPropTypes, InjectionKey, PropType, Ref, MaybeRef, MaybeRefOrGetter, VNode, WritableComputedRef } from 'vue'
   import('vue')
   // @ts-ignore
-  export type { ToastType, Toast } from '../../composables/useToast'
+  export type { ToastType, ToastActionType, ToastAction, ToastOptions, Toast } from '../../composables/useToast'
   import('../../composables/useToast')
 }
 // for vue template auto import
@@ -80,7 +79,6 @@ namespace _ComponentCustomProperties {
   const { useHydration }: typeof import('../../node_modules/nuxt/dist/app/composables/hydrate')
   const { useImage }: typeof import('../../node_modules/@nuxt/image/dist/runtime/composables')
   const { useLoadingIndicator }: typeof import('../../node_modules/nuxt/dist/app/composables/loading-indicator')
-  const { useNuxtDevTools }: typeof import('../../node_modules/@nuxt/devtools/dist/runtime/use-nuxt-devtools')
   const { usePreviewMode }: typeof import('../../node_modules/nuxt/dist/app/composables/preview')
   const { useRequestURL }: typeof import('../../node_modules/nuxt/dist/app/composables/url')
   const { useRouteAnnouncer }: typeof import('../../node_modules/nuxt/dist/app/composables/route-announcer')

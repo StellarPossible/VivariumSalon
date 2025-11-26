@@ -2,11 +2,24 @@ import { readonly } from 'vue'
 
 export type ToastType = 'success' | 'error' | 'info'
 
+export type ToastActionType = 'open-cart'
+
+export interface ToastAction {
+  label: string
+  type: ToastActionType
+}
+
+export interface ToastOptions {
+  duration?: number
+  action?: ToastAction
+}
+
 export interface Toast {
   id: string
   message: string
   type: ToastType
   duration: number
+  action?: ToastAction
 }
 
 export const useToast = () => {
@@ -16,9 +29,10 @@ export const useToast = () => {
     toasts.value = toasts.value.filter((toast) => toast.id !== id)
   }
 
-  const show = (message: string, type: ToastType = 'info', duration = 3000) => {
+  const show = (message: string, type: ToastType = 'info', options: ToastOptions = {}) => {
+    const { duration = 3000, action } = options
     const id = `${Date.now()}-${Math.random().toString(16).slice(2)}`
-    const toast: Toast = { id, message, type, duration }
+    const toast: Toast = { id, message, type, duration, action }
 
     toasts.value.push(toast)
 
@@ -29,16 +43,16 @@ export const useToast = () => {
     }
   }
 
-  const success = (message: string, duration?: number) => {
-    show(message, 'success', duration)
+  const success = (message: string, options?: ToastOptions) => {
+    show(message, 'success', options)
   }
 
-  const error = (message: string, duration?: number) => {
-    show(message, 'error', duration)
+  const error = (message: string, options?: ToastOptions) => {
+    show(message, 'error', options)
   }
 
-  const info = (message: string, duration?: number) => {
-    show(message, 'info', duration)
+  const info = (message: string, options?: ToastOptions) => {
+    show(message, 'info', options)
   }
 
   return {

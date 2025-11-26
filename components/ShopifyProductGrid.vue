@@ -14,9 +14,27 @@
       </slot>
     </div>
     <div v-else class="product-experience">
+      <div class="view-toggle">
+        <button
+          type="button"
+          class="view-toggle-btn"
+          :class="{ active: viewMode === 'collections' }"
+          @click="viewMode = 'collections'"
+        >
+          Shop Collections
+        </button>
+        <button
+          type="button"
+          class="view-toggle-btn"
+          :class="{ active: viewMode === 'all' }"
+          @click="viewMode = 'all'"
+        >
+          Shop All Products
+        </button>
+      </div>
       <Transition name="view-fade" mode="out-in">
         <section
-          v-if="isAllProductsView"
+          v-if="viewMode === 'all'"
           key="all-products"
           class="all-products-section"
           aria-labelledby="all-products-heading"
@@ -30,11 +48,15 @@
             <article
               v-for="product in allProductsList"
               :key="product.node.id"
-              class="product-card product-card--all"
+              class="product-card"
               role="listitem"
             >
-              <NuxtLink :to="`/products/${product.node.handle}`" class="product-link">
-                <div class="product-image" aria-hidden="true">
+              <button
+                type="button"
+                class="product-trigger"
+                @click="openProductModal(product)"
+              >
+                <div class="product-image">
                   <template v-if="product.node.images.edges.length">
                     <img
                       :src="product.node.images.edges[0].node.url"
@@ -45,12 +67,10 @@
                     <div class="image-placeholder">{{ product.node.title.charAt(0) }}</div>
                   </template>
                 </div>
-              </NuxtLink>
-              <div class="product-info">
-                <NuxtLink :to="`/products/${product.node.handle}`" class="product-info__link">
-                  <span class="product-collection-pill">{{ resolveCategoryForProduct(product) }}</span>
+                <div class="product-content">
+                  <span class="product-category">{{ resolveCategoryForProduct(product) }}</span>
                   <h4 class="product-title">{{ product.node.title }}</h4>
-                  <p class="price">
+                  <p class="product-price">
                     {{
                       formatPrice(
                         product.node.priceRange.minVariantPrice.amount,
@@ -58,76 +78,76 @@
                       )
                     }}
                   </p>
-                  <p class="description">
-                    {{ truncate(product.node.description, descriptionLength) }}
-                  </p>
-                </NuxtLink>
-                <button
-                  type="button"
-                  class="quick-add-btn"
-                  :disabled="!isVariantAvailable(product)"
-                  @click.prevent.stop="handleQuickAdd(product)"
-                >
-                  {{ isVariantAvailable(product) ? 'Add to Cart' : 'Out of Stock' }}
-                </button>
-              </div>
+                </div>
+              </button>
+              <button
+                type="button"
+                class="product-add-btn"
+                :disabled="!isVariantAvailable(product)"
+                @click.prevent.stop="handleQuickAdd(product)"
+              >
+                {{ isVariantAvailable(product) ? 'Add to Cart' : 'Out of Stock' }}
+              </button>
             </article>
           </div>
         </section>
-        <div v-else key="collection-view" class="category-view">
+        <div v-else-if="viewMode === 'collections'" key="collection-view" class="category-view">
           <section
             ref="categorySectionRef"
             class="category-section"
             aria-labelledby="collection-browser-heading"
           >
             <header class="section-head">
-              <span class="section-kicker">Curated edits</span>
               <h3 id="collection-browser-heading">Shop by Collection</h3>
               <p class="section-description">Select a ritual to explore salon-trusted essentials.</p>
             </header>
             <div class="category-display">
-              <nav class="category-selector" aria-label="Product collections">
-                <button
-                  v-for="group in categorizedProducts"
-                  :key="group.category"
-                  class="category-chip"
-                  type="button"
-                  :class="{
-                    'is-active': group.category === activeCategoryName,
-                    'is-empty': !group.products.length,
-                  }"
-                  :aria-pressed="group.category === activeCategoryName"
-                  @click="selectCategory(group.category)"
+              <aside class="category-nav" aria-label="Product collections">
+                <nav
+                  class="category-tabs"
+                  role="tablist"
+                  aria-orientation="vertical"
+                  aria-label="Collection tabs"
                 >
-                  <span class="chip-label">{{ group.category }}</span>
-                  <span
-                    v-if="categoryDetailLookup[group.category]?.tagline"
-                    class="chip-tagline"
+                  <button
+                    v-for="(group, index) in categorizedProducts"
+                    :key="group.category"
+                    :ref="(el) => setCategoryTabRef(el, index)"
+                    class="category-tab"
+                    type="button"
+                    role="tab"
+                    :id="getCategoryTabId(group.category)"
+                    :aria-controls="getCategoryPanelId(group.category)"
+                    :aria-selected="group.category === activeCategoryName"
+                    :tabindex="group.category === activeCategoryName ? 0 : -1"
+                    :class="{
+                      'is-active': group.category === activeCategoryName,
+                    }"
+                    @click="selectCategory(group.category)"
+                    @keydown="handleTabKeydown($event, index)"
                   >
-                    {{ categoryDetailLookup[group.category]?.tagline }}
-                  </span>
-                  <span v-if="group.highlight" class="chip-highlight" aria-live="polite">
-                    <span class="chip-highlight-media" aria-hidden="true">
-                      <img
-                        v-if="group.highlight.product.node.images.edges.length"
-                        :src="group.highlight.product.node.images.edges[0].node.url"
-                        :alt="group.highlight.product.node.images.edges[0].node.altText || group.highlight.product.node.title"
-                      />
-                      <span v-else class="chip-highlight-placeholder">
-                        {{ group.highlight.product.node.title.charAt(0) }}
-                      </span>
+                    <span class="tab-label">{{ group.category }}</span>
+                    <span
+                      v-if="categoryDetailLookup[group.category]?.tagline"
+                      class="tab-tagline"
+                    >
+                      {{ categoryDetailLookup[group.category]?.tagline }}
                     </span>
-                    <span class="chip-highlight-product">
-                      {{ group.highlight.product.node.title }}
+                    <span class="tab-count" aria-hidden="true">
+                      {{ group.products.length === 1 ? '1 product' : `${group.products.length} products` }}
                     </span>
-                  </span>
-                </button>
-              </nav>
+                  </button>
+                </nav>
+              </aside>
               <Transition name="category-fade" mode="out-in">
-                <div
+                <section
                   v-if="activeCategoryGroup"
                   :key="activeCategoryName || 'unselected'"
+                  :id="getCategoryPanelId(activeCategoryName)"
                   class="category-products"
+                  role="tabpanel"
+                  :aria-labelledby="getCategoryTabId(activeCategoryName)"
+                  tabindex="0"
                 >
                   <header class="category-summary">
                     <div class="category-overview">
@@ -150,8 +170,12 @@
                       class="product-card"
                       role="listitem"
                     >
-                      <NuxtLink :to="`/products/${product.node.handle}`" class="product-link">
-                        <div class="product-image" aria-hidden="true">
+                      <button
+                        type="button"
+                        class="product-trigger"
+                        @click="openProductModal(product)"
+                      >
+                        <div class="product-image">
                           <template v-if="product.node.images.edges.length">
                             <img
                               :src="product.node.images.edges[0].node.url"
@@ -162,11 +186,9 @@
                             <div class="image-placeholder">{{ product.node.title.charAt(0) }}</div>
                           </template>
                         </div>
-                      </NuxtLink>
-                      <div class="product-info">
-                        <NuxtLink :to="`/products/${product.node.handle}`" class="product-info__link">
+                        <div class="product-content">
                           <h4 class="product-title">{{ product.node.title }}</h4>
-                          <p class="price">
+                          <p class="product-price">
                             {{
                               formatPrice(
                                 product.node.priceRange.minVariantPrice.amount,
@@ -174,83 +196,188 @@
                               )
                             }}
                           </p>
-                          <p class="description">
-                            {{ truncate(product.node.description, descriptionLength) }}
-                          </p>
-                        </NuxtLink>
-                        <button
-                          type="button"
-                          class="quick-add-btn"
-                          :disabled="!isVariantAvailable(product)"
-                          @click.prevent.stop="handleQuickAdd(product)"
-                        >
-                          {{ isVariantAvailable(product) ? 'Add to Cart' : 'Out of Stock' }}
-                        </button>
-                      </div>
+                        </div>
+                      </button>
+                      <button
+                        type="button"
+                        class="product-add-btn"
+                        :disabled="!isVariantAvailable(product)"
+                        @click.prevent.stop="handleQuickAdd(product)"
+                      >
+                        {{ isVariantAvailable(product) ? 'Add to Cart' : 'Out of Stock' }}
+                      </button>
                     </article>
                   </div>
                   <div v-else class="category-empty">
                     <p>We&apos;re curating this collection. Check back soon for new arrivals.</p>
                   </div>
-                </div>
+                </section>
               </Transition>
-            </div>
-          </section>
-
-          <section
-            v-if="collectionSpotlights.length"
-            class="collection-section"
-            aria-labelledby="collection-spotlights-heading"
-          >
-            <header class="section-head">
-              <span class="section-kicker">Experience the ritual</span>
-              <h3 id="collection-spotlights-heading">Collection Spotlights</h3>
-              <p class="section-description">Press play for an immersive look at our signature routines.</p>
-            </header>
-            <div class="collection-grid">
-              <article
-                v-for="collection in collectionSpotlights"
-                :key="collection.id"
-                class="collection-card"
-              >
-                <div class="collection-media">
-                  <iframe
-                    v-if="collection.media.type === 'video'"
-                    :src="collection.mediaSrc"
-                    :title="collection.media.title || collection.title"
-                    frameborder="0"
-                    allow="autoplay; fullscreen; picture-in-picture"
-                    allowfullscreen
-                  ></iframe>
-                  <img
-                    v-else
-                    :src="collection.media.url"
-                    :alt="collection.media.title || collection.title"
-                  />
-                </div>
-                <div class="collection-body">
-                  <span class="collection-pill">{{ collection.category }}</span>
-                  <h4 class="collection-title">{{ collection.title }}</h4>
-                  <p class="collection-description">{{ collection.description }}</p>
-                  <div class="collection-meta">
-                    <span class="collection-count">
-                      {{ collection.productCount === 1 ? '1 product' : `${collection.productCount} products` }}
-                    </span>
-                    <button
-                      type="button"
-                      class="collection-cta"
-                      @click="selectCollection(collection)"
-                    >
-                      Shop {{ collection.category }}
-                    </button>
-                  </div>
-                </div>
-              </article>
             </div>
           </section>
         </div>
       </Transition>
     </div>
+
+    <Teleport to="body">
+      <Transition name="product-modal">
+        <div
+          v-if="showProductModal"
+          class="product-modal-overlay"
+          role="dialog"
+          aria-modal="true"
+          :aria-labelledby="productModalTitleId"
+          :aria-describedby="productModalDescriptionId"
+          @click.self="closeProductModal()"
+        >
+          <div class="product-modal" tabindex="-1">
+            <button
+              ref="modalCloseButtonRef"
+              type="button"
+              class="product-modal__close"
+              aria-label="Close product details"
+              @click="closeProductModal()"
+            >
+              <span aria-hidden="true">&times;</span>
+            </button>
+            <div class="product-modal__scroller" ref="productModalRef">
+              <div class="product-modal__content">
+                <div class="product-modal__media" aria-hidden="true">
+                  <template v-if="selectedProductImage">
+                    <img
+                      :src="selectedProductImage.url"
+                      :alt="selectedProductImage.altText || selectedProduct?.node.title"
+                    />
+                  </template>
+                  <template v-else>
+                    <div class="product-modal__placeholder">
+                      {{ selectedProduct?.node.title.charAt(0) }}
+                    </div>
+                  </template>
+                </div>
+                <div class="product-modal__details">
+                  <p v-if="selectedModalCategory" class="product-modal__kicker">
+                    {{ selectedModalCategory }} Collection
+                  </p>
+                  <h3 :id="productModalTitleId" class="product-modal__title">
+                    {{ selectedProduct?.node.title }}
+                  </h3>
+                  <p v-if="selectedProduct?.node.productType" class="product-modal__type">
+                    {{ selectedProduct.node.productType }}
+                  </p>
+                  <div v-if="selectedProductPriceRange" class="product-modal__price">
+                    {{
+                      formatPrice(
+                        selectedProductPriceRange.amount,
+                        selectedProductPriceRange.currencyCode,
+                      )
+                    }}
+                  </div>
+                  <div :id="productModalDescriptionId" class="product-modal__description">
+                    <p v-for="(line, index) in selectedProductDescriptionLines" :key="index">
+                      {{ line }}
+                    </p>
+                  </div>
+                  <ul v-if="selectedProductTags.length" class="product-modal__tags">
+                    <li v-for="tag in selectedProductTags" :key="tag">{{ tag }}</li>
+                  </ul>
+                  <div class="product-modal__actions">
+                    <template v-if="selectedVariantAvailable">
+                      <button
+                        v-if="selectedVariantQuantity === 0"
+                        type="button"
+                        class="modal-add-btn"
+                        @click="handleModalAdd"
+                      >
+                        Add to Cart
+                      </button>
+                      <div v-else class="modal-quantity">
+                        <button
+                          type="button"
+                          class="quantity-btn"
+                          aria-label="Decrease quantity"
+                          @click="decrementSelectedQuantity"
+                        >
+                          &minus;
+                        </button>
+                        <span class="quantity-value" aria-live="polite">
+                          {{ selectedVariantQuantity }}
+                        </span>
+                        <button
+                          type="button"
+                          class="quantity-btn"
+                          aria-label="Increase quantity"
+                          @click="incrementSelectedQuantity"
+                        >
+                          +
+                        </button>
+                      </div>
+                    </template>
+                    <span v-else class="product-modal__soldout">Currently out of stock</span>
+                  </div>
+                </div>
+              </div>
+
+              <section
+                v-if="recommendedProducts.length"
+                class="product-modal__recommendations"
+                aria-labelledby="product-modal-recommendations-heading"
+              >
+                <header class="recommendations-head">
+                  <h4 id="product-modal-recommendations-heading">{{ recommendedSectionTitle }}</h4>
+                  <p v-if="selectedModalCategory" class="recommendations-sub">
+                    Discover more favorites curated from our salon rituals.
+                  </p>
+                </header>
+                <div class="recommendations-track" role="list">
+                  <article
+                    v-for="recommended in recommendedProducts"
+                    :key="recommended.node.id"
+                    class="recommendation-card"
+                    role="listitem"
+                  >
+                    <button
+                      type="button"
+                      class="recommendation-card__trigger"
+                      @click="openProductModal(recommended)"
+                    >
+                      <div class="recommendation-card__media" aria-hidden="true">
+                        <template v-if="recommended.node.images.edges.length">
+                          <img
+                            :src="recommended.node.images.edges[0].node.url"
+                            :alt="recommended.node.images.edges[0].node.altText || recommended.node.title"
+                          />
+                        </template>
+                        <template v-else>
+                          <div class="recommendation-card__placeholder">
+                            {{ recommended.node.title.charAt(0) }}
+                          </div>
+                        </template>
+                      </div>
+                      <div class="recommendation-card__body">
+                        <span class="recommendation-card__category">
+                          {{ resolveCategoryForProduct(recommended) }}
+                        </span>
+                        <span class="recommendation-card__title">{{ recommended.node.title }}</span>
+                        <span class="recommendation-card__price">
+                          {{
+                            formatPrice(
+                              recommended.node.priceRange.minVariantPrice.amount,
+                              recommended.node.priceRange.minVariantPrice.currencyCode,
+                            )
+                          }}
+                        </span>
+                      </div>
+                    </button>
+                  </article>
+                </div>
+              </section>
+            </div>
+          </div>
+        </div>
+      </Transition>
+    </Teleport>
+
     <div v-if="debugEnabled" class="debug-panel">
       <div class="debug-header">
         <span class="debug-summary">
@@ -294,7 +421,7 @@
 </template>
 
 <script setup lang="ts">
-import type { PropType } from 'vue'
+import type { ComponentPublicInstance, PropType } from 'vue'
 import { useCart } from '@/composables/useCart'
 type ProductImageEdge = {
   node: {
@@ -370,7 +497,7 @@ const props = defineProps({
 })
 
 const { fetchProducts } = useShopify()
-const { addToCart, openCart } = useCart()
+const { addToCart, cartItems, updateQuantity, removeFromCart } = useCart()
 const products = ref<ProductEdge[]>([])
 const loading = ref(true)
 const error = ref<string | null>(null)
@@ -378,17 +505,78 @@ const debugLogs = ref<DebugLogEntry[]>([])
 const showDebug = ref(false)
 const activeCategory = ref<string | null>(null)
 const categorySectionRef = ref<HTMLElement | null>(null)
+const categoryTabRefs = ref<Array<HTMLElement | null>>([])
+const selectedProduct = ref<ProductEdge | null>(null)
+const modalCloseButtonRef = ref<HTMLButtonElement | null>(null)
+const productModalRef = ref<HTMLDivElement | null>(null)
+const previousBodyOverflow = ref<string | null>(null)
+const viewMode = ref<'collections' | 'all'>(props.viewMode)
 
-type CollectionHighlight = {
-  product: ProductEdge
-  amount: string
-  currency: string
+const route = useRoute()
+const router = useRouter()
+const pendingRouteHandle = ref<string | null>(null)
+
+const showProductModal = computed(() => Boolean(selectedProduct.value))
+const productModalTitleId = computed(() =>
+  selectedProduct.value ? `product-modal-${selectedProduct.value.node.handle}-title` : 'product-modal-title',
+)
+const productModalDescriptionId = computed(() =>
+  selectedProduct.value
+    ? `product-modal-${selectedProduct.value.node.handle}-description`
+    : 'product-modal-description',
+)
+const selectedProductPriceRange = computed(
+  () => selectedProduct.value?.node.priceRange.minVariantPrice ?? null,
+)
+const selectedProductImage = computed(() => selectedProduct.value?.node.images.edges[0]?.node ?? null)
+const selectedProductTags = computed(() =>
+  selectedProduct.value
+    ? selectedProduct.value.node.tags
+        .map((tag) => tag.trim())
+        .filter((tag) => tag.length)
+        .slice(0, 6)
+    : [],
+)
+
+const routeProductHandle = computed(() => {
+  const raw = route.query.product
+  if (Array.isArray(raw)) {
+    return raw[0] ?? null
+  }
+
+  return raw ? String(raw) : null
+})
+
+const selectedProductDescriptionLines = computed(() => {
+  if (!selectedProduct.value) {
+    return []
+  }
+
+  return selectedProduct.value.node.description
+    .split(/\r?\n/)
+    .map((line) => line.trim())
+    .filter((line) => line.length)
+})
+
+const getCategoryIdentifier = (category: string | null | undefined) => {
+  const canonical = category ? canonicalizeCategory(category) : ''
+  return canonical.length ? canonical : 'collection'
+}
+
+const getCategoryTabId = (category: string | null | undefined) =>
+  `collection-tab-${getCategoryIdentifier(category)}`
+
+const getCategoryPanelId = (category: string | null | undefined) =>
+  `collection-panel-${getCategoryIdentifier(category)}`
+
+const setCategoryTabRef = (el: Element | ComponentPublicInstance | null, index: number) => {
+  const element = el && '$el' in el ? (el.$el as HTMLElement | null) : (el as HTMLElement | null)
+  categoryTabRefs.value[index] = element instanceof HTMLElement ? element : null
 }
 
 type CategorizedProductGroup = {
   category: string
   products: ProductEdge[]
-  highlight: CollectionHighlight | null
 }
 
 type DebugLogEntry = {
@@ -416,30 +604,8 @@ type ShopifyProductsResponse = {
   }
 }
 
-type CategoryMedia =
-  | {
-      type: 'video'
-      url: string
-      title?: string
-    }
-  | {
-      type: 'image'
-      url: string
-      title?: string
-    }
-
-type CollectionSpotlight = {
-  id: string
-  title: string
-  description: string
-  category: string
-  productHandles: string[]
-  media: CategoryMedia
-}
-
 const debugEnabled = computed(() => props.debug || process.dev)
 const formattedProducts = computed(() => JSON.stringify(products.value, null, 2))
-const isAllProductsView = computed(() => props.viewMode === 'all')
 const allProductsList = computed(() =>
   [...products.value].sort((a, b) =>
     a.node.title.localeCompare(b.node.title, 'en', { sensitivity: 'base' })
@@ -618,45 +784,6 @@ const deriveCategoryFromHandle = (handle: string) => {
   return 'Essential Haircare'
 }
 
-const parsePriceAmount = (amount: string | null | undefined) => {
-  if (!amount) {
-    return null
-  }
-
-  const numeric = Number.parseFloat(amount)
-  return Number.isFinite(numeric) ? numeric : null
-}
-
-type ProductPriceDetails = {
-  amount: string
-  currency: string
-  numeric: number
-}
-
-const getProductMaxPrice = (edge: ProductEdge): ProductPriceDetails | null => {
-  const range = edge.node.priceRange
-  if (!range) {
-    return null
-  }
-
-  const maxNode = range.maxVariantPrice ?? null
-  const minNode = range.minVariantPrice ?? null
-
-  const amount = maxNode?.amount ?? minNode?.amount ?? null
-  const currency = maxNode?.currencyCode ?? minNode?.currencyCode ?? null
-
-  if (!amount || !currency) {
-    return null
-  }
-
-  const numeric = parsePriceAmount(amount)
-  if (numeric === null) {
-    return null
-  }
-
-  return { amount, currency, numeric }
-}
-
 const parseMetafieldValues = (metafield: ProductCategoryMetafield): string[] => {
   if (!metafield?.value) {
     return []
@@ -826,6 +953,62 @@ const resolveCategoryForProduct = (edge: ProductEdge) => {
   return deriveCategoryFromHandle(edge.node.handle)
 }
 
+const selectedModalCategory = computed(() =>
+  selectedProduct.value ? resolveCategoryForProduct(selectedProduct.value) : null,
+)
+
+const recommendedProducts = computed<ProductEdge[]>(() => {
+  const current = selectedProduct.value
+  if (!current) {
+    return []
+  }
+
+  const currentId = current.node.id
+  const currentCategory = resolveCategoryForProduct(current)
+  const sameCategory: ProductEdge[] = []
+  const otherCategory: ProductEdge[] = []
+
+  products.value.forEach((edge) => {
+    if (edge.node.id === currentId) {
+      return
+    }
+
+    const category = resolveCategoryForProduct(edge)
+    if (category === currentCategory) {
+      sameCategory.push(edge)
+    } else {
+      otherCategory.push(edge)
+    }
+  })
+
+  const combined: ProductEdge[] = []
+  const pushUnique = (list: ProductEdge[]) => {
+    for (const item of list) {
+      if (!combined.some((existing) => existing.node.id === item.node.id)) {
+        combined.push(item)
+        if (combined.length >= 10) {
+          break
+        }
+      }
+    }
+  }
+
+  pushUnique(sameCategory)
+  if (combined.length < 10) {
+    pushUnique(otherCategory)
+  }
+
+  return combined.slice(0, 10)
+})
+
+const recommendedSectionTitle = computed(() => {
+  const category = selectedModalCategory.value
+  if (category) {
+    return `More from ${category}`
+  }
+  return 'Recommended for you'
+})
+
 const categorizedProducts = computed<CategorizedProductGroup[]>(() => {
   const groups = new Map<string, ProductEdge[]>()
 
@@ -847,39 +1030,13 @@ const categorizedProducts = computed<CategorizedProductGroup[]>(() => {
         a.node.title.localeCompare(b.node.title, 'en', { sensitivity: 'base' })
       )
 
-      const highlightCandidate = items.reduce<
-        (CollectionHighlight & { numeric: number }) | null
-      >((selected, edge) => {
-        const priceDetails = getProductMaxPrice(edge)
-        if (!priceDetails) {
-          return selected
-        }
-
-        if (!selected || priceDetails.numeric > selected.numeric) {
-          return {
-            product: edge,
-            amount: priceDetails.amount,
-            currency: priceDetails.currency,
-            numeric: priceDetails.numeric,
-          }
-        }
-
-        return selected
-      }, null)
-
       return {
         category,
         products: sortedProducts,
-        highlight: highlightCandidate
-          ? {
-              product: highlightCandidate.product,
-              amount: highlightCandidate.amount,
-              currency: highlightCandidate.currency,
-            }
-          : null,
       }
     })
     .filter((group) => categoryDetailLookup[group.category])
+    .filter((group) => group.products.length > 0)
     .sort((a, b) => {
       const aIndex = categoryOrder.indexOf(a.category)
       const bIndex = categoryOrder.indexOf(b.category)
@@ -941,6 +1098,47 @@ watch(
   { immediate: true },
 )
 
+onBeforeUpdate(() => {
+  categoryTabRefs.value = []
+})
+
+const handleGlobalKeydown = (event: KeyboardEvent) => {
+  if (event.key === 'Escape' && showProductModal.value) {
+    event.preventDefault()
+    closeProductModal()
+  }
+}
+
+watch(showProductModal, (isOpen) => {
+  if (!process.client) {
+    return
+  }
+
+  if (isOpen) {
+    previousBodyOverflow.value = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+    window.addEventListener('keydown', handleGlobalKeydown)
+  } else {
+    window.removeEventListener('keydown', handleGlobalKeydown)
+    if (previousBodyOverflow.value !== null) {
+      document.body.style.overflow = previousBodyOverflow.value
+      previousBodyOverflow.value = null
+    }
+  }
+})
+
+onBeforeUnmount(() => {
+  if (!process.client) {
+    return
+  }
+
+  window.removeEventListener('keydown', handleGlobalKeydown)
+  if (previousBodyOverflow.value !== null) {
+    document.body.style.overflow = previousBodyOverflow.value
+    previousBodyOverflow.value = null
+  }
+})
+
 const scrollToCollections = () => {
   if (typeof window === 'undefined') {
     return
@@ -970,129 +1168,64 @@ const selectCategory = (category: string) => {
   scrollToCollections()
 }
 
-const withVideoParams = (url: string, params: Record<string, string>) => {
-  try {
-    const parsed = new URL(url)
-    Object.entries(params).forEach(([key, value]) => {
-      parsed.searchParams.set(key, value)
-    })
-    return parsed.toString()
-  } catch (error) {
-    return url
+const focusCategoryAtIndex = (index: number) => {
+  const target = categoryTabRefs.value[index]
+  if (target) {
+    target.focus()
   }
 }
 
-type CollectionSpotlightView = CollectionSpotlight & {
-  productCount: number
-  mediaSrc: string
-}
-
-const collectionBlueprints: CollectionSpotlight[] = [
-  {
-    id: 'alchemic-signature',
-    title: 'Alchemic Signature Ritual',
-    description: 'Tone-perfecting cleanse and care that keeps vivid shades luminous between visits.',
-    category: 'Alchemic System',
-    productHandles: [
-      'alchemic-silver-shampoo',
-      'alchemic-silver-conditioner',
-      'alchemic-chocolate-shampoo',
-      'alchemic-chocolate-conditioner',
-    ],
-    media: {
-      type: 'video',
-      url: 'https://player.vimeo.com/video/322131565',
-      title: 'Alchemic System Film',
-    },
-  },
-  {
-    id: 'heart-of-glass-brilliance',
-    title: 'Heart of Glass Brilliance',
-    description: 'Blue botanical actives neutralize brass while reinforcing blonde strength and shine.',
-    category: 'Heart of Glass',
-    productHandles: [
-      'heart-of-glass-silkening-shampoo',
-      'heart-of-glass-rich-conditioner',
-      'heart-of-glass-sheer-glaze',
-      'davines-holiday-set-heart-of-glass',
-    ],
-    media: {
-      type: 'video',
-      url: 'https://player.vimeo.com/video/459764493',
-      title: 'Heart of Glass Ritual',
-    },
-  },
-  {
-    id: 'pasta-love-edit',
-    title: 'Pasta & Love Edit',
-    description: 'Italian grooming staples for precise lines, subtle texture, and skin-soothing finish.',
-    category: 'Pasta & Love',
-    productHandles: [
-      'pasta-love',
-      'pasta-love-softening-shaving-cream',
-      'pasta-love-pre-shaving-and-softening-oil',
-    ],
-    media: {
-      type: 'video',
-      url: 'https://player.vimeo.com/video/518197110',
-      title: 'Pasta & Love Routine',
-    },
-  },
-  {
-    id: 'oi-radiance',
-    title: 'OI Radiance Ritual',
-    description: 'Iconic shine essentials that cushion every strand with silky softness and gloss.',
-    category: 'OI',
-    productHandles: [
-      'oi-shampoo',
-      'oi-conditioner',
-      'oi-oil',
-      'davines-holiday-set-oi',
-    ],
-    media: {
-      type: 'video',
-      url: 'https://player.vimeo.com/video/470706891',
-      title: 'OI Ritual Film',
-    },
-  },
-]
-
-const collectionSpotlights = computed<CollectionSpotlightView[]>(() => {
-  if (!products.value.length) {
-    return []
+const findNextEnabledIndex = (currentIndex: number, direction: 1 | -1) => {
+  const groups = categorizedProducts.value
+  if (!groups.length) {
+    return currentIndex
   }
 
-  return collectionBlueprints
-    .map((blueprint) => {
-      const handles = new Set(blueprint.productHandles)
-      const matched = products.value.filter((edge) => handles.has(edge.node.handle))
-      const mediaSrc =
-        blueprint.media.type === 'video'
-          ? withVideoParams(blueprint.media.url, {
-              autoplay: '0',
-              muted: '1',
-              loop: '1',
-              controls: '0',
-              background: '1',
-              playsinline: '1',
-            })
-          : blueprint.media.url
+  const total = groups.length
+  const nextIndex = (currentIndex + direction + total) % total
+  return nextIndex
+}
 
-      return {
-        ...blueprint,
-        productHandles: matched.map((edge) => edge.node.handle),
-        productCount: matched.length,
-        mediaSrc,
-      }
-    })
-    .filter((spotlight) => spotlight.productCount > 0)
-})
+const handleTabKeydown = (event: KeyboardEvent, index: number) => {
+  if (!categorizedProducts.value.length) {
+    return
+  }
 
-const selectCollection = (collection: CollectionSpotlightView) => {
-  selectCategory(collection.category)
-  nextTick(() => {
-    scrollToCollections()
-  })
+  const { key } = event
+
+  if (key === 'ArrowRight' || key === 'ArrowDown') {
+    event.preventDefault()
+    const nextIndex = findNextEnabledIndex(index, 1)
+    if (nextIndex !== index) {
+      selectCategory(categorizedProducts.value[nextIndex].category)
+      focusCategoryAtIndex(nextIndex)
+    }
+    return
+  }
+
+  if (key === 'ArrowLeft' || key === 'ArrowUp') {
+    event.preventDefault()
+    const nextIndex = findNextEnabledIndex(index, -1)
+    if (nextIndex !== index) {
+      selectCategory(categorizedProducts.value[nextIndex].category)
+      focusCategoryAtIndex(nextIndex)
+    }
+    return
+  }
+
+  if (key === 'Home') {
+    event.preventDefault()
+    selectCategory(categorizedProducts.value[0].category)
+    focusCategoryAtIndex(0)
+    return
+  }
+
+  if (key === 'End') {
+    event.preventDefault()
+    const lastIndex = categorizedProducts.value.length - 1
+    selectCategory(categorizedProducts.value[lastIndex].category)
+    focusCategoryAtIndex(lastIndex)
+  }
 }
 
 const getPrimaryVariant = (product: ProductEdge) =>
@@ -1102,6 +1235,22 @@ const isVariantAvailable = (product: ProductEdge) => {
   const variant = getPrimaryVariant(product)
   return Boolean(variant?.availableForSale)
 }
+
+const selectedVariant = computed(() =>
+  selectedProduct.value ? getPrimaryVariant(selectedProduct.value) : null,
+)
+
+const selectedVariantAvailable = computed(() => Boolean(selectedVariant.value?.availableForSale))
+
+const selectedVariantQuantity = computed(() => {
+  const variantId = selectedVariant.value?.id
+  if (!variantId) {
+    return 0
+  }
+
+  const entry = cartItems.value.find((item) => item.variantId === variantId)
+  return entry?.quantity ?? 0
+})
 
 const handleQuickAdd = (product: ProductEdge) => {
   const variant = getPrimaryVariant(product)
@@ -1126,14 +1275,170 @@ const handleQuickAdd = (product: ProductEdge) => {
     1,
   )
 
-  if (process.client) {
-    setTimeout(() => {
-      openCart()
-    }, 300)
+}
+
+const handleModalAdd = () => {
+  const product = selectedProduct.value
+  const variant = selectedVariant.value
+
+  if (!product || !variant || !variant.availableForSale) {
+    return
+  }
+
+  const imageNode = product.node.images.edges[0]?.node
+
+  addToCart(
+    {
+      variantId: variant.id,
+      productId: product.node.id,
+      title: product.node.title,
+      variantTitle: variant.title ?? undefined,
+      price: product.node.priceRange.minVariantPrice.amount,
+      currencyCode: product.node.priceRange.minVariantPrice.currencyCode,
+      image: imageNode?.url,
+      handle: product.node.handle,
+    },
+    1,
+  )
+}
+
+const incrementSelectedQuantity = () => {
+  const variant = selectedVariant.value
+  if (!variant || !variant.availableForSale) {
+    return
+  }
+
+  const nextQuantity = selectedVariantQuantity.value + 1
+  updateQuantity(variant.id, nextQuantity)
+}
+
+const decrementSelectedQuantity = () => {
+  const variant = selectedVariant.value
+  if (!variant) {
+    return
+  }
+
+  const nextQuantity = selectedVariantQuantity.value - 1
+  if (nextQuantity <= 0) {
+    removeFromCart(variant.id)
   } else {
-    openCart()
+    updateQuantity(variant.id, nextQuantity)
   }
 }
+
+type ModalSyncOptions = {
+  skipRouteSync?: boolean
+}
+
+const syncRouteProductQuery = (product: ProductEdge | null) => {
+  if (process.server) {
+    return
+  }
+
+  const currentHandle = routeProductHandle.value
+  const nextHandle = product?.node.handle ?? null
+
+  if (currentHandle === nextHandle) {
+    return
+  }
+
+  const currentQuery = { ...route.query } as Record<string, any>
+
+  if (nextHandle) {
+    currentQuery.product = nextHandle
+  } else {
+    delete currentQuery.product
+  }
+
+  void router.replace({
+    path: route.path,
+    query: currentQuery,
+    hash: route.hash,
+  })
+}
+
+const openProductModal = (product: ProductEdge, options: ModalSyncOptions = {}) => {
+  const category = resolveCategoryForProduct(product)
+  if (category && activeCategory.value !== category) {
+    activeCategory.value = category
+  }
+
+  selectedProduct.value = product
+
+  if (!options.skipRouteSync) {
+    syncRouteProductQuery(product)
+  }
+
+  nextTick(() => {
+    productModalRef.value?.scrollTo({ top: 0, behavior: 'auto' })
+    modalCloseButtonRef.value?.focus({ preventScroll: true })
+  })
+}
+
+const closeProductModal = (options: ModalSyncOptions = {}) => {
+  if (!options.skipRouteSync) {
+    syncRouteProductQuery(null)
+  }
+
+  selectedProduct.value = null
+  modalCloseButtonRef.value = null
+}
+
+const findProductByHandle = (handle: string | null | undefined) => {
+  if (!handle) {
+    return null
+  }
+
+  return products.value.find((edge) => edge.node.handle === handle) ?? null
+}
+
+const openProductForHandle = (handle: string, options: ModalSyncOptions = {}) => {
+  const match = findProductByHandle(handle)
+  if (!match) {
+    return false
+  }
+
+  openProductModal(match, options)
+  return true
+}
+
+watch(
+  routeProductHandle,
+  (handle) => {
+    if (!handle) {
+      if (selectedProduct.value) {
+        closeProductModal({ skipRouteSync: true })
+      }
+      pendingRouteHandle.value = null
+      return
+    }
+
+    if (selectedProduct.value?.node.handle === handle) {
+      pendingRouteHandle.value = null
+      return
+    }
+
+    if (!openProductForHandle(handle, { skipRouteSync: true })) {
+      pendingRouteHandle.value = handle
+    } else {
+      pendingRouteHandle.value = null
+    }
+  },
+  { immediate: true },
+)
+
+watch(
+  () => products.value.length,
+  () => {
+    if (!pendingRouteHandle.value) {
+      return
+    }
+
+    if (openProductForHandle(pendingRouteHandle.value, { skipRouteSync: true })) {
+      pendingRouteHandle.value = null
+    }
+  },
+)
 
 const truncate = (text: string, length: number) => {
   if (!text) return ''
@@ -1229,6 +1534,35 @@ onMounted(() => {
   gap: $spacing-xl * 1.5;
 }
 
+.view-toggle {
+  display: flex;
+  justify-content: center;
+  gap: $spacing-md;
+}
+
+.view-toggle-btn {
+  padding: $spacing-sm $spacing-md;
+  border: 2px solid rgba($accent-sage, 0.3);
+  border-radius: 24px;
+  background: transparent;
+  color: rgba($accent-sage, 0.7);
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover {
+    border-color: rgba($accent-sage, 0.6);
+    color: rgba($accent-sage, 0.9);
+  }
+
+  &.active {
+    background: $accent-sage;
+    border-color: $accent-sage;
+    color: $white;
+  }
+}
+
 .status-message {
   display: grid;
   gap: $spacing-xs;
@@ -1273,19 +1607,13 @@ onMounted(() => {
 
 .status-helper {
   font-size: 0.95rem;
-  color: rgba($accent-sage, 0.7);
-}
-.chip-highlight-label {
-  font-size: 0.68rem;
-  text-transform: uppercase;
-  letter-spacing: 0.16em;
-  color: rgba($accent-sage, 0.62);
+  color: rgb($accent-sage, 0.7);
 }
 
 .product-experience {
   display: flex;
   flex-direction: column;
-  gap: $spacing-xl * 1.5;
+  gap: $spacing-md;
 }
 
 .view-fade-enter-active,
@@ -1300,12 +1628,11 @@ onMounted(() => {
 }
 
 .all-products-section,
-.category-section,
-.collection-section {
+.category-section {
   background: rgba($white, 0.97);
   border: 1px solid rgba($accent-sage, 0.12);
   border-radius: 32px;
-  padding: $spacing-xl * 1.2 $spacing-xl * 1.25;
+  padding: $spacing-xl * .5;
   box-shadow: 0 30px 70px rgba($accent-sage, 0.12);
 }
 
@@ -1346,124 +1673,91 @@ onMounted(() => {
 
 .category-display {
   display: grid;
+  grid-template-columns: minmax(220px, 300px) minmax(0, 1fr);
   gap: $spacing-xl;
   align-items: start;
 }
 
-.category-selector {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-  gap: $spacing-sm;
+.category-nav {
+  position: sticky;
+  top: $spacing-xl;
+  align-self: start;
+  max-height: calc(100vh - $spacing-xxl);
+  overflow-y: auto;
+  padding-right: $spacing-sm;
 }
 
-.category-chip {
+.category-tabs {
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
-  gap: $spacing-xs;
-  padding: $spacing-sm $spacing-md;
-  border-radius: 18px;
-  border: 1px solid rgba($accent-sage, 0.18);
-  background: rgba($accent-sage, 0.08);
-  color: $accent-sage;
-  cursor: pointer;
-  text-align: left;
-  transition: transform 0.2s ease, border-color 0.2s ease, background 0.2s ease, color 0.2s ease;
+  gap: $spacing-sm;
+  padding-right: $spacing-sm;
+  border-right: 1px solid rgba($accent-sage, 0.18);
+}
 
-  &:hover,
+.category-tab {
+  appearance: none;
+  border: none;
+  background: rgba($accent-sage, 0.04);
+  color: rgba($accent-sage, 0.72);
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  padding: $spacing-sm $spacing-md;
+  border-radius: 12px;
+  position: relative;
+  text-align: left;
+  transition: color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: $spacing-xs * 0.5;
+    bottom: $spacing-xs * 0.5;
+    left: 0;
+    width: 3px;
+    border-radius: 999px;
+    background: transparent;
+    transition: background 0.2s ease;
+  }
+
+  &:hover {
+    color: $accent-sage;
+    background: rgba($accent-sage, 0.1);
+  }
+
   &:focus-visible {
-    transform: translateY(-2px);
-    border-color: rgba($accent-sage, 0.28);
-    background: rgba($accent-sage, 0.12);
-    outline: none;
+    outline: 2px solid rgba($accent-gold, 0.4);
+    outline-offset: 3px;
   }
 
   &.is-active {
-    border-color: rgba($accent-sage, 0.45);
-    background: linear-gradient(135deg, rgba($accent-sage, 0.85), rgba($accent-sage, 0.75));
-    color: lighten($white, 6%);
+    color: $accent-sage;
+    background: rgba($accent-sage, 0.14);
+    box-shadow: inset 0 0 0 1px rgba($accent-sage, 0.22);
 
-    .chip-tagline,
-    .chip-highlight,
-    .chip-highlight-product,
-    .chip-highlight-placeholder,
-    .chip-count {
-      color: lighten($white, 12%);
-    }
-
-    .chip-highlight-media {
-      background: rgba($white, 0.2);
+    &::before {
+      background: $accent-gold;
     }
   }
 
-  &.is-empty {
-    opacity: 0.45;
-    cursor: default;
-  }
 }
 
-.chip-label {
+.tab-label {
   font-weight: 600;
-  font-size: 1rem;
-  letter-spacing: 0.015em;
+  font-size: 0.95rem;
+  letter-spacing: 0.01em;
 }
 
-.chip-tagline {
-  font-size: 0.85rem;
-  color: rgba($accent-sage, 0.7);
-  transition: color 0.2s ease;
-}
-
-.chip-highlight {
-  display: flex;
-  align-items: center;
-  gap: $spacing-xs;
-  margin-top: $spacing-xs;
-  color: rgba($accent-sage, 0.82);
-  transition: color 0.2s ease;
-}
-
-.chip-highlight-media {
-  width: 42px;
-  height: 42px;
-  border-radius: 12px;
-  overflow: hidden;
-  background: rgba($accent-sage, 0.12);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-}
-
-.chip-highlight-placeholder {
-  font-weight: 600;
-  font-size: 1rem;
+.tab-tagline {
+  font-size: 0.8rem;
   color: rgba($accent-sage, 0.6);
 }
 
-.chip-highlight-product {
-  font-weight: 600;
-  font-size: 0.9rem;
-  letter-spacing: 0.01em;
-  max-width: 12ch;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.chip-count {
-  margin-top: $spacing-xs;
+.tab-count {
   font-size: 0.75rem;
-  padding: 0.2rem 0.55rem;
-  border-radius: 999px;
-  border: 1px solid rgba($accent-sage, 0.2);
-  color: rgba($accent-sage, 0.75);
-  transition: color 0.2s ease, border-color 0.2s ease;
+  color: rgba($accent-sage, 0.5);
 }
 
 .category-products {
@@ -1521,8 +1815,8 @@ onMounted(() => {
 
 .product-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-  gap: $spacing-xl;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: $spacing-lg;
 }
 
 .all-products-grid {
@@ -1532,35 +1826,37 @@ onMounted(() => {
 .product-card {
   display: flex;
   flex-direction: column;
-  height: 100%;
   background: rgba($white, 0.98);
-  border: 1px solid rgba($accent-sage, 0.12);
-  border-radius: 20px;
+  border: 1px solid rgba($accent-sage, 0.15);
+  border-radius: 16px;
   overflow: hidden;
-  box-shadow: 0 16px 42px rgba($accent-sage, 0.1);
-  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
 
   &:hover {
-    transform: translateY(-6px);
-    box-shadow: 0 24px 60px rgba($accent-sage, 0.16);
-    border-color: rgba($accent-sage, 0.26);
+    border-color: rgba($accent-sage, 0.3);
+    box-shadow: 0 8px 24px rgba($accent-sage, 0.1);
   }
 }
 
-.product-card--all .product-info {
-  gap: $spacing-sm;
-}
-
-.product-link {
+.product-trigger {
   display: block;
+  width: 100%;
   text-decoration: none;
   color: inherit;
+  border: none;
+  background: none;
+  cursor: pointer;
+  text-align: left;
+
+  &:focus-visible {
+    outline: 2px solid rgba($accent-gold, 0.4);
+    outline-offset: 2px;
+  }
 }
 
 .product-image {
-  background: linear-gradient(135deg, rgba($accent-sage, 0.18), rgba($accent-sage, 0.1));
-  height: 280px;
-  width: 100%;
+  aspect-ratio: 1;
+  background: linear-gradient(135deg, rgba($accent-sage, 0.08), rgba($accent-sage, 0.04));
   overflow: hidden;
 
   img {
@@ -1571,8 +1867,8 @@ onMounted(() => {
   }
 }
 
-.product-card:hover img {
-  transform: scale(1.05);
+.product-card:hover .product-image img {
+  transform: scale(1.03);
 }
 
 .image-placeholder {
@@ -1581,102 +1877,65 @@ onMounted(() => {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 3rem;
-  color: rgba($accent-sage, 0.35);
-  background: linear-gradient(135deg, rgba($accent-sage, 0.12), rgba($accent-sage, 0.08));
+  font-size: 2.5rem;
+  color: rgba($accent-sage, 0.3);
+  background: linear-gradient(135deg, rgba($accent-sage, 0.06), rgba($accent-sage, 0.03));
 }
 
-.product-info {
-  padding: $spacing-lg;
+.product-content {
+  padding: $spacing-md;
   display: flex;
   flex-direction: column;
-  gap: $spacing-sm;
-  flex: 1;
+  gap: $spacing-xs;
 }
 
-.product-info__link {
-  display: flex;
-  flex-direction: column;
-  gap: $spacing-sm;
-  text-decoration: none;
-  color: inherit;
-  flex: 1;
-
-  &:focus-visible {
-    outline: 2px solid rgba($accent-gold, 0.4);
-    outline-offset: 4px;
-  }
-}
-
-.product-info__link:hover .product-title {
-  text-decoration: underline;
-}
-
-.product-collection-pill {
-  align-self: flex-start;
-  padding: 0.2rem 0.75rem;
-  border-radius: 999px;
-  background: rgba($accent-sage, 0.12);
-  border: 1px solid rgba($accent-sage, 0.18);
-  color: rgba($accent-sage, 0.85);
+.product-category {
   font-size: 0.75rem;
   font-weight: 600;
-  letter-spacing: 0.08em;
+  color: rgba($accent-sage, 0.7);
   text-transform: uppercase;
-  margin-bottom: $spacing-xs;
+  letter-spacing: 0.05em;
 }
 
 .product-title {
   color: $accent-sage;
-  font-size: 1.25rem;
-  font-weight: 600;
-  margin: 0;
-}
-
-.price {
-  color: $accent-gold;
   font-size: 1.1rem;
   font-weight: 600;
   margin: 0;
+  line-height: 1.3;
 }
 
-.description {
-  color: rgba($accent-sage, 0.7);
-  font-size: 0.95rem;
-  line-height: 1.5;
+.product-price {
+  color: $accent-gold;
+  font-size: 1rem;
+  font-weight: 600;
   margin: 0;
 }
 
-.quick-add-btn {
-  margin-top: auto;
+.product-add-btn {
+  margin: 0 $spacing-md $spacing-md;
   padding: $spacing-sm $spacing-md;
-  background: linear-gradient(135deg, $accent-sage, darken($accent-sage, 8%));
+  background: $accent-sage;
   color: $white;
   border: none;
-  border-radius: 50px;
+  border-radius: 8px;
   cursor: pointer;
   font-size: 0.9rem;
-  font-weight: 600;
-  transition: all 0.25s ease;
-  box-shadow: 0 4px 12px rgba($accent-sage, 0.3);
+  font-weight: 500;
+  transition: background-color 0.2s ease;
 
-  &:hover:not(:disabled),
-  &:focus-visible:not(:disabled) {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 16px rgba($accent-sage, 0.4);
+  &:hover:not(:disabled) {
+    background: darken($accent-sage, 8%);
   }
 
   &:focus-visible {
     outline: 2px solid rgba($accent-gold, 0.5);
-    outline-offset: 3px;
+    outline-offset: 2px;
   }
 
   &:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
     background: rgba($accent-sage, 0.3);
-    box-shadow: none;
-    transform: none;
+    cursor: not-allowed;
   }
 }
 
@@ -1700,113 +1959,345 @@ onMounted(() => {
   transform: translateY(12px);
 }
 
-.collection-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-  gap: $spacing-xl;
+.product-modal-enter-active,
+.product-modal-leave-active {
+  transition: opacity 0.2s ease;
 }
 
-.collection-card {
-  display: flex;
-  flex-direction: column;
-  gap: $spacing-md;
-  padding: $spacing-lg;
-  border-radius: 24px;
-  border: 1px solid rgba($accent-sage, 0.12);
-  background: rgba($white, 0.98);
-  box-shadow: 0 20px 52px rgba($accent-sage, 0.12);
-  transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+.product-modal-enter-from,
+.product-modal-leave-to {
+  opacity: 0;
+}
 
-  &:hover {
-    transform: translateY(-6px);
-    border-color: rgba($accent-sage, 0.28);
-    box-shadow: 0 28px 64px rgba($accent-sage, 0.16);
+.product-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba($accent-sage, 0.35);
+  backdrop-filter: blur(6px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: $spacing-xl;
+  z-index: 1200;
+}
+
+.product-modal {
+  position: relative;
+  width: min(960px, 100%);
+  max-height: 88vh;
+  background: $white;
+  border-radius: 28px;
+  border: 1px solid rgba($accent-sage, 0.16);
+  box-shadow: 0 40px 90px rgba($accent-sage, 0.22);
+  overflow: hidden;
+}
+
+.product-modal__close {
+  position: absolute;
+  top: $spacing-sm;
+  right: $spacing-sm;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: none;
+  background: rgba($accent-sage, 0.12);
+  color: $accent-sage;
+  font-size: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.2s ease;
+
+  &:hover,
+  &:focus-visible {
+    background: rgba($accent-sage, 0.2);
+    transform: translateY(-1px);
+    outline: none;
   }
 }
 
-.collection-media {
-  position: relative;
-  aspect-ratio: 16 / 9;
-  border-radius: 18px;
-  overflow: hidden;
-  background: rgba($accent-sage, 0.08);
+.product-modal__scroller {
+  overflow-y: auto;
+  max-height: inherit;
+  padding: $spacing-xl * 1.2 $spacing-xl * 1.4;
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-xl;
+}
 
-  iframe,
+.product-modal__content {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: $spacing-xl;
+}
+
+.product-modal__media {
+  position: relative;
+  border-radius: 24px;
+  overflow: hidden;
+  background: linear-gradient(135deg, rgba($accent-sage, 0.18), rgba($accent-sage, 0.12));
+  min-height: 380px;
+
   img {
-    position: absolute;
-    inset: 0;
     width: 100%;
     height: 100%;
-    border: 0;
     object-fit: cover;
   }
 }
 
-.collection-body {
-  display: flex;
-  flex-direction: column;
-  gap: $spacing-sm;
-}
-
-.collection-pill {
-  align-self: flex-start;
-  padding: 0.25rem 0.75rem;
-  border-radius: 999px;
-  background: rgba($accent-sage, 0.12);
-  border: 1px solid rgba($accent-sage, 0.18);
-  color: $accent-sage;
-  font-size: 0.85rem;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  font-weight: 600;
-}
-
-.collection-title {
-  font-size: 1.4rem;
-  color: $accent-sage;
-  margin: 0;
-  font-weight: 600;
-}
-
-.collection-description {
-  color: rgba($accent-sage, 0.7);
-  margin: 0;
-  line-height: 1.6;
-  font-size: 1rem;
-}
-
-.collection-meta {
+.product-modal__placeholder {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: $spacing-md;
-  margin-top: $spacing-sm;
+  justify-content: center;
+  font-size: clamp(3rem, 6vw, 4rem);
+  color: rgba($accent-sage, 0.38);
+  height: 100%;
 }
 
-.collection-count {
+.product-modal__details {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+  color: $accent-sage;
+}
+
+.product-modal__kicker {
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  font-size: 0.75rem;
+  color: rgba($accent-sage, 0.6);
+  margin: 0;
+}
+
+.product-modal__title {
+  font-size: clamp(2rem, 3.5vw, 2.6rem);
+  margin: 0;
+  font-weight: 600;
+}
+
+.product-modal__type {
+  margin: 0;
   font-size: 0.9rem;
   color: rgba($accent-sage, 0.65);
 }
 
-.collection-cta {
-  appearance: none;
-  border: 1px solid rgba($accent-sage, 0.22);
-  background: $accent-sage;
-  color: lighten($white, 8%);
-  padding: $spacing-xs $spacing-lg;
-  border-radius: 999px;
+.product-modal__price {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: $accent-gold;
+}
+
+.product-modal__description {
+  display: grid;
+  gap: $spacing-sm;
   font-size: 0.95rem;
+  line-height: 1.2;
+  color: rgba($accent-sage, 0.78);
+
+  p {
+    margin: 0;
+  }
+}
+
+.product-modal__tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $spacing-xs;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+
+  li {
+    padding: 0.25rem 0.75rem;
+    border-radius: 999px;
+    background: rgba($accent-sage, 0.1);
+    border: 1px solid rgba($accent-sage, 0.18);
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+}
+
+.product-modal__actions {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-sm;
+  margin-top: $spacing-sm;
+}
+
+.modal-add-btn {
+  appearance: none;
+  border: none;
+  background: linear-gradient(135deg, $accent-sage, darken($accent-sage, 8%));
+  color: $white;
+  padding: $spacing-sm $spacing-lg;
+  border-radius: 999px;
+  font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
-  transition: transform 0.25s ease, box-shadow 0.25s ease, background 0.25s ease;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 
   &:hover,
   &:focus-visible {
-    transform: translateY(-2px);
-    box-shadow: 0 16px 38px rgba($accent-sage, 0.25);
-    background: darken($accent-sage, 4%);
+    transform: translateY(-1px);
+    box-shadow: 0 12px 28px rgba($accent-sage, 0.28);
     outline: none;
   }
+}
+
+.modal-quantity {
+  display: inline-flex;
+  align-items: center;
+  gap: $spacing-sm;
+  border-radius: 999px;
+  background: rgba($accent-sage, 0.08);
+  border: 1px solid rgba($accent-sage, 0.18);
+  padding: $spacing-xs $spacing-sm;
+  align-self: flex-start;
+}
+
+.quantity-btn {
+  appearance: none;
+  border: none;
+  background: transparent;
+  color: $accent-sage;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: background 0.2s ease;
+
+  &:hover,
+  &:focus-visible {
+    background: rgba($accent-sage, 0.12);
+    outline: none;
+  }
+}
+
+.quantity-value {
+  min-width: 2ch;
+  text-align: center;
+  font-weight: 600;
+  color: $accent-sage;
+}
+
+.product-modal__soldout {
+  font-size: 0.95rem;
+  color: rgba($accent-sage, 0.65);
+}
+
+.product-modal__recommendations {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+}
+
+.recommendations-head {
+  display: grid;
+  gap: $spacing-xs;
+
+  h4 {
+    margin: 0;
+    font-size: 1.2rem;
+    color: $accent-sage;
+  }
+}
+
+.recommendations-sub {
+  margin: 0;
+  font-size: 0.9rem;
+  color: rgba($accent-sage, 0.65);
+}
+
+.recommendations-track {
+  display: flex;
+  gap: $spacing-md;
+  overflow-x: auto;
+  padding-bottom: $spacing-sm;
+  margin: 0 -$spacing-sm;
+  padding-left: $spacing-sm;
+  scroll-snap-type: x mandatory;
+}
+
+.recommendation-card {
+  flex: 0 0 220px;
+  scroll-snap-align: start;
+}
+
+.recommendation-card__trigger {
+  appearance: none;
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-sm;
+  width: 100%;
+  border: none;
+  text-align: left;
+  background: rgba($white, 0.96);
+  border-radius: 18px;
+  border: 1px solid rgba($accent-sage, 0.14);
+  box-shadow: 0 18px 40px rgba($accent-sage, 0.12);
+  padding: $spacing-sm;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+
+  &:hover,
+  &:focus-visible {
+    transform: translateY(-4px);
+    border-color: rgba($accent-sage, 0.28);
+    box-shadow: 0 28px 60px rgba($accent-sage, 0.16);
+    outline: none;
+  }
+}
+
+.recommendation-card__media {
+  position: relative;
+  border-radius: 14px;
+  overflow: hidden;
+  aspect-ratio: 4 / 5;
+  background: rgba($accent-sage, 0.1);
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+}
+
+.recommendation-card__placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.2rem;
+  color: rgba($accent-sage, 0.4);
+  height: 100%;
+}
+
+.recommendation-card__body {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-xs;
+}
+
+.recommendation-card__category {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  color: rgba($accent-sage, 0.6);
+}
+
+.recommendation-card__title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: $accent-sage;
+}
+
+.recommendation-card__price {
+  font-size: 0.95rem;
+  color: $accent-gold;
+  font-weight: 600;
 }
 
 .debug-panel {
@@ -1892,8 +2383,39 @@ onMounted(() => {
 }
 
 @media (max-width: $breakpoint-lg) {
-  .category-selector {
-    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  .category-display {
+    grid-template-columns: 1fr;
+    gap: $spacing-lg;
+  }
+
+  .category-nav {
+    position: static;
+    max-height: none;
+    padding-right: 0;
+  }
+
+  .category-tabs {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: $spacing-sm;
+    border-right: none;
+    border-bottom: 1px solid rgba($accent-sage, 0.18);
+    padding-right: 0;
+    padding-bottom: $spacing-sm;
+  }
+
+  .category-tab {
+    flex: 1 1 220px;
+    border-radius: 12px 12px 0 0;
+
+    &::before {
+      top: auto;
+      bottom: -$spacing-xs;
+      left: $spacing-md * 0.6;
+      right: $spacing-md * 0.6;
+      width: auto;
+      height: 3px;
+    }
   }
 
   .category-summary {
@@ -1904,17 +2426,23 @@ onMounted(() => {
   .category-total {
     align-self: flex-start;
   }
+
+  .product-modal__content {
+    grid-template-columns: 1fr;
+  }
+
+  .product-modal__scroller {
+    padding: $spacing-xl;
+  }
+
+  .product-modal__media {
+    min-height: 320px;
+  }
 }
 
 @media (max-width: $breakpoint-md) {
   .product-experience {
     gap: $spacing-xl;
-  }
-
-  .all-products-section,
-  .category-section,
-  .collection-section {
-    padding: $spacing-xl $spacing-lg;
   }
 
   .product-grid {
@@ -1930,19 +2458,33 @@ onMounted(() => {
     height: 240px;
   }
 
-  .collection-grid {
-    grid-template-columns: 1fr;
+  .product-modal__scroller {
+    padding: $spacing-lg;
   }
+
+  .recommendations-track {
+    margin: 0;
+    padding: 0;
+    gap: $spacing-sm;
+  }
+
 }
 
 @media (max-width: $breakpoint-sm) {
-  .category-selector {
-    grid-template-columns: 1fr;
+  .category-tabs {
+    gap: $spacing-xs;
+    overflow-x: auto;
+    flex-wrap: nowrap;
+  }
+
+  .category-tab {
+    flex: 0 0 auto;
+    min-width: 200px;
+    border-radius: 12px;
   }
 
   .all-products-section,
-  .category-section,
-  .collection-section {
+  .category-section {
     padding: $spacing-lg;
   }
 
@@ -1950,8 +2492,12 @@ onMounted(() => {
     grid-template-columns: 1fr;
   }
 
-  .collection-card {
+  .product-modal__scroller {
     padding: $spacing-md;
+  }
+
+  .recommendation-card {
+    flex: 0 0 180px;
   }
 }
 </style>
