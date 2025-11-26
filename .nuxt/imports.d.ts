@@ -32,4 +32,5 @@ export { useCart } from '../composables/useCart';
 export { useShopify } from '../composables/useShopify';
 export { useToast, ToastType, ToastActionType, ToastAction, ToastOptions, Toast } from '../composables/useToast';
 export { useImage } from '../node_modules/@nuxt/image/dist/runtime/composables';
+export { useNuxtDevTools } from '../node_modules/@nuxt/devtools/dist/runtime/use-nuxt-devtools';
 export { definePageMeta } from '../node_modules/nuxt/dist/pages/runtime/composables';

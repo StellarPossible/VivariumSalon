@@ -14,6 +14,25 @@
       </slot>
     </div>
     <div v-else class="product-experience">
+      <div class="section-header-row">
+        <div class="search-container">
+          <div class="search-input-wrapper">
+            <Icon icon="heroicons:magnifying-glass" class="search-icon" />
+            <input
+              type="text"
+              v-model="searchQuery"
+              placeholder="Search products..."
+              class="search-input"
+            />
+          </div>
+        </div>
+        <header class="section-head">
+          <h3 v-if="viewMode === 'collections'" id="collection-browser-heading">Shop by Collection</h3>
+          <h3 v-else id="all-products-heading">All Products</h3>
+          <p v-if="viewMode === 'collections'" class="section-description">Select a ritual to explore salon-trusted essentials.</p>
+          <p v-else class="section-description">Browse every Vivarium favorite in one streamlined view.</p>
+        </header>
+      </div>
       <div class="view-toggle">
         <button
           type="button"
@@ -37,13 +56,7 @@
           v-if="viewMode === 'all'"
           key="all-products"
           class="all-products-section"
-          aria-labelledby="all-products-heading"
         >
-          <header class="section-head">
-            <span class="section-kicker">Full catalog</span>
-            <h3 id="all-products-heading">All Products</h3>
-            <p class="section-description">Browse every Vivarium favorite in one streamlined view.</p>
-          </header>
           <div class="product-grid all-products-grid" role="list">
             <article
               v-for="product in allProductsList"
@@ -67,17 +80,9 @@
                     <div class="image-placeholder">{{ product.node.title.charAt(0) }}</div>
                   </template>
                 </div>
-                <div class="product-content">
+                <div class="product-info">
                   <span class="product-category">{{ resolveCategoryForProduct(product) }}</span>
                   <h4 class="product-title">{{ product.node.title }}</h4>
-                  <p class="product-price">
-                    {{
-                      formatPrice(
-                        product.node.priceRange.minVariantPrice.amount,
-                        product.node.priceRange.minVariantPrice.currencyCode,
-                      )
-                    }}
-                  </p>
                 </div>
               </button>
               <button
@@ -86,7 +91,15 @@
                 :disabled="!isVariantAvailable(product)"
                 @click.prevent.stop="handleQuickAdd(product)"
               >
-                {{ isVariantAvailable(product) ? 'Add to Cart' : 'Out of Stock' }}
+                <span class="btn-text">{{ isVariantAvailable(product) ? 'Add to Cart' : 'Out of Stock' }}</span>
+                <span class="btn-price">
+                  {{
+                    formatPrice(
+                      product.node.priceRange.minVariantPrice.amount,
+                      product.node.priceRange.minVariantPrice.currencyCode,
+                    )
+                  }}
+                </span>
               </button>
             </article>
           </div>
@@ -95,12 +108,7 @@
           <section
             ref="categorySectionRef"
             class="category-section"
-            aria-labelledby="collection-browser-heading"
           >
-            <header class="section-head">
-              <h3 id="collection-browser-heading">Shop by Collection</h3>
-              <p class="section-description">Select a ritual to explore salon-trusted essentials.</p>
-            </header>
             <div class="category-display">
               <aside class="category-nav" aria-label="Product collections">
                 <nav
@@ -126,15 +134,18 @@
                     @click="selectCategory(group.category)"
                     @keydown="handleTabKeydown($event, index)"
                   >
-                    <span class="tab-label">{{ group.category }}</span>
+                    <div class="tab-header">
+                      <Icon
+                        :icon="categoryDetailLookup[group.category]?.icon || 'heroicons:question-mark-circle'"
+                        class="tab-icon"
+                      />
+                      <span class="tab-label">{{ group.category }}</span>
+                    </div>
                     <span
                       v-if="categoryDetailLookup[group.category]?.tagline"
                       class="tab-tagline"
                     >
                       {{ categoryDetailLookup[group.category]?.tagline }}
-                    </span>
-                    <span class="tab-count" aria-hidden="true">
-                      {{ group.products.length === 1 ? '1 product' : `${group.products.length} products` }}
                     </span>
                   </button>
                 </nav>
@@ -154,14 +165,17 @@
                       <p class="category-kicker">
                         {{ activeCategoryDetail?.tagline }}
                       </p>
-                      <h4 class="category-title">{{ activeCategoryName }}</h4>
+                      <h4 class="category-title">
+                        <Icon
+                          :icon="activeCategoryDetail?.icon || 'heroicons:question-mark-circle'"
+                          class="category-title-icon"
+                        />
+                        {{ activeCategoryName }}
+                      </h4>
                       <p class="category-description">
                         {{ activeCategoryDetail?.description }}
                       </p>
                     </div>
-                    <span class="category-total">
-                        {{ activeProducts.length === 1 ? '1 product' : `${activeProducts.length} products` }}
-                    </span>
                   </header>
                   <div v-if="activeProducts.length" class="product-grid" role="list">
                     <article
@@ -186,16 +200,8 @@
                             <div class="image-placeholder">{{ product.node.title.charAt(0) }}</div>
                           </template>
                         </div>
-                        <div class="product-content">
+                        <div class="product-info">
                           <h4 class="product-title">{{ product.node.title }}</h4>
-                          <p class="product-price">
-                            {{
-                              formatPrice(
-                                product.node.priceRange.minVariantPrice.amount,
-                                product.node.priceRange.minVariantPrice.currencyCode,
-                              )
-                            }}
-                          </p>
                         </div>
                       </button>
                       <button
@@ -204,7 +210,15 @@
                         :disabled="!isVariantAvailable(product)"
                         @click.prevent.stop="handleQuickAdd(product)"
                       >
-                        {{ isVariantAvailable(product) ? 'Add to Cart' : 'Out of Stock' }}
+                        <span class="btn-text">{{ isVariantAvailable(product) ? 'Add to Cart' : 'Out of Stock' }}</span>
+                        <span class="btn-price">
+                          {{
+                            formatPrice(
+                              product.node.priceRange.minVariantPrice.amount,
+                              product.node.priceRange.minVariantPrice.currencyCode,
+                            )
+                          }}
+                        </span>
                       </button>
                     </article>
                   </div>
@@ -422,6 +436,7 @@
 
 <script setup lang="ts">
 import type { ComponentPublicInstance, PropType } from 'vue'
+import { Icon } from '@iconify/vue'
 import { useCart } from '@/composables/useCart'
 type ProductImageEdge = {
   node: {
@@ -511,6 +526,7 @@ const modalCloseButtonRef = ref<HTMLButtonElement | null>(null)
 const productModalRef = ref<HTMLDivElement | null>(null)
 const previousBodyOverflow = ref<string | null>(null)
 const viewMode = ref<'collections' | 'all'>(props.viewMode)
+const searchQuery = ref('')
 
 const route = useRoute()
 const router = useRouter()
@@ -606,11 +622,22 @@ type ShopifyProductsResponse = {
 
 const debugEnabled = computed(() => props.debug || process.dev)
 const formattedProducts = computed(() => JSON.stringify(products.value, null, 2))
-const allProductsList = computed(() =>
-  [...products.value].sort((a, b) =>
+const allProductsList = computed(() => {
+  let filteredProducts = [...products.value]
+
+  if (searchQuery.value.trim()) {
+    const query = searchQuery.value.toLowerCase().trim()
+    filteredProducts = filteredProducts.filter(product =>
+      product.node.title.toLowerCase().includes(query) ||
+      product.node.description?.toLowerCase().includes(query) ||
+      product.node.tags?.some(tag => tag.toLowerCase().includes(query))
+    )
+  }
+
+  return filteredProducts.sort((a, b) =>
     a.node.title.localeCompare(b.node.title, 'en', { sensitivity: 'base' })
-  ),
-)
+  )
+})
 
 const categoryOrder = [
   'Essential Haircare',
@@ -629,6 +656,7 @@ type CategoryDetail = {
   title: string
   tagline: string
   description: string
+  icon: string
 }
 
 const categoryDetailLookup: Record<string, CategoryDetail> = {
@@ -637,60 +665,70 @@ const categoryDetailLookup: Record<string, CategoryDetail> = {
     tagline: 'Daily Ritual Care',
     description:
       'Hydration-forward haircare designed for balanced, weightless strength every day.',
+    icon: 'heroicons:sparkles',
   },
   Naturaltech: {
     title: 'Naturaltech',
     tagline: 'Scalp Science Systems',
     description:
       'Targeted scalp and hair treatments powered by trichology research and natural actives.',
+    icon: 'heroicons:beaker',
   },
   OI: {
     title: 'OI',
     tagline: 'Iconic Shine Ritual',
     description:
       'Multi-tasking favorites that deliver instant gloss, softness, and signature fragrance.',
+    icon: 'heroicons:sun',
   },
   'More Inside': {
     title: 'More Inside',
     tagline: 'Styling Storytellers',
     description:
       'High-performance styling formulas that sculpt, define, and finish every look with touchable texture.',
+    icon: 'heroicons:scissors',
   },
   'Heart of Glass': {
     title: 'Heart of Glass',
     tagline: 'Blonde Brilliance',
     description:
       'Blue and purple botanicals neutralize brass while fortifying delicate blonde strands.',
+    icon: 'heroicons:bolt',
   },
   'Pasta & Love': {
     title: 'Pasta & Love',
     tagline: 'Modern Grooming',
     description:
       'Italian-crafted grooming essentials for clean lines, subtle texture, and skin comfort.',
+    icon: 'heroicons:rectangle-stack',
   },
   'Alchemic System': {
     title: 'Alchemic System',
     tagline: 'Color-Enhancing Pigments',
     description:
       'Customizable pigments refresh tone and extend color vibrancy between salon visits.',
+    icon: 'heroicons:swatch',
   },
   Authentic: {
     title: 'Authentic',
     tagline: 'Multi-Use Clean Beauty',
     description:
       'Certified natural oils for hair, face, and body with minimalist ingredients.',
+    icon: 'heroicons:star',
   },
   'Essential Haircare Shampoo Bars': {
     title: 'Essential Haircare Shampoo Bars',
     tagline: 'Sustainable Solids',
     description:
       'Low-waste shampoo bars that deliver the same luxurious results in solid form.',
+    icon: 'heroicons:recycle',
   },
   'Hair Refresher': {
     title: 'Hair Refresher',
     tagline: 'Instant Reset',
     description:
       'Lightweight dry spray revives hair between washes with freshness and volume.',
+    icon: 'heroicons:arrow-path',
   },
 }
 
@@ -1026,7 +1064,18 @@ const categorizedProducts = computed<CategorizedProductGroup[]>(() => {
 
   return Array.from(groups.entries())
     .map(([category, items]) => {
-      const sortedProducts = [...items].sort((a, b) =>
+      let filteredProducts = [...items]
+
+      if (searchQuery.value.trim()) {
+        const query = searchQuery.value.toLowerCase().trim()
+        filteredProducts = filteredProducts.filter(product =>
+          product.node.title.toLowerCase().includes(query) ||
+          product.node.description?.toLowerCase().includes(query) ||
+          product.node.tags?.some(tag => tag.toLowerCase().includes(query))
+        )
+      }
+
+      const sortedProducts = filteredProducts.sort((a, b) =>
         a.node.title.localeCompare(b.node.title, 'en', { sensitivity: 'base' })
       )
 
@@ -1637,8 +1686,8 @@ onMounted(() => {
 }
 
 .section-head {
+  flex: 1;
   text-align: center;
-  margin-bottom: $spacing-xl;
   display: grid;
   gap: $spacing-xs;
   justify-items: center;
@@ -1648,6 +1697,55 @@ onMounted(() => {
     color: $accent-sage;
     font-weight: 600;
     margin: 0;
+  }
+}
+
+.section-header-row {
+  display: flex;
+  align-items: center;
+  gap: $spacing-lg;
+  position: relative;
+}
+
+.search-container {
+  position: absolute;
+  left: 0;
+}
+
+.search-input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  max-width: 12rem;
+}
+
+.search-icon {
+  position: absolute;
+  left: $spacing-sm;
+  width: 1.2rem;
+  height: 1.2rem;
+  color: rgba($accent-sage, 0.6);
+  pointer-events: none;
+}
+
+.search-input {
+  width: 100%;
+  padding: $spacing-sm $spacing-sm $spacing-sm 2.5rem;
+  border: 1px solid rgba($accent-sage, 0.2);
+  border-radius: 8px;
+  background: rgba($white, 0.95);
+  color: $accent-sage;
+  font-size: 0.9rem;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+
+  &:focus {
+    outline: none;
+    border-color: rgba($accent-sage, 0.4);
+    box-shadow: 0 0 0 3px rgba($accent-sage, 0.1);
+  }
+
+  &::placeholder {
+    color: rgba($accent-sage, 0.5);
   }
 }
 
@@ -1755,9 +1853,25 @@ onMounted(() => {
   color: rgba($accent-sage, 0.6);
 }
 
-.tab-count {
-  font-size: 0.75rem;
-  color: rgba($accent-sage, 0.5);
+.tab-header {
+  display: flex;
+  align-items: center;
+  gap: $spacing-xs;
+}
+
+.tab-icon {
+  width: 1.2rem;
+  height: 1.2rem;
+  flex-shrink: 0;
+  color: rgba($accent-sage, 0.7);
+}
+
+.category-tab.is-active .tab-icon {
+  color: $accent-sage;
+}
+
+.category-tab:hover .tab-icon {
+  color: $accent-sage;
 }
 
 .category-products {
@@ -1791,6 +1905,16 @@ onMounted(() => {
   color: $accent-sage;
   margin: 0 0 $spacing-xs;
   font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+}
+
+.category-title-icon {
+  width: 2rem;
+  height: 2rem;
+  flex-shrink: 0;
+  color: $accent-sage;
 }
 
 .category-description {
@@ -1798,19 +1922,6 @@ onMounted(() => {
   color: rgba($accent-sage, 0.7);
   margin: 0;
   line-height: 1.6;
-}
-
-.category-total {
-  display: inline-flex;
-  align-items: center;
-  gap: $spacing-xs;
-  padding: $spacing-xs $spacing-md;
-  border-radius: 999px;
-  border: 1px solid rgba($accent-sage, 0.18);
-  background: rgba($accent-sage, 0.08);
-  color: $accent-sage;
-  font-size: 0.9rem;
-  font-weight: 600;
 }
 
 .product-grid {
@@ -1831,6 +1942,7 @@ onMounted(() => {
   border-radius: 16px;
   overflow: hidden;
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  min-height: 320px;
 
   &:hover {
     border-color: rgba($accent-sage, 0.3);
@@ -1839,7 +1951,7 @@ onMounted(() => {
 }
 
 .product-trigger {
-  display: block;
+  display: flex;
   width: 100%;
   text-decoration: none;
   color: inherit;
@@ -1847,6 +1959,8 @@ onMounted(() => {
   background: none;
   cursor: pointer;
   text-align: left;
+  flex-flow: column;
+  flex: 1;
 
   &:focus-visible {
     outline: 2px solid rgba($accent-gold, 0.4);
@@ -1855,9 +1969,10 @@ onMounted(() => {
 }
 
 .product-image {
-  aspect-ratio: 1;
-  background: linear-gradient(135deg, rgba($accent-sage, 0.08), rgba($accent-sage, 0.04));
+  aspect-ratio: 0.75;
+  background: $white;
   overflow: hidden;
+  position: relative;
 
   img {
     width: 100%;
@@ -1879,37 +1994,29 @@ onMounted(() => {
   justify-content: center;
   font-size: 2.5rem;
   color: rgba($accent-sage, 0.3);
-  background: linear-gradient(135deg, rgba($accent-sage, 0.06), rgba($accent-sage, 0.03));
+  background: $white;
 }
 
-.product-content {
+.product-info {
   padding: $spacing-md;
-  display: flex;
-  flex-direction: column;
-  gap: $spacing-xs;
+  background: $white;
 }
 
 .product-category {
   font-size: 0.75rem;
   font-weight: 600;
-  color: rgba($accent-sage, 0.7);
+  color: rgba($black, 0.8);
   text-transform: uppercase;
   letter-spacing: 0.05em;
+  margin-bottom: $spacing-xs;
 }
 
 .product-title {
-  color: $accent-sage;
+  color: $black;
   font-size: 1.1rem;
   font-weight: 600;
-  margin: 0;
+  margin: 0 0 $spacing-xs 0;
   line-height: 1.3;
-}
-
-.product-price {
-  color: $accent-gold;
-  font-size: 1rem;
-  font-weight: 600;
-  margin: 0;
 }
 
 .product-add-btn {
@@ -1923,6 +2030,11 @@ onMounted(() => {
   font-size: 0.9rem;
   font-weight: 500;
   transition: background-color 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  min-height: 48px;
 
   &:hover:not(:disabled) {
     background: darken($accent-sage, 8%);
@@ -1937,6 +2049,17 @@ onMounted(() => {
     background: rgba($accent-sage, 0.3);
     cursor: not-allowed;
   }
+}
+
+.btn-text {
+  font-size: 1.25rem;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.btn-price {
+  font-size: 1rem;
+  font-weight: 500;
 }
 
 .category-empty {
@@ -2423,10 +2546,6 @@ onMounted(() => {
     align-items: flex-start;
   }
 
-  .category-total {
-    align-self: flex-start;
-  }
-
   .product-modal__content {
     grid-template-columns: 1fr;
   }
@@ -2443,6 +2562,23 @@ onMounted(() => {
 @media (max-width: $breakpoint-md) {
   .product-experience {
     gap: $spacing-xl;
+  }
+
+  .section-header-row {
+    flex-direction: column;
+    align-items: stretch;
+    gap: $spacing-md;
+  }
+
+  .search-container {
+    position: static;
+    order: -1; /* Move search above section-head */
+  }
+
+  .section-head {
+    flex: none;
+    text-align: center;
+    justify-items: center;
   }
 
   .product-grid {
