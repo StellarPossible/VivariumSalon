@@ -14,6 +14,7 @@ type LazyComponent<T> = (T & DefineComponent<HydrationStrategies, {}, {}, {}, {}
 interface _GlobalComponents {
       'AboutSection': typeof import("../components/AboutSection.vue")['default']
     'BackToTop': typeof import("../components/BackToTop.vue")['default']
+    'CartModal': typeof import("../components/CartModal.vue")['default']
     'ContactModal': typeof import("../components/ContactModal.vue")['default']
     'FloatingHelp': typeof import("../components/FloatingHelp.vue")['default']
     'HeroContent': typeof import("../components/HeroContent.vue")['default']
@@ -23,6 +24,7 @@ interface _GlobalComponents {
     'ShopifyProductGrid': typeof import("../components/ShopifyProductGrid.vue")['default']
     'SiteFooter': typeof import("../components/SiteFooter.vue")['default']
     'SiteHeader': typeof import("../components/SiteHeader.vue")['default']
+    'ToastContainer': typeof import("../components/ToastContainer.vue")['default']
     'NuxtWelcome': typeof import("../node_modules/nuxt/dist/app/components/welcome.vue")['default']
     'NuxtLayout': typeof import("../node_modules/nuxt/dist/app/components/nuxt-layout")['default']
     'NuxtErrorBoundary': typeof import("../node_modules/nuxt/dist/app/components/nuxt-error-boundary.vue")['default']
@@ -49,6 +51,7 @@ interface _GlobalComponents {
     'NuxtRouteAnnouncer': IslandComponent<typeof import("../node_modules/nuxt/dist/app/components/server-placeholder")['default']>
       'LazyAboutSection': LazyComponent<typeof import("../components/AboutSection.vue")['default']>
     'LazyBackToTop': LazyComponent<typeof import("../components/BackToTop.vue")['default']>
+    'LazyCartModal': LazyComponent<typeof import("../components/CartModal.vue")['default']>
     'LazyContactModal': LazyComponent<typeof import("../components/ContactModal.vue")['default']>
     'LazyFloatingHelp': LazyComponent<typeof import("../components/FloatingHelp.vue")['default']>
     'LazyHeroContent': LazyComponent<typeof import("../components/HeroContent.vue")['default']>
@@ -58,6 +61,7 @@ interface _GlobalComponents {
     'LazyShopifyProductGrid': LazyComponent<typeof import("../components/ShopifyProductGrid.vue")['default']>
     'LazySiteFooter': LazyComponent<typeof import("../components/SiteFooter.vue")['default']>
     'LazySiteHeader': LazyComponent<typeof import("../components/SiteHeader.vue")['default']>
+    'LazyToastContainer': LazyComponent<typeof import("../components/ToastContainer.vue")['default']>
     'LazyNuxtWelcome': LazyComponent<typeof import("../node_modules/nuxt/dist/app/components/welcome.vue")['default']>
     'LazyNuxtLayout': LazyComponent<typeof import("../node_modules/nuxt/dist/app/components/nuxt-layout")['default']>
     'LazyNuxtErrorBoundary': LazyComponent<typeof import("../node_modules/nuxt/dist/app/components/nuxt-error-boundary.vue")['default']>
@@ -90,6 +94,7 @@ declare module 'vue' {
 
 export const AboutSection: typeof import("../components/AboutSection.vue")['default']
 export const BackToTop: typeof import("../components/BackToTop.vue")['default']
+export const CartModal: typeof import("../components/CartModal.vue")['default']
 export const ContactModal: typeof import("../components/ContactModal.vue")['default']
 export const FloatingHelp: typeof import("../components/FloatingHelp.vue")['default']
 export const HeroContent: typeof import("../components/HeroContent.vue")['default']
@@ -99,6 +104,7 @@ export const ShopifyDebug: typeof import("../components/ShopifyDebug.vue")['defa
 export const ShopifyProductGrid: typeof import("../components/ShopifyProductGrid.vue")['default']
 export const SiteFooter: typeof import("../components/SiteFooter.vue")['default']
 export const SiteHeader: typeof import("../components/SiteHeader.vue")['default']
+export const ToastContainer: typeof import("../components/ToastContainer.vue")['default']
 export const NuxtWelcome: typeof import("../node_modules/nuxt/dist/app/components/welcome.vue")['default']
 export const NuxtLayout: typeof import("../node_modules/nuxt/dist/app/components/nuxt-layout")['default']
 export const NuxtErrorBoundary: typeof import("../node_modules/nuxt/dist/app/components/nuxt-error-boundary.vue")['default']
@@ -125,6 +131,7 @@ export const NuxtIsland: typeof import("../node_modules/nuxt/dist/app/components
 export const NuxtRouteAnnouncer: IslandComponent<typeof import("../node_modules/nuxt/dist/app/components/server-placeholder")['default']>
 export const LazyAboutSection: LazyComponent<typeof import("../components/AboutSection.vue")['default']>
 export const LazyBackToTop: LazyComponent<typeof import("../components/BackToTop.vue")['default']>
+export const LazyCartModal: LazyComponent<typeof import("../components/CartModal.vue")['default']>
 export const LazyContactModal: LazyComponent<typeof import("../components/ContactModal.vue")['default']>
 export const LazyFloatingHelp: LazyComponent<typeof import("../components/FloatingHelp.vue")['default']>
 export const LazyHeroContent: LazyComponent<typeof import("../components/HeroContent.vue")['default']>
@@ -134,6 +141,7 @@ export const LazyShopifyDebug: LazyComponent<typeof import("../components/Shopif
 export const LazyShopifyProductGrid: LazyComponent<typeof import("../components/ShopifyProductGrid.vue")['default']>
 export const LazySiteFooter: LazyComponent<typeof import("../components/SiteFooter.vue")['default']>
 export const LazySiteHeader: LazyComponent<typeof import("../components/SiteHeader.vue")['default']>
+export const LazyToastContainer: LazyComponent<typeof import("../components/ToastContainer.vue")['default']>
 export const LazyNuxtWelcome: LazyComponent<typeof import("../node_modules/nuxt/dist/app/components/welcome.vue")['default']>
 export const LazyNuxtLayout: LazyComponent<typeof import("../node_modules/nuxt/dist/app/components/nuxt-layout")['default']>
 export const LazyNuxtErrorBoundary: LazyComponent<typeof import("../node_modules/nuxt/dist/app/components/nuxt-error-boundary.vue")['default']>

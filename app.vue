@@ -17,6 +17,9 @@
 
     <SiteFooter />
 
+    <CartModal />
+    <ToastContainer />
+
     <!-- Only show in development -->
     <!-- <ShopifyDebug v-if="isDev" /> -->
   </div>
@@ -24,10 +27,12 @@
 
 <script setup lang="ts">
 import { ref, onMounted, onBeforeUnmount } from 'vue'
+import { useCart } from '@/composables/useCart'
 // Components are auto-imported by Nuxt
 
 const scrolledPastThreshold = ref(false)
 const isDev = process.dev
+const { initCart } = useCart()
 
 function handleScroll() {
   const y = window.scrollY
@@ -35,6 +40,8 @@ function handleScroll() {
 }
 
 onMounted(() => {
+  // Initialize cart from persisted state when the app mounts
+  initCart()
   window.addEventListener('scroll', handleScroll)
 })
 

@@ -24,6 +24,7 @@ declare global {
   const { reloadNuxtApp }: typeof import('../../node_modules/nuxt/dist/app/composables/chunk')
   const { setInterval }: typeof import('../../node_modules/nuxt/dist/app/compat/interval')
   const { updateAppConfig, useAppConfig }: typeof import('../../node_modules/nuxt/dist/app/config')
+  const { useCart }: typeof import('../../composables/useCart')
   const { useFetch, useLazyFetch }: typeof import('../../node_modules/nuxt/dist/app/composables/fetch')
   const { useHydration }: typeof import('../../node_modules/nuxt/dist/app/composables/hydrate')
   const { useImage }: typeof import('../../node_modules/@nuxt/image/dist/runtime/composables')
@@ -35,12 +36,16 @@ declare global {
   const { useRuntimeHook }: typeof import('../../node_modules/nuxt/dist/app/composables/runtime-hook')
   const { useScript, useScriptClarity, useScriptCloudflareWebAnalytics, useScriptCrisp, useScriptEventPage, useScriptFathomAnalytics, useScriptGoogleAdsense, useScriptGoogleAnalytics, useScriptGoogleMaps, useScriptGoogleTagManager, useScriptHotjar, useScriptIntercom, useScriptLemonSqueezy, useScriptMatomoAnalytics, useScriptMetaPixel, useScriptNpm, useScriptPlausibleAnalytics, useScriptSegment, useScriptSnapchatPixel, useScriptStripe, useScriptTriggerConsent, useScriptTriggerElement, useScriptUmamiAnalytics, useScriptVimeoPlayer, useScriptXPixel, useScriptYouTubePlayer }: typeof import('../../node_modules/nuxt/dist/app/composables/script-stubs')
   const { useShopify }: typeof import('../../composables/useShopify')
+  const { useToast }: typeof import('../../composables/useToast')
 }
 // for type re-export
 declare global {
   // @ts-ignore
   export type { Component, ComponentPublicInstance, ComputedRef, DirectiveBinding, ExtractDefaultPropTypes, ExtractPropTypes, ExtractPublicPropTypes, InjectionKey, PropType, Ref, MaybeRef, MaybeRefOrGetter, VNode, WritableComputedRef } from 'vue'
   import('vue')
+  // @ts-ignore
+  export type { ToastType, Toast } from '../../composables/useToast'
+  import('../../composables/useToast')
 }
 // for vue template auto import
 type UnwrapRefs<T> = {
@@ -70,6 +75,7 @@ namespace _ComponentCustomProperties {
   const { reloadNuxtApp }: typeof import('../../node_modules/nuxt/dist/app/composables/chunk')
   const { setInterval }: typeof import('../../node_modules/nuxt/dist/app/compat/interval')
   const { updateAppConfig, useAppConfig }: typeof import('../../node_modules/nuxt/dist/app/config')
+  const { useCart }: typeof import('../../composables/useCart')
   const { useFetch, useLazyFetch }: typeof import('../../node_modules/nuxt/dist/app/composables/fetch')
   const { useHydration }: typeof import('../../node_modules/nuxt/dist/app/composables/hydrate')
   const { useImage }: typeof import('../../node_modules/@nuxt/image/dist/runtime/composables')
@@ -81,6 +87,7 @@ namespace _ComponentCustomProperties {
   const { useRuntimeHook }: typeof import('../../node_modules/nuxt/dist/app/composables/runtime-hook')
   const { useScript, useScriptClarity, useScriptCloudflareWebAnalytics, useScriptCrisp, useScriptEventPage, useScriptFathomAnalytics, useScriptGoogleAdsense, useScriptGoogleAnalytics, useScriptGoogleMaps, useScriptGoogleTagManager, useScriptHotjar, useScriptIntercom, useScriptLemonSqueezy, useScriptMatomoAnalytics, useScriptMetaPixel, useScriptNpm, useScriptPlausibleAnalytics, useScriptSegment, useScriptSnapchatPixel, useScriptStripe, useScriptTriggerConsent, useScriptTriggerElement, useScriptUmamiAnalytics, useScriptVimeoPlayer, useScriptXPixel, useScriptYouTubePlayer }: typeof import('../../node_modules/nuxt/dist/app/composables/script-stubs')
   const { useShopify }: typeof import('../../composables/useShopify')
+  const { useToast }: typeof import('../../composables/useToast')
 }
 declare module 'vue' {
   interface ComponentCustomProperties extends UnwrapRefs<typeof _ComponentCustomProperties> {}
