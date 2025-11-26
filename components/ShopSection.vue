@@ -54,7 +54,7 @@ const setView = (view: ShopView) => {
 
 .shop-section {
   position: relative;
-  padding: $spacing-lg;
+  padding: $spacing-md;
   background: linear-gradient(180deg, lighten($white, 4%) 0%, $white 60%, lighten($white, 2%) 100%);
 }
 
@@ -156,22 +156,12 @@ const setView = (view: ShopView) => {
   background: rgba($white, 0.92);
   border-radius: 28px;
   border: 1px solid rgba($accent-sage, 0.1);
-  padding: $spacing-md;
+  padding: $spacing-sm;
   box-shadow: 0 30px 70px rgba($accent-sage, 0.12);
 }
 
 .shop-section__content :deep(.shopify-product-grid) {
   margin-top: 0;
-}
-
-@media (max-width: $breakpoint-lg) {
-  .shop-section {
-    padding: $spacing-xl $spacing-md;
-  }
-
-  .shop-section__content {
-    padding: $spacing-lg;
-  }
 }
 
 @media (max-width: $breakpoint-md) {
@@ -185,9 +175,7 @@ const setView = (view: ShopView) => {
 }
 
 @media (max-width: $breakpoint-sm) {
-  .shop-section {
-    padding: $spacing-xl $spacing-sm;
-  }
+ 
 
   .shop-section__content {
     padding: $spacing-md;

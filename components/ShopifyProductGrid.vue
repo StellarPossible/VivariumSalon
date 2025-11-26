@@ -1817,6 +1817,7 @@ onMounted(() => {
   border-radius: 16px;
   overflow: hidden;
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  min-height: 320px;
 
   &:hover {
     border-color: rgba($accent-sage, 0.3);
@@ -1834,6 +1835,7 @@ onMounted(() => {
   cursor: pointer;
   text-align: left;
   flex-flow: column;
+  flex: 1;
 
   &:focus-visible {
     outline: 2px solid rgba($accent-gold, 0.4);
