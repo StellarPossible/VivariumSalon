@@ -340,7 +340,7 @@
                 <header class="recommendations-head">
                   <h4 id="product-modal-recommendations-heading">{{ recommendedSectionTitle }}</h4>
                   <p v-if="selectedModalCategory" class="recommendations-sub">
-                    Discover more favorites curated from our salon rituals.
+                    Discover Curated Favorites
                   </p>
                 </header>
                 <div class="recommendations-track" role="list">
@@ -1709,7 +1709,7 @@ onMounted(() => {
 
 .search-container {
   position: absolute;
-  left: 0;
+  left: 2rem;
 }
 
 .search-input-wrapper {
