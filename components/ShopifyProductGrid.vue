@@ -2020,7 +2020,7 @@ onMounted(() => {
 }
 
 .product-add-btn {
-  margin: 0 $spacing-md $spacing-md;
+  margin: 0 $spacing-sm $spacing-sm;
   padding: $spacing-sm $spacing-md;
   background: $accent-sage;
   color: $white;

@@ -155,7 +155,6 @@ watch(
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: $spacing-lg;
 }
 
 .logo {

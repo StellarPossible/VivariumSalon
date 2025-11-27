@@ -186,7 +186,6 @@ onMounted(() => {
   background-position: center;
   background-image: url("//us.davines.com/cdn/shop/files/HOMEPAGE_MOBILE_1x1_opt2_800x.jpg?v=1763135549");
   border-radius: 28px;
-  margin-bottom: $spacing-md;
   box-shadow: 0 30px 70px rgba($accent-sage, 0.12);
   overflow: hidden;
 }
@@ -209,14 +208,16 @@ onMounted(() => {
 
 .banner-overlay {
   position: absolute;
-  top: 2rem;
-  right: 2rem;
+  top: 0;
+  right: 0;
   color: white;
   max-width: 500px;
   z-index: 2;
-  background: rgba(255, 255, 255, 0.6);
-  padding: 1rem 1.5rem;
-  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.8);
+  padding: 1rem;
+  border-radius: 28px;
+  margin: .5rem;
+  
 }
 
 .banner-overlay .shop-section__title {
