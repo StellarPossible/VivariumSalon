@@ -340,7 +340,7 @@
                 <header class="recommendations-head">
                   <h4 id="product-modal-recommendations-heading">{{ recommendedSectionTitle }}</h4>
                   <p v-if="selectedModalCategory" class="recommendations-sub">
-                    Discover more favorites curated from our salon rituals.
+                    Discover Curated Favorites
                   </p>
                 </header>
                 <div class="recommendations-track" role="list">
@@ -1709,7 +1709,7 @@ onMounted(() => {
 
 .search-container {
   position: absolute;
-  left: 0;
+  left: 2rem;
 }
 
 .search-input-wrapper {
@@ -1790,7 +1790,7 @@ onMounted(() => {
   flex-direction: column;
   gap: $spacing-sm;
   padding-right: $spacing-sm;
-  border-right: 1px solid rgba($accent-sage, 0.18);
+  justify-content: center;
 }
 
 .category-tab {
@@ -1835,9 +1835,6 @@ onMounted(() => {
     background: rgba($accent-sage, 0.14);
     box-shadow: inset 0 0 0 1px rgba($accent-sage, 0.22);
 
-    &::before {
-      background: $accent-gold;
-    }
   }
 
 }
@@ -2020,7 +2017,7 @@ onMounted(() => {
 }
 
 .product-add-btn {
-  margin: 0 $spacing-md $spacing-md;
+  margin: 0 $spacing-sm $spacing-sm;
   padding: $spacing-sm $spacing-md;
   background: $accent-sage;
   color: $white;
@@ -2610,7 +2607,6 @@ onMounted(() => {
   .category-tabs {
     gap: $spacing-xs;
     overflow-x: auto;
-    flex-wrap: nowrap;
   }
 
   .category-tab {

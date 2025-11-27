@@ -1,12 +1,18 @@
 <template>
   <section class="shop-section" id="shop">
     <div class="shop-section__shell">
+      <div class="shop-banner">
+        <video ref="bannerVideo" class="banner-video" :style="{ opacity: videoVisible ? 1 : 0 }" src="https://cdn.shopify.com/videos/c/o/v/187b3c0169694a8391dd3d7e75fcba05.mp4" loop muted playsinline></video>
+        <div class="banner-overlay">
+          <h2 class="shop-section__title">Discover Curated Favorites
+</h2>
+          <p class="shop-section__subtitle">
+            Explore salon-favorite essentials, mindful treatments, and grooming staples selected to extend the Vivarium
+            experience between visits.
+          </p>
+        </div>
+      </div>
       <div class="shop-section__intro">
-        <h2 class="shop-section__title">Curated haircare and rituals for everyday vitality</h2>
-        <p class="shop-section__subtitle">
-          Explore salon-favorite essentials, mindful treatments, and grooming staples selected to extend the Vivarium
-          experience between visits.
-        </p>
       </div>
 
       <div class="shop-section__content">
@@ -17,11 +23,13 @@
 </template>
 
 <script setup lang="ts">
-import { nextTick, ref } from 'vue'
+import { nextTick, ref, onMounted } from 'vue'
 
 type ShopView = 'collections' | 'all'
 
 const activeView = ref<ShopView>('collections')
+const bannerVideo = ref<HTMLVideoElement | null>(null)
+const videoVisible = ref(false)
 
 const scrollToView = (view: ShopView) => {
   if (typeof window === 'undefined') {
@@ -47,6 +55,13 @@ const setView = (view: ShopView) => {
   activeView.value = view
   scrollToView(view)
 }
+
+onMounted(() => {
+  setTimeout(() => {
+    videoVisible.value = true
+    bannerVideo.value?.play()
+  }, 3000)
+})
 </script>
 
 <style scoped lang="scss">
@@ -162,6 +177,60 @@ const setView = (view: ShopView) => {
 
 .shop-section__content :deep(.shopify-product-grid) {
   margin-top: 0;
+}
+
+.shop-banner {
+  position: relative;
+  height: 400px;
+  background-size: cover;
+  background-position: center;
+  background-image: url("//us.davines.com/cdn/shop/files/HOMEPAGE_MOBILE_1x1_opt2_800x.jpg?v=1763135549");
+  border-radius: 28px;
+  box-shadow: 0 30px 70px rgba($accent-sage, 0.12);
+  overflow: hidden;
+}
+
+@media (min-width: 768px) {
+  .shop-banner {
+    background-image: url("//us.davines.com/cdn/shop/files/HOMEPAGE_2x1_81a2b063-6bd1-4e25-8d0d-02c73010f299_2000x.jpg?v=1763135550");
+  }
+}
+
+.banner-video {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: opacity 1s ease;
+}
+
+.banner-overlay {
+  position: absolute;
+  top: 0;
+  right: 0;
+  color: white;
+  max-width: 500px;
+  z-index: 2;
+  background: rgba(255, 255, 255, 0.8);
+  padding: 1rem;
+  border-radius: 28px;
+  margin: .5rem;
+  
+}
+
+.banner-overlay .shop-section__title {
+  font-size: 1.5rem;
+  line-height: 1.1;
+  color: $accent-sage;
+  margin-bottom: 0.5rem;
+}
+
+.banner-overlay .shop-section__subtitle {
+  font-size: 0.9rem;
+  line-height: 1.05;
+  color: rgba($accent-sage, 0.9);
 }
 
 @media (max-width: $breakpoint-md) {
