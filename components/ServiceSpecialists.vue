@@ -238,8 +238,9 @@ function shouldShowImage(specialist: { image?: string; isAvailable?: boolean }) 
 
 .specialists-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(225px, 1fr));
-  gap: $spacing-xl;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 280px));
+  justify-content: center;
+  gap: 1rem;
 }
 
 .specialist-card {
@@ -249,6 +250,7 @@ function shouldShowImage(specialist: { image?: string; isAvailable?: boolean }) 
   border-radius: 16px;
   overflow: hidden;
   transition: all 0.3s ease;
+  max-width: 14rem;
   
   &:hover {
     transform: translateY(-10px);
@@ -446,14 +448,14 @@ function shouldShowImage(specialist: { image?: string; isAvailable?: boolean }) 
 
 @media (max-width: $breakpoint-lg) {
   .specialists-grid {
-    grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(160px, 240px));
   }
 }
 
 @media (max-width: $breakpoint-md) {
   
   .specialists-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 200px));
     gap: calc(#{$spacing-xl} * 0.75);
   }
   

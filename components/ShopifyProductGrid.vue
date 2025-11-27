@@ -1790,7 +1790,7 @@ onMounted(() => {
   flex-direction: column;
   gap: $spacing-sm;
   padding-right: $spacing-sm;
-  border-right: 1px solid rgba($accent-sage, 0.18);
+  justify-content: center;
 }
 
 .category-tab {
@@ -1835,9 +1835,6 @@ onMounted(() => {
     background: rgba($accent-sage, 0.14);
     box-shadow: inset 0 0 0 1px rgba($accent-sage, 0.22);
 
-    &::before {
-      background: $accent-gold;
-    }
   }
 
 }
@@ -2610,7 +2607,6 @@ onMounted(() => {
   .category-tabs {
     gap: $spacing-xs;
     overflow-x: auto;
-    flex-wrap: nowrap;
   }
 
   .category-tab {
