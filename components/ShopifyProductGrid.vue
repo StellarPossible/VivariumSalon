@@ -100,10 +100,10 @@
                 type="button"
                 class="product-add-btn"
                 :disabled="!isVariantAvailable(product)"
-                @click.prevent.stop="handleQuickAdd(product)"
+                @click.prevent.stop="product.node.handle === 'gift-card' ? (() => window.open('https://vivarium.glossgenius.com/shop/gift-cards', '_blank'))() : handleQuickAdd(product)"
               >
-                <span class="btn-text">{{ isVariantAvailable(product) ? 'Add to Cart' : 'Out of Stock' }}</span>
-                <span class="btn-price" :class="{ 'on-sale': isOnSale(product) }">
+                <span class="btn-text">{{ product.node.handle === 'gift-card' ? 'Buy Now' : (isVariantAvailable(product) ? 'Add to Cart' : 'Out of Stock') }}</span>
+                <span v-if="product.node.handle !== 'gift-card'" class="btn-price" :class="{ 'on-sale': isOnSale(product) }">
                   <span v-if="isOnSale(product)" class="original-price">{{ formatPrice(product.node.priceRange.minVariantPrice.amount, product.node.priceRange.minVariantPrice.currencyCode) }}</span>
                   {{ isOnSale(product) ? formatPrice(getSalePrice(product), product.node.priceRange.minVariantPrice.currencyCode) : formatPrice(product.node.priceRange.minVariantPrice.amount, product.node.priceRange.minVariantPrice.currencyCode) }}
                 </span>
@@ -216,10 +216,10 @@
                         type="button"
                         class="product-add-btn"
                         :disabled="!isVariantAvailable(product)"
-                        @click.prevent.stop="handleQuickAdd(product)"
+                        @click.prevent.stop="product.node.handle === 'gift-card' ? (() => window.open('https://vivarium.glossgenius.com/shop/gift-cards', '_blank'))() : handleQuickAdd(product)"
                       >
-                        <span class="btn-text">{{ isVariantAvailable(product) ? 'Add to Cart' : 'Out of Stock' }}</span>
-                        <span class="btn-price" :class="{ 'on-sale': isOnSale(product) }">
+                        <span class="btn-text">{{ product.node.handle === 'gift-card' ? 'Buy Now' : (isVariantAvailable(product) ? 'Add to Cart' : 'Out of Stock') }}</span>
+                        <span v-if="product.node.handle !== 'gift-card'" class="btn-price" :class="{ 'on-sale': isOnSale(product) }">
                           <span v-if="isOnSale(product)" class="original-price">{{ formatPrice(product.node.priceRange.minVariantPrice.amount, product.node.priceRange.minVariantPrice.currencyCode) }}</span>
                           {{ isOnSale(product) ? formatPrice(getSalePrice(product), product.node.priceRange.minVariantPrice.currencyCode) : formatPrice(product.node.priceRange.minVariantPrice.amount, product.node.priceRange.minVariantPrice.currencyCode) }}
                         </span>
@@ -1584,7 +1584,7 @@ const loadProducts = async () => {
           minVariantPrice: { amount: '25', currencyCode: 'USD' },
           maxVariantPrice: { amount: '100', currencyCode: 'USD' }
         },
-        images: { edges: [{ node: { url: '/images/gift-card.jpg', altText: 'Gift Card' } }] },
+        images: { edges: [{ node: { url: '/images/site_images/giftcard.jpg', altText: 'Gift Card' } }] },
         variants: { edges: [{ node: { id: 'gift-card-variant', availableForSale: true } }] }
       }
     }
