@@ -1,27 +1,21 @@
 <template>
   <div class="sale-promo">
     <div class="sale-promo__section">
-      <h3>Exclusive Davines Holiday Boxes</h3>
-      <p>Popular Davines products bundled at unbeatable discounts! <i>Plus</i> 15% off only on Small Business Saturday through 12/1!</p>
-      <NuxtLink to="/shop" class="btn btn-primary">Shop Now</NuxtLink>
-    </div>
-
-    <div class="sale-promo__section">
       <h3>Gift Card Special</h3>
       <p>Spend $100 on a gift card and receive a <i>FREE</i> Davines travel-size shampoo + conditioner duo! Perfect for gifting.</p>
       <a href="https://vivarium.glossgenius.com/shop/gift-cards" class="btn btn-secondary" target="_blank" rel="noopener noreferrer">Get Gift Card</a>
     </div>
 
     <div class="sale-promo__section">
-      <h3>Extension Sale</h3>
-      <p>Book and pay deposit by 12/1 for exclusive discounts + <strong>free Davines gifts</strong> on new hair extensions! Transform your look today.</p>
-      <NuxtLink to="/our-team#specialists" class="btn btn-primary">Book Consultation</NuxtLink>
+      <h3>Exclusive Davines Holiday Boxes</h3>
+      <p>Popular Davines products bundled at unbeatable discounts! <i>Plus</i> 15% off only on Small Business Saturday through 12/1!</p>
+      <NuxtLink to="/shop" class="btn btn-primary">Shop Now</NuxtLink>
     </div>
 
     <div class="sale-promo__section">
       <h3>Free Consultation</h3>
       <p>Ready to enhance your beauty? Schedule your complimentary consultation and discover personalized treatments tailored just for you.</p>
-      <a href="https://vivarium.glossgenius.com/services" class="btn btn-secondary" target="_blank" rel="noopener noreferrer">Book Your Free Consultation Today</a>
+      <a href="https://vivarium.glossgenius.com/services" class="btn btn-secondary" target="_blank" rel="noopener noreferrer">Book Free Consultation</a>
     </div>
   </div>
 </template>
@@ -50,7 +44,7 @@
 
 .sale-promo__section {
   width: 100%;
-  padding: $spacing-md;
+  padding: $spacing-md; 
   background: rgba($white, 0.95);
   border-radius: 12px;
   text-align: center;
@@ -74,7 +68,7 @@
 
 .sale-promo__section p {
   color: $text-color;
-  line-height: 1.2;
+  line-height: 1;
   margin-bottom: $spacing-sm;
   font-size: 1.1rem;
   word-break: break-word;
@@ -85,14 +79,13 @@
   padding: $spacing-md $spacing-lg;
   border-radius: 30px;
   font-family: $font-family;
-  font-size: 1.1rem;
+  font-size: 1.25rem;
   font-weight: 700;
   text-decoration: none;
   transition: all 0.3s ease;
   cursor: pointer;
   display: inline-block;
   text-align: center;
-  text-transform: uppercase;
   letter-spacing: 0.5px;
 
   &-primary {
@@ -125,7 +118,7 @@
 
 @media (min-width: 700px) {
   .sale-promo {
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(3, 1fr);
   }
   .sale-promo__section {
     width: 100%;

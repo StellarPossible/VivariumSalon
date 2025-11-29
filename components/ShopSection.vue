@@ -10,6 +10,9 @@
             Explore salon-favorite essentials, mindful treatments, and grooming staples selected to extend the Vivarium
             experience between visits.
           </p>
+          <div class="banner-promo">
+            <p>Holiday Gift Sets: 15% Off through 12/1!</p>
+          </div>
         </div>
       </div>
       <div class="shop-section__intro">
@@ -231,6 +234,22 @@ onMounted(() => {
   font-size: 0.9rem;
   line-height: 1.05;
   color: rgba($accent-sage, 0.9);
+}
+
+.banner-promo {
+  margin-top: 1rem;
+  padding: 0.5rem;
+  background: rgba($accent-gold, 0.1);
+  border-radius: 8px;
+  border: 1px solid rgba($accent-gold, 0.3);
+}
+
+.banner-promo p {
+  margin: 0;
+  font-size: 0.85rem;
+  color: $accent-sage;
+  font-weight: 600;
+  text-align: center;
 }
 
 @media (max-width: $breakpoint-md) {

@@ -28,8 +28,10 @@
         </div>
         <header class="section-head">
           <h3 v-if="viewMode === 'collections'" id="collection-browser-heading">Shop by Collection</h3>
+          <h3 v-else-if="viewMode === 'sale'" id="sale-products-heading">On Sale Products</h3>
           <h3 v-else id="all-products-heading">All Products</h3>
           <p v-if="viewMode === 'collections'" class="section-description">Select a ritual to explore salon-trusted essentials.</p>
+          <p v-else-if="viewMode === 'sale'" class="section-description">Discover holiday gift sets and special offers.</p>
           <p v-else class="section-description">Browse every Vivarium favorite in one streamlined view.</p>
         </header>
       </div>
@@ -50,16 +52,24 @@
         >
           Shop All Products
         </button>
+        <button
+          type="button"
+          class="view-toggle-btn"
+          :class="{ active: viewMode === 'sale' }"
+          @click="viewMode = 'sale'"
+        >
+          On Sale
+        </button>
       </div>
       <Transition name="view-fade" mode="out-in">
         <section
-          v-if="viewMode === 'all'"
+          v-if="viewMode === 'all' || viewMode === 'sale'"
           key="all-products"
           class="all-products-section"
         >
           <div class="product-grid all-products-grid" role="list">
             <article
-              v-for="product in allProductsList"
+              v-for="product in viewMode === 'sale' ? saleProductsList : allProductsList"
               :key="product.node.id"
               class="product-card"
               role="listitem"
@@ -67,7 +77,7 @@
               <button
                 type="button"
                 class="product-trigger"
-                @click="openProductModal(product)"
+                @click="product.node.handle === 'gift-card' ? (() => window.open('https://vivarium.glossgenius.com/shop/gift-cards', '_blank'))() : openProductModal(product)"
               >
                 <div class="product-image">
                   <template v-if="product.node.images.edges.length">
@@ -83,6 +93,7 @@
                 <div class="product-info">
                   <span class="product-category">{{ resolveCategoryForProduct(product) }}</span>
                   <h4 class="product-title">{{ product.node.title }}</h4>
+                  <span v-if="isOnSale(product)" class="sale-badge">15% Off</span>
                 </div>
               </button>
               <button
@@ -92,13 +103,9 @@
                 @click.prevent.stop="handleQuickAdd(product)"
               >
                 <span class="btn-text">{{ isVariantAvailable(product) ? 'Add to Cart' : 'Out of Stock' }}</span>
-                <span class="btn-price">
-                  {{
-                    formatPrice(
-                      product.node.priceRange.minVariantPrice.amount,
-                      product.node.priceRange.minVariantPrice.currencyCode,
-                    )
-                  }}
+                <span class="btn-price" :class="{ 'on-sale': isOnSale(product) }">
+                  <span v-if="isOnSale(product)" class="original-price">{{ formatPrice(product.node.priceRange.minVariantPrice.amount, product.node.priceRange.minVariantPrice.currencyCode) }}</span>
+                  {{ isOnSale(product) ? formatPrice(getSalePrice(product), product.node.priceRange.minVariantPrice.currencyCode) : formatPrice(product.node.priceRange.minVariantPrice.amount, product.node.priceRange.minVariantPrice.currencyCode) }}
                 </span>
               </button>
             </article>
@@ -187,7 +194,7 @@
                       <button
                         type="button"
                         class="product-trigger"
-                        @click="openProductModal(product)"
+                        @click="product.node.handle === 'gift-card' ? (() => window.open('https://vivarium.glossgenius.com/shop/gift-cards', '_blank'))() : openProductModal(product)"
                       >
                         <div class="product-image">
                           <template v-if="product.node.images.edges.length">
@@ -202,6 +209,7 @@
                         </div>
                         <div class="product-info">
                           <h4 class="product-title">{{ product.node.title }}</h4>
+                          <span v-if="isOnSale(product)" class="sale-badge">15% Off</span>
                         </div>
                       </button>
                       <button
@@ -211,13 +219,9 @@
                         @click.prevent.stop="handleQuickAdd(product)"
                       >
                         <span class="btn-text">{{ isVariantAvailable(product) ? 'Add to Cart' : 'Out of Stock' }}</span>
-                        <span class="btn-price">
-                          {{
-                            formatPrice(
-                              product.node.priceRange.minVariantPrice.amount,
-                              product.node.priceRange.minVariantPrice.currencyCode,
-                            )
-                          }}
+                        <span class="btn-price" :class="{ 'on-sale': isOnSale(product) }">
+                          <span v-if="isOnSale(product)" class="original-price">{{ formatPrice(product.node.priceRange.minVariantPrice.amount, product.node.priceRange.minVariantPrice.currencyCode) }}</span>
+                          {{ isOnSale(product) ? formatPrice(getSalePrice(product), product.node.priceRange.minVariantPrice.currencyCode) : formatPrice(product.node.priceRange.minVariantPrice.amount, product.node.priceRange.minVariantPrice.currencyCode) }}
                         </span>
                       </button>
                     </article>
@@ -279,13 +283,9 @@
                   <p v-if="selectedProduct?.node.productType" class="product-modal__type">
                     {{ selectedProduct.node.productType }}
                   </p>
-                  <div v-if="selectedProductPriceRange" class="product-modal__price">
-                    {{
-                      formatPrice(
-                        selectedProductPriceRange.amount,
-                        selectedProductPriceRange.currencyCode,
-                      )
-                    }}
+                  <div v-if="selectedProductPriceRange" class="product-modal__price" :class="{ 'on-sale': isOnSale(selectedProduct!) }">
+                    <span v-if="isOnSale(selectedProduct!)" class="original-price">{{ formatPrice(selectedProductPriceRange.amount, selectedProductPriceRange.currencyCode) }}</span>
+                    {{ isOnSale(selectedProduct!) ? formatPrice(getSalePrice(selectedProduct!), selectedProductPriceRange.currencyCode) : formatPrice(selectedProductPriceRange.amount, selectedProductPriceRange.currencyCode) }}
                   </div>
                   <div :id="productModalDescriptionId" class="product-modal__description">
                     <p v-for="(line, index) in selectedProductDescriptionLines" :key="index">
@@ -373,13 +373,9 @@
                           {{ resolveCategoryForProduct(recommended) }}
                         </span>
                         <span class="recommendation-card__title">{{ recommended.node.title }}</span>
-                        <span class="recommendation-card__price">
-                          {{
-                            formatPrice(
-                              recommended.node.priceRange.minVariantPrice.amount,
-                              recommended.node.priceRange.minVariantPrice.currencyCode,
-                            )
-                          }}
+                        <span class="recommendation-card__price" :class="{ 'on-sale': isOnSale(recommended) }">
+                          <span v-if="isOnSale(recommended)" class="original-price">{{ formatPrice(recommended.node.priceRange.minVariantPrice.amount, recommended.node.priceRange.minVariantPrice.currencyCode) }}</span>
+                          {{ isOnSale(recommended) ? formatPrice(getSalePrice(recommended), recommended.node.priceRange.minVariantPrice.currencyCode) : formatPrice(recommended.node.priceRange.minVariantPrice.amount, recommended.node.priceRange.minVariantPrice.currencyCode) }}
                         </span>
                       </div>
                     </button>
@@ -505,9 +501,9 @@ const props = defineProps({
     default: false,
   },
   viewMode: {
-    type: String as PropType<'collections' | 'all'>,
+    type: String as PropType<'collections' | 'all' | 'sale'>,
     default: 'collections',
-    validator: (value: string) => ['collections', 'all'].includes(value),
+    validator: (value: string) => ['collections', 'all', 'sale'].includes(value),
   },
 })
 
@@ -525,12 +521,23 @@ const selectedProduct = ref<ProductEdge | null>(null)
 const modalCloseButtonRef = ref<HTMLButtonElement | null>(null)
 const productModalRef = ref<HTMLDivElement | null>(null)
 const previousBodyOverflow = ref<string | null>(null)
-const viewMode = ref<'collections' | 'all'>(props.viewMode)
+const viewMode = ref<'collections' | 'all' | 'sale'>(props.viewMode)
 const searchQuery = ref('')
 
 const route = useRoute()
 const router = useRouter()
 const pendingRouteHandle = ref<string | null>(null)
+
+const isOnSale = (product: ProductEdge) => {
+  const title = product.node.title.toLowerCase()
+  const tags = product.node.tags.map(t => t.toLowerCase())
+  return title.includes('holiday') || title.includes('gift set') || tags.includes('holiday') || tags.includes('gift-set') || title.includes('gift-set')
+}
+
+const getSalePrice = (product: ProductEdge) => {
+  const original = parseFloat(product.node.priceRange.minVariantPrice.amount)
+  return (original * 0.85).toFixed(2) // 15% off
+}
 
 const showProductModal = computed(() => Boolean(selectedProduct.value))
 const productModalTitleId = computed(() =>
@@ -638,6 +645,8 @@ const allProductsList = computed(() => {
     a.node.title.localeCompare(b.node.title, 'en', { sensitivity: 'base' })
   )
 })
+
+const saleProductsList = computed(() => allProductsList.value.filter(isOnSale))
 
 const categoryOrder = [
   'Essential Haircare',
@@ -1559,6 +1568,27 @@ const loadProducts = async () => {
       hasNextPage = Boolean(connection?.pageInfo?.hasNextPage)
       after = connection?.pageInfo?.endCursor ?? null
     }
+
+    // Add gift card product
+    const giftCard: ProductEdge = {
+      cursor: 'gift-card',
+      node: {
+        id: 'gift-card',
+        title: 'Gift Card',
+        handle: 'gift-card',
+        description: 'Purchase a gift card for the perfect present.',
+        productType: 'Gift Card',
+        tags: ['gift'],
+        categoryMetafield: null,
+        priceRange: {
+          minVariantPrice: { amount: '25', currencyCode: 'USD' },
+          maxVariantPrice: { amount: '100', currencyCode: 'USD' }
+        },
+        images: { edges: [{ node: { url: '/images/gift-card.jpg', altText: 'Gift Card' } }] },
+        variants: { edges: [{ node: { id: 'gift-card-variant', availableForSale: true } }] }
+      }
+    }
+    products.value.push(giftCard)
   } catch (err) {
     const message = err instanceof Error ? err.message : 'Unable to load products right now.'
     error.value = message
@@ -2016,6 +2046,18 @@ onMounted(() => {
   line-height: 1.3;
 }
 
+.sale-badge {
+  display: inline-block;
+  background: $accent-gold;
+  color: $white;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
 .product-add-btn {
   margin: 0 $spacing-sm $spacing-sm;
   padding: $spacing-sm $spacing-md;
@@ -2057,6 +2099,19 @@ onMounted(() => {
 .btn-price {
   font-size: 1rem;
   font-weight: 500;
+
+  &.on-sale {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+  }
+
+  .original-price {
+    text-decoration: line-through;
+    color: rgba($black, 0.6);
+    font-size: 0.9rem;
+  }
 }
 
 .category-empty {
@@ -2206,6 +2261,19 @@ onMounted(() => {
   font-size: 1.5rem;
   font-weight: 600;
   color: $accent-gold;
+
+  &.on-sale {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .original-price {
+    text-decoration: line-through;
+    color: rgba($accent-sage, 0.6);
+    font-size: 1.2rem;
+  }
 }
 
 .product-modal__description {
@@ -2418,6 +2486,19 @@ onMounted(() => {
   font-size: 0.95rem;
   color: $accent-gold;
   font-weight: 600;
+
+  &.on-sale {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+  }
+
+  .original-price {
+    text-decoration: line-through;
+    color: rgba($accent-sage, 0.6);
+    font-size: 0.85rem;
+  }
 }
 
 .debug-panel {
