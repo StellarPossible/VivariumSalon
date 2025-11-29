@@ -34,13 +34,13 @@
   flex-wrap: wrap;
   gap: $spacing-md;
   padding: $spacing-sm;
-  background: rgba($white, 0.95);
-  border-radius: 8px;
+  background: transparent;
   box-shadow: 0 2px 4px rgba($black, 0.1);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   width: 100%;
   align-items: stretch;
+  justify-content: space-evenly;
 }
 
 .sale-promo__section {
