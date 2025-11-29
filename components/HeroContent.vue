@@ -10,6 +10,9 @@
       </div>
       <p class="hero-subtitle">Your Premier Destination for Beauty and Wellness</p>
     </div>
+    <div class="hero-sale-banner">
+      <SalePromo />
+    </div>
     <div class="hero-features">
       <div class="feature-card">
         <div class="feature-icon">
@@ -69,13 +72,14 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: space-evenly ;
+  justify-content: flex-start;
   min-height: 100vh;
   text-align: center;
   position: relative;
   background: url('/images/vivariumhero.png') no-repeat center center;
   background-size: cover;
   scroll-margin-top: $spacing-xl * 3;
+  gap: $spacing-lg;
   
   &::before {
     content: '';
@@ -96,20 +100,26 @@
   z-index: 1;
 }
 
+.hero-sale-banner {
+  width: 100%;
+  max-width: 1200px;
+  z-index: 2;
+  padding: 0 $spacing-md;
+}
+
 .hero-features {
-  position: absolute;
-  bottom: $spacing-sm;
-  left: 50%;
-  transform: translateX(-50%);
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
   width: 100%;
+  max-width: 1200px;
   background: rgba($white, 0.1);
   border: none;
   box-shadow: 0 10px 30px rgba($black, 0.45);
-  padding: 5px;
+  padding: $spacing-sm;
   backdrop-filter: blur(5px);
   -webkit-backdrop-filter: blur(5px);
+  z-index: 3;
+  border-radius: 14px;
 }
 
 .feature-card {
@@ -249,6 +259,7 @@
 @media (max-width: $breakpoint-md) {
   .hero-content {
     scroll-margin-top: $spacing-xl * 2;
+    gap: $spacing-md;
   }
 
   .hero-inner {
@@ -265,10 +276,13 @@
     }
   }
 
+  .hero-sale-banner {
+    padding: 0 $spacing-sm;
+  }
+
   .hero-features {
-    position: static;
-    transform: none;
-    width: 100%;
+    grid-template-columns: 1fr;
+    padding: $spacing-sm;
   }
 
   .feature-card {
