@@ -72,7 +72,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: flex-start;
+  justify-content: flex-end;
   min-height: 100vh;
   text-align: center;
   position: relative;
@@ -102,16 +102,13 @@
 
 .hero-sale-banner {
   width: 100%;
-  max-width: 1200px;
   z-index: 2;
-  padding: 0 $spacing-md;
 }
 
 .hero-features {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
   width: 100%;
-  max-width: 1200px;
   background: rgba($white, 0.1);
   border: none;
   box-shadow: 0 10px 30px rgba($black, 0.45);
@@ -119,7 +116,6 @@
   backdrop-filter: blur(5px);
   -webkit-backdrop-filter: blur(5px);
   z-index: 3;
-  border-radius: 14px;
 }
 
 .feature-card {
@@ -189,11 +185,9 @@
 }
 
 .hero-subtitle {
-  margin: 0 0 $spacing-xl 0;
   font-family: 'Charm', cursive;
   font-size: clamp(1.25rem, 3.2vw, 2.5rem);
   color: rgba($white, 0.9);
-  margin-bottom: $spacing-xl;
   text-shadow: 0 1px 5px rgba(0, 0, 0, 0.2);
   line-height: 1.2;
 }
@@ -274,10 +268,6 @@
       width: 100%;
       max-width: 300px;
     }
-  }
-
-  .hero-sale-banner {
-    padding: 0 $spacing-sm;
   }
 
   .hero-features {
