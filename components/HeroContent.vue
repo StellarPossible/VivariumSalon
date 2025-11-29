@@ -102,7 +102,6 @@
 
 .hero-sale-banner {
   width: 100%;
-  max-width: 1200px;
   z-index: 2;
   padding: 0 $spacing-md;
 }
@@ -111,7 +110,6 @@
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
   width: 100%;
-  max-width: 1200px;
   background: rgba($white, 0.1);
   border: none;
   box-shadow: 0 10px 30px rgba($black, 0.45);
@@ -119,7 +117,6 @@
   backdrop-filter: blur(5px);
   -webkit-backdrop-filter: blur(5px);
   z-index: 3;
-  border-radius: 14px;
 }
 
 .feature-card {
