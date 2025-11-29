@@ -48,7 +48,6 @@
   padding: $spacing-lg;
   background: rgba($white, 0.9);
   border-radius: 6px;
-  border-left: 4px solid $accent-gold;
   text-align: center;
   display: flex;
   flex-direction: column;
