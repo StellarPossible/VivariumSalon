@@ -13,6 +13,19 @@
   </div>
 </template>
 
+
+<script setup lang="ts">
+useSeoMeta({
+  title: 'Shop Our Collection - Vivarium Salon',
+  description: 'Browse our curated collection of premium beauty and wellness products.',
+  ogTitle: 'Shop Our Collection - Vivarium Salon',
+  ogDescription: 'Browse our curated collection of premium beauty and wellness products.',
+  ogImage: 'https://vivarium.stellarpossible.com/images/og-products.jpg',
+  ogUrl: 'https://vivarium.stellarpossible.com/products',
+  twitterCard: 'summary_large_image',
+})
+</script>
+
 <style scoped>
 .products-page {
   min-height: 100vh;

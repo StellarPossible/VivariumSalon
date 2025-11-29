@@ -1083,7 +1083,7 @@ const _u3IyQqUp99QxpixP2sUD8u_K57vRqm7OzpWzr4iaxg = (function(nitro) {
 
 const rootDir = "/Users/marievalentonis/Desktop/StellarPossible, LLC/GitHub Repos/VivariumSalon";
 
-const appHead = {"meta":[{"name":"viewport","content":"width=device-width, initial-scale=1"},{"charset":"utf-8"}],"link":[],"style":[],"script":[],"noscript":[]};
+const appHead = {"meta":[{"name":"viewport","content":"width=device-width, initial-scale=1"},{"charset":"utf-8"},{"name":"theme-color","content":"#000000"}],"link":[{"rel":"icon","type":"image/x-icon","href":"/favicon.ico"}],"style":[],"script":[],"noscript":[],"charset":"utf-8","viewport":"width=device-width, initial-scale=1"};
 
 const appRootTag = "div";
 

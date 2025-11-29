@@ -18,6 +18,7 @@ interface _GlobalComponents {
     'ContactModal': typeof import("../components/ContactModal.vue")['default']
     'FloatingHelp': typeof import("../components/FloatingHelp.vue")['default']
     'HeroContent': typeof import("../components/HeroContent.vue")['default']
+    'SalePromo': typeof import("../components/SalePromo.vue")['default']
     'ServiceSpecialists': typeof import("../components/ServiceSpecialists.vue")['default']
     'ShopSection': typeof import("../components/ShopSection.vue")['default']
     'ShopifyDebug': typeof import("../components/ShopifyDebug.vue")['default']
@@ -55,6 +56,7 @@ interface _GlobalComponents {
     'LazyContactModal': LazyComponent<typeof import("../components/ContactModal.vue")['default']>
     'LazyFloatingHelp': LazyComponent<typeof import("../components/FloatingHelp.vue")['default']>
     'LazyHeroContent': LazyComponent<typeof import("../components/HeroContent.vue")['default']>
+    'LazySalePromo': LazyComponent<typeof import("../components/SalePromo.vue")['default']>
     'LazyServiceSpecialists': LazyComponent<typeof import("../components/ServiceSpecialists.vue")['default']>
     'LazyShopSection': LazyComponent<typeof import("../components/ShopSection.vue")['default']>
     'LazyShopifyDebug': LazyComponent<typeof import("../components/ShopifyDebug.vue")['default']>
@@ -98,6 +100,7 @@ export const CartModal: typeof import("../components/CartModal.vue")['default']
 export const ContactModal: typeof import("../components/ContactModal.vue")['default']
 export const FloatingHelp: typeof import("../components/FloatingHelp.vue")['default']
 export const HeroContent: typeof import("../components/HeroContent.vue")['default']
+export const SalePromo: typeof import("../components/SalePromo.vue")['default']
 export const ServiceSpecialists: typeof import("../components/ServiceSpecialists.vue")['default']
 export const ShopSection: typeof import("../components/ShopSection.vue")['default']
 export const ShopifyDebug: typeof import("../components/ShopifyDebug.vue")['default']
@@ -135,6 +138,7 @@ export const LazyCartModal: LazyComponent<typeof import("../components/CartModal
 export const LazyContactModal: LazyComponent<typeof import("../components/ContactModal.vue")['default']>
 export const LazyFloatingHelp: LazyComponent<typeof import("../components/FloatingHelp.vue")['default']>
 export const LazyHeroContent: LazyComponent<typeof import("../components/HeroContent.vue")['default']>
+export const LazySalePromo: LazyComponent<typeof import("../components/SalePromo.vue")['default']>
 export const LazyServiceSpecialists: LazyComponent<typeof import("../components/ServiceSpecialists.vue")['default']>
 export const LazyShopSection: LazyComponent<typeof import("../components/ShopSection.vue")['default']>
 export const LazyShopifyDebug: LazyComponent<typeof import("../components/ShopifyDebug.vue")['default']>

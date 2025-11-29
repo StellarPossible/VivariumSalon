@@ -28,11 +28,25 @@
 <script setup lang="ts">
 import { ref, onMounted, onBeforeUnmount } from 'vue'
 import { useCart } from '@/composables/useCart'
-// Components are auto-imported by Nuxt
 
 const scrolledPastThreshold = ref(false)
 const isDev = process.dev
 const { initCart } = useCart()
+
+// Add default SEO meta tags
+useSeoMeta({
+  title: 'Vivarium Salon - Premium Beauty & Wellness',
+  description: 'Discover premium beauty and wellness products at Vivarium Salon.',
+  ogTitle: 'Vivarium Salon - Premium Beauty & Wellness',
+  ogDescription: 'Discover premium beauty and wellness products at Vivarium Salon.',
+  ogImage: 'https://vivarium.stellarpossible.com/images/og-default.jpg',
+  ogUrl: 'https://vivarium.stellarpossible.com',
+  ogType: 'website',
+  twitterCard: 'summary_large_image',
+  twitterTitle: 'Vivarium Salon - Premium Beauty & Wellness',
+  twitterDescription: 'Discover premium beauty and wellness products at Vivarium Salon.',
+  twitterImage: 'https://vivarium.stellarpossible.com/images/og-default.jpg',
+})
 
 function handleScroll() {
   const y = window.scrollY
@@ -40,7 +54,6 @@ function handleScroll() {
 }
 
 onMounted(() => {
-  // Initialize cart from persisted state when the app mounts
   initCart()
   window.addEventListener('scroll', handleScroll)
 })
