@@ -80,6 +80,7 @@
   background-size: cover;
   scroll-margin-top: $spacing-xl * 3;
   gap: $spacing-lg;
+  padding-top: 6rem;
   
   &::before {
     content: '';
@@ -254,10 +255,10 @@
   .hero-content {
     scroll-margin-top: $spacing-xl * 2;
     gap: $spacing-md;
+    padding-top: 8rem;
   }
 
   .hero-inner {
-    margin-top: 8rem;
   }
 
   .hero-cta {

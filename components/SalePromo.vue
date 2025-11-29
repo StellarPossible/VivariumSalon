@@ -1,36 +1,33 @@
 <template>
   <div class="sale-promo">
     <div class="sale-promo__section">
-      <div class="section-icon">
-        <Icon name="mdi:gift-outline" size="48" />
-      </div>
-      <h3>Davines Holiday Boxes</h3>
-      <p>Popular Davines products bundled at discount. Additional 15% off on Small Business Saturday through 12/1!</p>
+      <h3>Exclusive Davines Holiday Boxes</h3>
+      <p>Popular Davines products bundled at unbeatable discounts! <i>Plus</i> 15% off only on Small Business Saturday through 12/1!</p>
       <NuxtLink to="/shop" class="btn btn-primary">Shop Now</NuxtLink>
     </div>
 
     <div class="sale-promo__section">
-      <div class="section-icon">
-        <Icon name="mdi:credit-card-outline" size="48" />
-      </div>
       <h3>Gift Card Special</h3>
-      <p>$100 gift card = Free Davines travel-size shampoo + conditioner duo!</p>
+      <p>Spend $100 on a gift card and receive a <i>FREE</i> Davines travel-size shampoo + conditioner duo! Perfect for gifting.</p>
       <a href="https://vivarium.glossgenius.com/shop/gift-cards" class="btn btn-secondary" target="_blank" rel="noopener noreferrer">Get Gift Card</a>
     </div>
 
     <div class="sale-promo__section">
-      <div class="section-icon">
-        <Icon name="mdi:calendar-check-outline" size="48" />
-      </div>
       <h3>Extension Sale</h3>
-      <p>Book/pay deposit 12/1 for discounts + free Davines gifts on new installs.</p>
+      <p>Book and pay deposit by 12/1 for exclusive discounts + <strong>free Davines gifts</strong> on new hair extensions! Transform your look today.</p>
       <NuxtLink to="/our-team#specialists" class="btn btn-primary">Book Consultation</NuxtLink>
+    </div>
+
+    <div class="sale-promo__section">
+      <h3>Free Consultation</h3>
+      <p>Ready to enhance your beauty? Schedule your complimentary consultation and discover personalized treatments tailored just for you.</p>
+      <a href="https://vivarium.glossgenius.com/services" class="btn btn-secondary" target="_blank" rel="noopener noreferrer">Book Your Free Consultation Today</a>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { Icon } from '@iconify/vue'
+// No reactive data needed for this static component
 </script>
 
 <style scoped lang="scss">
@@ -38,12 +35,14 @@ import { Icon } from '@iconify/vue'
 
 
 .sale-promo {
-  display: flex;
-  flex-direction: column;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
   gap: $spacing-md;
   padding: $spacing-sm;
   background: transparent;
+  box-shadow: 0 2px 4px rgba($black, 0.1);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
   width: 100%;
   align-items: stretch;
   justify-content: space-evenly;
@@ -51,94 +50,50 @@ import { Icon } from '@iconify/vue'
 
 .sale-promo__section {
   width: 100%;
-  padding: $spacing-lg;
-  background: linear-gradient(135deg, rgba($white, 0.95) 0%, rgba($white, 0.85) 100%);
-  border-radius: 16px;
+  padding: $spacing-md;
+  background: rgba($white, 0.95);
+  border-radius: 12px;
   text-align: center;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  margin-bottom: $spacing-md;
+  margin-bottom: $spacing-sm;
   box-sizing: border-box;
-  box-shadow: 0 8px 32px rgba($black, 0.1);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba($white, 0.2);
-  transition: all 0.4s ease;
-  position: relative;
-  overflow: hidden;
-
-  &::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 4px;
-    background: linear-gradient(90deg, $accent-gold, $accent-sage);
-  }
-
-  &:hover {
-    transform: translateY(-8px);
-    box-shadow: 0 16px 48px rgba($black, 0.15);
-  }
-}
-
-.section-icon {
-  margin-bottom: $spacing-md;
-  color: $accent-sage;
-  transition: transform 0.3s ease;
-
-  .sale-promo__section:hover & {
-    transform: scale(1.1);
-  }
+  box-shadow: 0 4px 12px rgba($black, 0.15);
+  border: 1px solid rgba($accent-gold, 0.2);
 }
 
 .sale-promo__section h3 {
   color: $primary-color;
   margin-bottom: $spacing-sm;
-  font-size: 1.25rem;
-  word-break: break-word;
+  font-size: 1.8rem;
   font-weight: 700;
+  word-break: break-word;
+  line-height: 1;
 }
 
 .sale-promo__section p {
   color: $text-color;
-  line-height: 1.6;
-  margin-bottom: $spacing-lg;
-  font-size: 0.9rem;
+  line-height: 1.2;
+  margin-bottom: $spacing-sm;
+  font-size: 1.1rem;
   word-break: break-word;
 }
 
 
 .btn {
-  padding: $spacing-sm $spacing-md;
-  border-radius: 50px;
+  padding: $spacing-md $spacing-lg;
+  border-radius: 30px;
   font-family: $font-family;
-  font-size: 1rem;
-  font-weight: 600;
+  font-size: 1.1rem;
+  font-weight: 700;
   text-decoration: none;
   transition: all 0.3s ease;
   cursor: pointer;
   display: inline-block;
   text-align: center;
-  position: relative;
-  overflow: hidden;
-
-  &::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent, rgba($white, 0.2), transparent);
-    transition: left 0.5s;
-  }
-
-  &:hover::before {
-    left: 100%;
-  }
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 
   &-primary {
     background: linear-gradient(135deg, $accent-gold 0%, darken($accent-gold, 10%) 100%);
@@ -149,7 +104,7 @@ import { Icon } from '@iconify/vue'
     &:hover {
       background: linear-gradient(135deg, darken($accent-gold, 10%) 0%, darken($accent-gold, 20%) 100%);
       transform: translateY(-3px);
-      box-shadow: 0 8px 25px rgba($accent-gold, 0.6);
+      box-shadow: 0 6px 20px rgba($accent-gold, 0.6);
     }
   }
 
@@ -162,7 +117,7 @@ import { Icon } from '@iconify/vue'
     &:hover {
       background: linear-gradient(135deg, darken($accent-sage, 10%) 0%, darken($accent-sage, 20%) 100%);
       transform: translateY(-3px);
-      box-shadow: 0 8px 25px rgba($accent-sage, 0.6);
+      box-shadow: 0 6px 20px rgba($accent-sage, 0.6);
     }
   }
 }
@@ -170,54 +125,17 @@ import { Icon } from '@iconify/vue'
 
 @media (min-width: 700px) {
   .sale-promo {
-    flex-direction: row;
-    flex-wrap: wrap;
-    gap: $spacing-md;
-  }
-  .sale-promo__section {
-    width: calc(33.333% - #{$spacing-md});
-    margin-bottom: 0;
-    animation: slideUp 0.6s ease-out forwards;
-  }
-}
-
-@keyframes slideUp {
-  from {
-    opacity: 0;
-    transform: translateY(30px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@media (max-width: $breakpoint-md) {
-  .sale-promo {
-    flex-direction: column;
-    padding: $spacing-md;
+    grid-template-columns: repeat(4, 1fr);
   }
   .sale-promo__section {
     width: 100%;
-    padding: $spacing-md;
-    margin-bottom: $spacing-md;
-    animation: fadeIn 0.6s ease-out forwards;
-  }
-  .sale-promo__section h3 {
-    font-size: 1.1rem;
-  }
-  .sale-promo__section p {
-    font-size: 0.85rem;
-    margin-bottom: $spacing-md;
+    margin-bottom: 0;
   }
 }
 
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
+@media (max-width: 600px) {
+  .sale-promo {
+    grid-template-columns: 1fr;
   }
 }
 </style>
